@@ -1,0 +1,34 @@
+<div class="content flex flex-col" style="width: 100%; height: 100%">
+  <div class="flex py-4 px-6 justify-between">
+    <div
+      class="flex justify-between items-center text-[#101828] text-lg font-medium"
+    >
+      Total No. of Drivers
+      <span
+        class="text-xs bg-blue-50 text-blue-900 px-3 py-0.5 rounded-2xl ml-2"
+      >
+        {{ drivers.length }} drivers
+      </span>
+    </div>
+    <button
+      mat-flat-button
+      color="primary"
+      cdkFocusInitial
+      (click)="openNewDriverDialog()"
+    >
+      <mat-icon style="color: white">add</mat-icon> Add New Driver
+    </button>
+  </div>
+
+  <div style="width: 100%; overflow-x: auto">
+    <ag-grid-angular
+      class="ag-theme-alpine"
+      style="width: 100%; height: 90vh"
+      [rowData]="drivers"
+      [columnDefs]="colDefs"
+      [gridOptions]="gridOptions"
+      [theme]="'legacy'"
+    >
+    </ag-grid-angular>
+  </div>
+</div>

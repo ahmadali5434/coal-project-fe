@@ -1,0 +1,30 @@
+<div class="content" class="flex flex-col" style="width: 100%; height: 100%">
+  <div class="flex py-4 px-6 justify-between">
+    <div
+      class="flex justify-between items-center text-[#101828] text-lg font-medium"
+    >
+      Total No. of stocks
+      <span
+        class="text-xs bg-blue-50 text-blue-900 px-3 py-0.5 rounded-2xl ml-2"
+      >
+        {{ purchaseStockData().length }} stocks</span
+      >
+    </div>
+    <button
+      mat-flat-button
+      color="primary"
+      cdkFocusInitial
+      (click)="onBuyStock()"
+    >
+      Buy Stock
+    </button>
+  </div>
+  <ag-grid-angular
+    style="width: 100%; height: 90vh"
+    [rowData]="purchaseStockData()"
+    [gridOptions]="gridOptions"
+    [columnDefs]="colDefs"
+    [theme]="'legacy'"
+    class="ag-theme-alpine"
+  />
+</div>

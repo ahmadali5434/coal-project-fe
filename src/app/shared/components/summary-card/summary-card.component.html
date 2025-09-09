@@ -1,0 +1,43 @@
+<mat-card appearance="outlined" class="w-full flex my-4 p-4 flex-col">
+  <div class="flex justify-between items-center">
+    <mat-card-title class="text-xl font-semibold mb-3 text-[#0667ee]">
+      {{ title }}
+    </mat-card-title>
+
+    <button
+      mat-stroked-button
+      color="accent"
+      (click)="onEdit()"
+      class="h-8 text-sm flex items-center gap-1 hover:bg-blue-100 cursor-pointer px-2 rounded-full"
+    >
+      <mat-icon class="!text-base">edit</mat-icon>
+      <span>Edit</span>
+    </button>
+  </div>
+
+  <mat-card-content class="mt-4 text-sm">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
+      @for (key of objectKeys(data); track key) { 
+        @if(key !== imageKey) {
+        <ng-container>
+          <div class="break-words">
+            <span class="font-medium pr-2">{{ prettifyKey(key) }}:</span>
+            {{ prettifyValue(data[key]) }}
+          </div>
+        </ng-container>
+      } 
+    }
+    </div>
+
+    @if(imageKey && data[imageKey]) {
+    <div class="mt-6">
+      <span>{{ prettifyKey(imageKey) }}:</span><br />
+      <img
+        [src]="data[imageKey]"
+        class="h-60 object-cover rounded mt-2"
+        alt="Image"
+      />
+    </div>
+    }
+  </mat-card-content>
+</mat-card>

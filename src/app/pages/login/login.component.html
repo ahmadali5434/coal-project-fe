@@ -1,0 +1,39 @@
+<div class="h-full flex flex-col justify-center items-center">
+  <div class="text-4xl font-semibold text-[#014367] mb-16">
+    Jaji Trading Company
+  </div>
+  <div class="min-w-96 flex flex-col gap-4">
+    <mat-form-field class="w-full">
+      <mat-label>Enter your email</mat-label>
+      <input
+        matInput
+        placeholder="pat@example.com"
+        [formControl]="email"
+        (blur)="updateErrorMessage()"
+        required
+      />
+      @if (email.invalid) {
+      <mat-error>{{ errorMessage() }}</mat-error>
+      }
+    </mat-form-field>
+    <mat-form-field class="w-full">
+      <mat-label>Enter your password</mat-label>
+      <input matInput [type]="hide() ? 'password' : 'text'" />
+      <button
+        matIconButton
+        matSuffix
+        (click)="clickEvent($event)"
+        [attr.aria-label]="'Hide password'"
+        [attr.aria-pressed]="hide()"
+      >
+        <mat-icon>{{ hide() ? "visibility_off" : "visibility" }}</mat-icon>
+      </button>
+    </mat-form-field>
+  
+  <button matButton="filled" class="w-full" (click)="onloginClicked()">Login</button>
+
+  <a matButton (click)="onForgotPasswordClicked()" class="w-full">Forgot Password </a>
+</div>
+</div>
+
+<router-outlet />

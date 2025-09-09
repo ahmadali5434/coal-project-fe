@@ -1,0 +1,60 @@
+<h2 class="flex justify-center items-center text-3xl pt-8">
+  {{ isEdit ? 'Update Customer' : 'Add New Customer' }}
+</h2>
+<mat-dialog-content class="mat-typography">
+  <form [formGroup]="addCustomerForm">
+    <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 gap-y-3 w-full place-items-center my-12">
+      <mat-form-field class="w-80">
+        <mat-label>Enter Customer Name</mat-label>
+        <input matInput formControlName="fullName"/>
+          <mat-error *ngIf="addCustomerForm.get('fullName')?.hasError('required')">
+          Customer Name is required
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="w-80">
+        <mat-label>Select Country</mat-label>
+        <mat-select formControlName="countryId">
+          @for(country of countries; track country.id) {
+            <mat-option [value]="country.id">{{country.name}}</mat-option>
+          }
+        </mat-select>
+        <mat-error *ngIf="addCustomerForm.get('countryId')?.hasError('required')">
+          Country is required
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="w-80">
+        <mat-label>Select City</mat-label>
+        <mat-select formControlName="cityId">
+          @for(city of citiesByCountry; track city.id) {
+            <mat-option [value]="city.id">{{city.name}}</mat-option>
+          }
+        </mat-select>
+        <mat-error *ngIf="addCustomerForm.get('cityId')?.hasError('required')">
+          City is required
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="w-80">
+
+        <mat-label>Area Address</mat-label>
+        <input matInput formControlName="address" />
+          <mat-error *ngIf="addCustomerForm.get('address')?.hasError('required')">
+          Address is required
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="w-80">
+        <mat-label>Enter Contact Number</mat-label>
+        <input matInput formControlName="phoneNumber"/>
+          <mat-error *ngIf="addCustomerForm.get('phoneNumber')?.hasError('required')">
+          Contact Number is required
+        </mat-error>
+      </mat-form-field>
+      
+    </div>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button matButton="outlined" mat-dialog-close>Cancel</button>
+  <button  mat-flat-button color="primary" cdkFocusInitial (click)="onSave()">
+    {{ isEdit ? 'Update Customer' : 'Add Customer' }}
+  </button>
+</mat-dialog-actions>

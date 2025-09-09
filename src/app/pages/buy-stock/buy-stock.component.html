@@ -1,0 +1,71 @@
+<div class="flex flex-col items-center w-full px-6 py-4 space-y-6">
+  @if(purchaseData() ) {
+  <div
+    class="w-full max-w-6xl bg-[#216B96] text-white px-6 py-4 text-2xl font-semibold rounded-md shadow"
+  >
+    Buy Stock
+  </div>
+  <div class="w-full my-8 px-2 flex flex-start gap-4">
+    @if(!purchaseRateData() ) {
+    <button
+      mat-flat-button
+      color="primary"
+      cdkFocusInitial
+      (click)="openRateDialog()"
+    >
+      Rate Entry
+    </button>
+    } @if(!afghanGumrakData() ) {
+    <button
+      mat-flat-button
+      color="primary"
+      cdkFocusInitial
+      (click)="openAfghanGumrakDialog()"
+    >
+      Afghan Gumrak Entry
+    </button>
+    } @if(!pakCustomData() ) {
+    <button
+      mat-flat-button
+      color="primary"
+      cdkFocusInitial
+      (click)="openPakCustomDialog()"
+    >
+      Pakistan Custom Entry
+    </button>
+    }
+  </div>
+  } @if(purchaseData() ) {
+  <app-summary-card
+    title="Purchase Detail"
+    [data]="purchaseData()!"
+    imageKey="builtyImage"
+    class="w-full"
+    (edit)="openEditPurchaseDialog(purchaseData().id!)"
+  ></app-summary-card>
+  } @if(purchaseRateData() ) {
+  <app-summary-card
+    title="Rate Detail"
+    [data]="purchaseRateData()!"
+    imageKey="builtyImage"
+    class="w-full"
+    (edit)="openRateDialog()"
+  ></app-summary-card>
+  } @if(afghanGumrakData() ) {
+  <app-summary-card
+    title="Afghan Gumrak Detail"
+    [data]="afghanGumrakData()!"
+    imageKey="customImage"
+    class="w-full"
+    (edit)="openAfghanGumrakDialog()"
+  ></app-summary-card>
+  } @if(pakCustomData() ) {
+  <app-summary-card
+    title="Pakistan Custom Detail"
+    [data]="pakCustomData()!"
+    imageKey="customImage"
+    class="w-full"
+    (edit)="openPakCustomDialog()"
+  ></app-summary-card>
+  }
+</div>

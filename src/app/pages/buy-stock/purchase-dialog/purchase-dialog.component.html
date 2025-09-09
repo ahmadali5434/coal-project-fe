@@ -1,0 +1,128 @@
+<h2 class="flex justify-center items-center text-3xl pt-8">
+  Add Purchase Detail
+</h2>
+<mat-dialog-content class="mat-typography">
+  <form [formGroup]="purchaseForm" class="w-full">
+    <div class="w-full flex justify-center">
+      <div
+        class="grid grid-cols-1 lg:grid-cols-2 gap-y-4 w-full place-items-center my-3"
+      >
+        <mat-form-field class="w-[80%]">
+          <mat-label>Choose Purchase Date</mat-label>
+          <input
+            matInput
+            [matDatepicker]="picker"
+            formControlName="purchaseDate"
+          />
+          <mat-hint>MM/DD/YYYY</mat-hint>
+          <mat-datepicker-toggle matIconSuffix [for]="picker">
+            <mat-icon matDatepickerToggleIcon>keyboard_arrow_down</mat-icon>
+          </mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+        <mat-form-field class="w-[80%]">
+          <mat-label>Select Customer Name</mat-label>
+          <mat-select formControlName="customerId">
+            <mat-option
+              (click)="openNewCustomerDialog()"
+              class="text-blue-600 font-semibold"
+            >
+              ➕ Add New Customer
+            </mat-option>
+            <mat-divider></mat-divider>
+
+            @for(customer of customerList(); track customer) {
+            <mat-option [value]="customer.id">{{
+              customer.fullName
+            }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field class="w-[80%]">
+          <mat-label>Select place of Purchase</mat-label>
+          <mat-select formControlName="placeOfPurchaseId">
+            @for(warehouse of warehouses; track warehouse) {
+            <mat-option [value]="warehouse.id">{{
+              warehouse.name
+            }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field class="w-[80%]">
+          <mat-label>Select Stock Destination</mat-label>
+          <mat-select formControlName="stockDestinationId">
+            @for(warehouse of warehouses; track warehouse) {
+            <mat-option [value]="warehouse.id">{{
+              warehouse.name
+            }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field class="w-[80%]">
+          <mat-label>Enter Truck Number</mat-label>
+          <input matInput formControlName="truckNo" />
+        </mat-form-field>
+        <mat-form-field class="w-[80%]">
+          <mat-label>Select Driver Name</mat-label>
+          <mat-select formControlName="driverId">
+            <mat-option
+              (click)="openNewDriverDialog()"
+              class="text-blue-600 font-semibold"
+            >
+              ➕ Add New Driver
+            </mat-option>
+
+            <mat-divider></mat-divider>
+
+            @for(driver of drivers(); track driver) {
+            <mat-option [value]="driver.id">{{ driver.name }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field class="w-[80%]">
+          <mat-label>Enter Metric Ton</mat-label>
+          <input matInput formControlName="metricTon" />
+        </mat-form-field>
+        <div class="w-[80%] h-48 relative">
+          <!-- Hidden file input -->
+          <input
+            type="file"
+            accept="image/*"
+            #fileInput
+            (change)="onImageSelected($event)"
+            hidden
+          />
+          <mat-card
+            class="h-full mx-auto flex items-center justify-center gap-4 flex-wrap box-border cursor-pointer"
+            (click)="fileInput.click()"
+          >
+            <!-- Image Preview -->
+            @if (!selectedImage) {
+            <span class="text-gray-800 text-center">Upload Builty Image</span>
+            } @if(selectedImage) {
+            <div class="flex w-full h-full items-center gap-2">
+              <img
+                [src]="selectedImage"
+                alt="Builty Preview"
+                class="w-full h-full object-contain rounded"
+              />
+              <button
+                mat-icon-button
+                color="warn"
+                (click)="clearImage($event)"
+                aria-label="Remove"
+              >
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+            }
+          </mat-card>
+        </div>
+      </div>
+    </div>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button matButton="outlined" mat-dialog-close>Cancel</button>
+  <button matButton="filled" cdkFocusInitial (click)="onSave()">Save</button>
+</mat-dialog-actions>

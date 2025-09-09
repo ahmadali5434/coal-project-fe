@@ -1,0 +1,8 @@
+<h2 mat-dialog-title class="mt-4 text-center">Confirmation</h2>
+<mat-dialog-content>
+  {{ data.message || "Are you sure?" }}
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button matButton="outlined" (click)="onCancel()">No</button>
+  <button matButton="filled" cdkFocusInitial color="warn"  (click)="onConfirm()">Yes</button>
+</mat-dialog-actions>

@@ -1,0 +1,50 @@
+<h2 class="flex justify-center items-center text-3xl pt-8">Add Rate Detail</h2>
+<mat-dialog-content class="mat-typography">
+  <form [formGroup]="rateForm">
+    <div
+      class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 gap-y-3 w-full place-items-center my-12"
+    >
+      <mat-form-field class="w-[80%]">
+        <mat-label>Truck Number</mat-label>
+        <input matInput formControlName="truckNo" />
+      </mat-form-field>
+      <mat-form-field class="w-[80%]">
+        <mat-label>Driver Name</mat-label>
+        <input matInput formControlName="driverName" />
+      </mat-form-field>
+      <mat-form-field class="w-[80%]">
+        <mat-label>Metric Ton</mat-label>
+        <input matInput formControlName="metricTon" />
+      </mat-form-field>
+      <mat-form-field class="w-[80%]">
+        <mat-label>Freight Per Ton</mat-label>
+        <input matInput formControlName="freightPerTon" />
+      </mat-form-field>
+      <mat-form-field class="w-[80%]">
+        <mat-label>Expense</mat-label>
+        <input matInput formControlName="expense" />
+      </mat-form-field>
+      <mat-form-field class="w-[80%]">
+        <mat-label>Advance Payment</mat-label>
+        <input matInput formControlName="advancePayment" />
+      </mat-form-field>
+      <mat-form-field class="w-[80%]">
+        <mat-label>Enter Amount (Afghanistan)</mat-label>
+        <input matInput formControlName="amountAFN" />
+      </mat-form-field>
+      <mat-form-field class="w-[80%]">
+        <mat-label>Enter Exchange Rate</mat-label>
+        <input matInput formControlName="exchangeRate" />
+      </mat-form-field>
+      <mat-form-field class="w-[80%]">
+        <mat-label>Amount (PKR)</mat-label>
+        <input matInput formControlName="amountPKR" readonly/>
+      </mat-form-field>
+
+    </div>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <button matButton="outlined" mat-dialog-close>Cancel</button>
+    <button matButton="filled" cdkFocusInitial (click)="onSave()">Save</button>
+  </mat-dialog-actions>
