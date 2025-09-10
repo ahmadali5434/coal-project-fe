@@ -8,7 +8,7 @@ RUN npm run build -- --configuration production
 
 # Serve with nginx
 FROM nginx:stable-alpine
-COPY --from=build /app/dist/coal /usr/share/nginx/html
+COPY --from=build /app/dist/coal/browser /usr/share/nginx/html
 
 # Optional: custom nginx config for Angular routes
 COPY nginx.conf /etc/nginx/conf.d/default.conf
