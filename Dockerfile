@@ -19,7 +19,7 @@
     COPY nginx.conf /etc/nginx/conf.d/default.conf
     
     # Copy Angular build output from the correct location
-    COPY --from=build /app/dist /usr/share/nginx/html
+    COPY --from=build /app/dist/. /usr/share/nginx/html
     
     EXPOSE 80
     CMD ["nginx", "-g", "daemon off;"]
