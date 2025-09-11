@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular/build:application",
           "options": {
-            "outputPath": "dist/coal",
+            "outputPath": "dist/coal/browser",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": ["zone.js"],
