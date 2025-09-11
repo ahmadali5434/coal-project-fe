@@ -18,7 +18,7 @@ FROM nginx:stable-alpine
 # Copy custom nginx config
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Copy Angular build output (from dist/coal/browser)
+# Copy Angular build output
 COPY --from=build /app/dist/coal /usr/share/nginx/html
 
 EXPOSE 80
