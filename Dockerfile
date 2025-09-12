@@ -45,7 +45,7 @@ RUN rm -rf /usr/share/nginx/html/*
 
 # Copy built app from build stage.
 # (Your build produces dist/coal/browser/index.html)
-COPY --from=build /app/dist/coal/browser /usr/share/nginx/html
+COPY --from=build /app/dist/coal /usr/share/nginx/html
 
 # Copy nginx config (ensure nginx.conf is next to Dockerfile)
 COPY nginx.conf /etc/nginx/conf.d/default.conf
