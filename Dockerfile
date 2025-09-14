@@ -23,7 +23,7 @@
   # -----------------------------
   FROM nginx:stable-alpine
   # Copy built Angular files into nginx html folder
-  COPY --from=builder /app/dist/coal /usr/share/nginx/html
+  COPY --from=builder /app/dist/coal/browser /usr/share/nginx/html
   
   # Replace nginx default site config with our Angular SPA config
   COPY nginx.conf /etc/nginx/conf.d/default.conf
