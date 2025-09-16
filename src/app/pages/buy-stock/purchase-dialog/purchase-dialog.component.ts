@@ -35,12 +35,11 @@ import { MatCard } from '@angular/material/card';
 import { WarehouseService } from '../../warehouse/data-access/warehouse.service';
 import { AddNewCustomerDialogComponent } from '../add-new-customer-dialog/add-new-customer-dialog.component';
 import { BuyStockService } from '../data-access/buy-stock.service';
-import { Customer, PurchaseEntry, Warehouse } from '../data-access/buy-stock.dto';
+import { Customer, Driver, PurchaseEntry, Warehouse } from '../data-access/buy-stock.dto';
 import { CustomerService } from '../data-access/customer.service';
 import { AddNewDriverDialogComponent } from '../add-new-driver-dialog/add-new-driver-dialog.component';
 import { DriverService } from '../data-access/driver.service';
 import { toFormData } from '../../../shared/utils/form-utils';
-import { toSignal } from '@angular/core/rxjs-interop';
 // #endregion
 
 @Component({
@@ -84,9 +83,7 @@ export class PurchaseDialogComponent implements OnInit {
   // #region Data Sources
   warehouses: Warehouse[] = [];
   customerList = signal<Customer[]>([]);
-  drivers = toSignal(this.driverService.fetchAllDrivers(), {
-    initialValue: [],
-  });
+  drivers = signal<Driver[]>([]);
   // #endregion
 
   // #region Form
@@ -109,11 +106,8 @@ export class PurchaseDialogComponent implements OnInit {
 
   // #region Lifecycle
   ngOnInit(): void {
-    this.customerService.fetchAllCustomers().subscribe({
-      next: (customers) => {
-        this.customerList.set(customers);
-      },
-    });
+    this.loadCustomers();
+    this.loadDrivers();
     this.warehouseService.fetchAllWarehousesDetail().subscribe({
       next: (res) => {
         this.warehouses = res.data;
@@ -143,6 +137,18 @@ export class PurchaseDialogComponent implements OnInit {
     this.purchaseForm.reset();
     this.selectedImage = null;
     this.selectedFile = null;
+  }
+
+  private loadCustomers() {
+    this.customerService.fetchAllCustomers().subscribe({
+      next: (customers) => this.customerList.set(customers),
+    });
+  }
+
+  private loadDrivers() {
+    this.driverService.fetchAllDrivers().subscribe({
+      next: (drivers) => this.drivers.set(drivers),
+    });
   }
   // #endregion
 
@@ -243,7 +249,7 @@ export class PurchaseDialogComponent implements OnInit {
       })
       .afterClosed()
       .subscribe((customer) => {
-        if (customer) this.customerService.fetchAllCustomers();
+        if (customer) this.loadCustomers();
       });
   }
 
@@ -252,7 +258,7 @@ export class PurchaseDialogComponent implements OnInit {
       .open(AddNewDriverDialogComponent, { panelClass: 'dialog-container-lg' })
       .afterClosed()
       .subscribe((driver) => {
-        if (driver?.name) this.driverService.createDriver(driver);
+        if (driver) this.loadDrivers();
       });
   }
   // #endregion
