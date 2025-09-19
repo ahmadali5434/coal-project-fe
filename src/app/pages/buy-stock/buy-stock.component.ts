@@ -58,7 +58,7 @@ export class BuyStockComponent implements OnInit {
 
   ngOnInit(): void {
     const purchaseId = this.route.snapshot.paramMap.get('id');
-    purchaseId ? this.openEditPurchaseDialog(purchaseId) : this.openNewPurchaseDialog();
+    purchaseId ? this.refreshSummary(purchaseId) : this.openNewPurchaseDialog();
   }
 
   openNewPurchaseDialog() {
@@ -77,9 +77,9 @@ export class BuyStockComponent implements OnInit {
   }
   
   openEditPurchaseDialog(purchaseId: string) {
-    this.buyStockService.getPurchaseById(purchaseId).subscribe({
+    this.buyStockService.getPurchase(purchaseId).subscribe({
       next: (res) => {
-        const purchaseData = res[0];
+        const purchaseData = res;
   
         const dialogRef = this.dialog.open(PurchaseDialogComponent, {
           panelClass: 'dialog-container-lg',
@@ -88,7 +88,7 @@ export class BuyStockComponent implements OnInit {
   
         dialogRef.afterClosed().subscribe((updatedId: string) => {
           if (updatedId) {
-            this.refreshSummaryAfterEdit(updatedId);
+            this.refreshSummary(updatedId);
           } else {
             this.router.navigateByUrl('/home');
           }
@@ -96,23 +96,18 @@ export class BuyStockComponent implements OnInit {
       },
       error: (err) => {}
     });
-  }
-  
-  private refreshSummary(purchaseId: string) {
-    this.buyStockService.getPurchaseById(purchaseId).subscribe((res) => {
-      const mappedData = this.mapToPurchaseSummary(res[0]);
-      this.purchaseData.set(mappedData);
-    });
-  }
+  } 
 
-  private refreshSummaryAfterEdit(purchaseId: string) {
-    this.buyStockService.getFullPurchaseDataById(purchaseId).subscribe({
+  private refreshSummary(purchaseId: string) {
+    this.buyStockService.getPurchase(purchaseId).subscribe({
       next: (data) => {
-        if (data && data.length > 0) {
-          const mappedData = this.mapToPurchaseSummary(data[0]);
+        if (data) {
+          const mappedData = this.mapToPurchaseSummary(data);
           this.purchaseData.set(mappedData);
-          if (data[0].purchaseRate?.id) {
-            const rateData = this.mapToRateSummary(data[0].purchaseRate);
+          console.log('Purchase Data:', data);
+          console.log('Purchase Rate Data:', data.purchaseRate);
+          if (data.purchaseRate?.id) {
+            const rateData = this.mapToRateSummary(data.purchaseRate);
             this.purchaseRateData.set(rateData);
           }
         }
@@ -133,7 +128,7 @@ export class BuyStockComponent implements OnInit {
   }
   
   openEditRateDialog(purchaseId: string) {
-    this.buyStockService.getPurchaseById(purchaseId).subscribe({
+    this.buyStockService.getPurchase(purchaseId).subscribe({
       next: (res) => {
         const purchaseData = res;
   
@@ -144,7 +139,7 @@ export class BuyStockComponent implements OnInit {
   
         dialogRef.afterClosed().subscribe((updatedRateId: string) => {
           if (updatedRateId) {
-            //this.refreshRateSummary(updatedRateId);
+            this.refreshRateSummary(purchaseId);
           }
         });
       },
@@ -152,9 +147,9 @@ export class BuyStockComponent implements OnInit {
     });
   }
   
-  private refreshRateSummary(purchaseId: string, rateId: string) {
-    this.buyStockService.getRateById(purchaseId, rateId).subscribe((res) => {
-      const mappedData = this.mapToRateSummary(res[0]);
+  private refreshRateSummary(purchaseId: string) {
+    this.buyStockService.getPurchaseRate(purchaseId).subscribe((res) => {
+      const mappedData = this.mapToRateSummary(res);
       this.purchaseRateData.set(mappedData);   // keep separate signal/store for rate
     });
   }

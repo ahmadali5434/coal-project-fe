@@ -1,8 +1,21 @@
 import { City, Country } from "../../../shared/model";
 
-export interface CountryRef { id: string; name: string; code: string; }
-export interface CityRef { id: string; name: string; }
-export interface PurchaseEntry {
+// ----------------- BASE REFERENCES -----------------
+
+export interface CountryRef {
+  id: string;
+  name: string;
+  code: string;
+}
+
+export interface CityRef {
+  id: string;
+  name: string;
+}
+
+// ----------------- PURCHASE ENTRY -----------------
+
+export interface Purchase {
   id?: string;
   purchaseDate: string;
   customerName: string;
@@ -14,7 +27,7 @@ export interface PurchaseEntry {
   builtyImage: string;
 }
 
-export interface PurchaseEntryPayload {
+export interface CreateOrUpdatePurchasePayload {
   purchaseDate: string;        // ISO date string e.g. "2025-07-31"
   customerId: number;          // FK
   placeOfPurchaseId: number;   // FK
@@ -23,8 +36,10 @@ export interface PurchaseEntryPayload {
   driverId: number;            // FK
   metricTon: number;           
   builtyImage?: File;
-  status: 'partial' | 'complete'; // enum for purchase status
+  status: PurchaseStatus;      // enum
 }
+
+// ----------------- PURCHASE RATE -----------------
 
 export interface PurchaseRate {
   id?: string;
@@ -36,14 +51,25 @@ export interface PurchaseRate {
   amountPKR: number;
 }
 
-export type PurchaseStatus = 'partial' | 'complete';
+// ----------------- PURCHASE STATUS -----------------
 
-export interface FullPurchaseEntry {
+export type PurchaseStatus =
+  | 'partial'
+  | 'rate_added'
+  | 'gumrak_added'
+  | 'custom_added'
+  | 'complete';
+
+// ----------------- FULL PURCHASE ENTRY -----------------
+
+export interface PurchaseWithDetails {
   id?: string;
-  purchaseData: PurchaseEntry;
-  purchaseRate?: PurchaseRate;
+  purchase: Purchase;
+  purchaseRate?: PurchaseRate | null;   // single object (1:1)
   status: PurchaseStatus;
 }
+
+// ----------------- CUSTOM ENTRY -----------------
 
 export interface CustomEntry {
   paymentDate: string;
@@ -51,7 +77,9 @@ export interface CustomEntry {
   customImage: string;
 }
 
-export type Customer = {
+// ----------------- CUSTOMER -----------------
+
+export interface Customer {
   id: number;
   idCardNo?: number;
   fullName: string;
@@ -64,45 +92,46 @@ export type Customer = {
   createdAt?: string;
   updatedAt?: string;
 }
+
 export interface CreateOrUpdateCustomerPayload {
   id?: string;
   fullName: string;
   phoneNumber: string;
   countryId: string;
   cityId: string;
-address: string;
-}
-export interface CreateOrUpdateDriverPayload {
-idCardNo: string;
-name: string;
-driverFatherName?: string;
-province?: string;
-areaAddress?: string;
-afghanContactNo?: string;
-pakistanContactNo?: string;
-countryId: string; 
-cityId: string; 
-}
-export interface ApiResponse<T> {
-  success: boolean;
-  data: T;
-  message?: string;
+  address: string;
 }
 
+// ----------------- DRIVER -----------------
+
 export interface Driver {
-id: string;
-idCardNo: string;
-name: string;
-driverFatherName?: string;
-province?: string;
-areaAddress?: string;
-afghanContactNo?: string;
-pakistanContactNo?: string;
-country?: Country | null; 
-city?: City | null;
-createdAt?: string;
-updatedAt?: string;
+  id: string;
+  idCardNo: string;
+  name: string;
+  driverFatherName?: string;
+  province?: string;
+  areaAddress?: string;
+  afghanContactNo?: string;
+  pakistanContactNo?: string;
+  country?: Country | null; 
+  city?: City | null;
+  createdAt?: string;
+  updatedAt?: string;
 }
+
+export interface CreateOrUpdateDriverPayload {
+  idCardNo: string;
+  name: string;
+  driverFatherName?: string;
+  province?: string;
+  areaAddress?: string;
+  afghanContactNo?: string;
+  pakistanContactNo?: string;
+  countryId: string; 
+  cityId: string; 
+}
+
+// ----------------- WAREHOUSE -----------------
 
 export interface Warehouse {
   id: number;                  
@@ -110,7 +139,6 @@ export interface Warehouse {
   countryId: number;           
   cityId: number;               
   warehouseLocation: string;
-
   country?: Country;
   city?: City;
 }
@@ -121,6 +149,9 @@ export interface CreateOrUpdateWarehousePayload {
   cityId: string;
   warehouseLocation: string;
 }
+
+// ----------------- API RESPONSE -----------------
+
 export interface ApiResponse<T> {
   success: boolean;
   data: T;

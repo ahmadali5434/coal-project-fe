@@ -35,7 +35,7 @@ import { MatCard } from '@angular/material/card';
 import { WarehouseService } from '../../warehouse/data-access/warehouse.service';
 import { AddNewCustomerDialogComponent } from '../add-new-customer-dialog/add-new-customer-dialog.component';
 import { BuyStockService } from '../data-access/buy-stock.service';
-import { Customer, Driver, PurchaseEntry, Warehouse } from '../data-access/buy-stock.dto';
+import { Customer, Driver, Purchase, Warehouse } from '../data-access/buy-stock.dto';
 import { CustomerService } from '../data-access/customer.service';
 import { AddNewDriverDialogComponent } from '../add-new-driver-dialog/add-new-driver-dialog.component';
 import { DriverService } from '../data-access/driver.service';
@@ -68,7 +68,7 @@ export class PurchaseDialogComponent implements OnInit {
   private readonly dialogRef = inject(MatDialogRef<PurchaseDialogComponent>);
 
   // #region Inputs
-  @Input() purchaseData: PurchaseEntry | null = null;
+  @Input() purchaseData: Purchase | null = null;
   // #endregion
 
   // #region Services
@@ -121,7 +121,7 @@ export class PurchaseDialogComponent implements OnInit {
   // #endregion
 
   // #region Form Helpers
-  private patchFormData(data: PurchaseEntry) {
+  private patchFormData(data: Purchase) {
     const { builtyImage, ...rest } = data;
     this.purchaseForm.patchValue(rest);
 
@@ -168,7 +168,7 @@ export class PurchaseDialogComponent implements OnInit {
       purchaseDate: formValue.purchaseDate
         ? new Date(formValue.purchaseDate).toISOString()
         : null,
-      status: 'partial',
+      //status: 'partial',
     };
     const formData = toFormData(payload);
     const purchaseId = this.purchaseData?.id;
@@ -177,7 +177,7 @@ export class PurchaseDialogComponent implements OnInit {
   }
 
   private saveNewPurchase(formData: FormData) {
-    this.buyStockService.savePartialPurchase(formData).subscribe({
+    this.buyStockService.createPurchase(formData).subscribe({
       next: (res: any) => {
         this._snackBar.open('Purchase saved!', undefined, { duration: 3000 });
         this.resetForm();
@@ -194,7 +194,7 @@ export class PurchaseDialogComponent implements OnInit {
   }
 
   private updatePurchaseById(id: string, formData: FormData) {
-    this.buyStockService.updatePartialPurchaseById(id, formData).subscribe({
+    this.buyStockService.updatePurchase(id, formData).subscribe({
       next: (res: any) => {
         this._snackBar.open('Purchase saved!', undefined, { duration: 3000 });
         this.resetForm();

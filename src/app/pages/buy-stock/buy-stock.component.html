@@ -49,7 +49,7 @@
     [data]="purchaseRateData()!"
     imageKey="builtyImage"
     class="w-full"
-    (edit)="openRateDialog()"
+    (edit)="openEditRateDialog(purchaseData().id!)"
   ></app-summary-card>
   } @if(afghanGumrakData() ) {
   <app-summary-card
