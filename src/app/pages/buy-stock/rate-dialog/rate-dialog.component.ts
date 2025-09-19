@@ -1,8 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { MatDialogRef, MatDialogContent, MatDialogActions, MatDialogClose, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MatInputModule } from "@angular/material/input";
+import {
+  MatDialogRef,
+  MatDialogContent,
+  MatDialogActions,
+  MatDialogClose,
+  MAT_DIALOG_DATA,
+} from '@angular/material/dialog';
+import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { PurchaseRate } from '../data-access/buy-stock.dto';
@@ -20,7 +26,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
     MatSelectModule,
     MatButtonModule,
     MatDialogClose,
-],
+  ],
   templateUrl: './rate-dialog.component.html',
 })
 export class RateDialogComponent implements OnInit {
@@ -32,12 +38,22 @@ export class RateDialogComponent implements OnInit {
   rateForm!: FormGroup;
 
   ngOnInit(): void {
+    console.log('Dialog Data:', this.data);
     const purchase = this.data?.purchaseData;
-    const rateData = this.data?.rateData;
+    const rateData = purchase?.purchaseRate;
     this.rateForm = new FormGroup({
-      truckNo: new FormControl({ value: purchase?.truckNo ?? '', disabled: true }),
-      driverName: new FormControl({ value: purchase?.driverName ?? '', disabled: true }),
-      metricTon: new FormControl({ value: purchase?.metricTon ?? 0, disabled: true }),
+      truckNo: new FormControl({
+        value: purchase?.truckNo ?? '',
+        disabled: true,
+      }),
+      driverName: new FormControl({
+        value: purchase?.driverName ?? '',
+        disabled: true,
+      }),
+      metricTon: new FormControl({
+        value: purchase?.metricTon ?? 0,
+        disabled: true,
+      }),
       freightPerTon: new FormControl(rateData?.freightPerTon ?? 0),
       expense: new FormControl(rateData?.expense ?? 0),
       advancePayment: new FormControl(rateData?.advancePayment ?? 0),
@@ -64,10 +80,10 @@ export class RateDialogComponent implements OnInit {
     const rate = Number(this.rateForm.get('exchangeRate')?.value) || 0;
     const pkr = afn * rate;
 
-    this.rateForm.get('amountPKR')?.setValue(pkr.toString(), { emitEvent: false });
+    this.rateForm
+      .get('amountPKR')
+      ?.setValue(pkr.toString(), { emitEvent: false });
   }
-
-  
 
   onNoClick(): void {
     this.dialogRef.close();
@@ -76,7 +92,7 @@ export class RateDialogComponent implements OnInit {
   onSave() {
     if (this.rateForm.valid) {
       const formData = this.rateForm.value;
-      
+
       const data: PurchaseRate = {
         freightPerTon: formData.freightPerTon ?? 0,
         expense: formData.expense ?? '',
@@ -86,19 +102,53 @@ export class RateDialogComponent implements OnInit {
         amountPKR: Number(formData.amountPKR ?? 0),
       };
 
-      this.buyStockService.attachRateToPurchase(this.data?.purchaseData?.id, data).subscribe({
-        next: (res) => {
-          this._snackBar.open('Purchase Rate saved!', undefined, { duration: 3000 });
-          this.dialogRef.close(formData);  
-        },
-        error: (err) => {
-          this._snackBar.open('Error saving Purchase Rate. Please try again.', undefined, { duration: 3000 });
-        }
-      });
+      const purchaseRateId = this.data?.purchaseData?.purchaseRate?.id;
+      purchaseRateId
+        ? this.updatePurchaseRate(data)
+        : this.saveNewPurchaseRate(data);
     } else {
       this.rateForm.markAllAsTouched();
     }
   }
 
+  private saveNewPurchaseRate(formData: PurchaseRate) {
+    this.buyStockService
+      .createPurchaseRate(this.data?.purchaseData?.id, formData)
+      .subscribe({
+        next: (res) => {
+          this._snackBar.open('Purchase Rate saved!', undefined, {
+            duration: 3000,
+          });
+          this.dialogRef.close(formData);
+        },
+        error: (err) => {
+          this._snackBar.open(
+            'Error saving Purchase Rate. Please try again.',
+            undefined,
+            { duration: 3000 }
+          );
+        },
+      });
+  }
 
+  private updatePurchaseRate(formData: PurchaseRate) {
+    const purchaseId = this.data?.purchaseData?.id;
+    this.buyStockService
+      .updatePurchaseRate(purchaseId, formData)
+      .subscribe({
+        next: (res) => {
+          this._snackBar.open('Purchase Rate updated!', undefined, {
+            duration: 3000,
+          });
+          this.dialogRef.close(formData);
+        },
+        error: (err) => {
+          this._snackBar.open(
+            'Error updating Purchase Rate. Please try again.',
+            undefined,
+            { duration: 3000 }
+          );
+        },
+      });
+  }
 }

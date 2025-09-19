@@ -31,7 +31,7 @@ export class HomeComponent implements OnInit {
   purchaseStockData = signal<PurchaseDetail[]>([]);
 
   ngOnInit(): void {
-    this.buyStockService.getAllPurchases().subscribe({
+    this.buyStockService.getPurchases().subscribe({
       next: (data) => {
         const purchaseData = this.mapToPurchaseData(data);
         this.purchaseStockData.set(purchaseData);
@@ -132,7 +132,7 @@ export class HomeComponent implements OnInit {
       headerName: 'Actions',
       cellRenderer: ActionCellRendererComponent,
       cellRendererParams: {
-        onEdit: this.onEdit.bind(this),
+        onView: this.onView.bind(this),
         onDelete: this.onDelete.bind(this),
       },
       pinned: 'right',
@@ -159,7 +159,7 @@ export class HomeComponent implements OnInit {
     this.router.navigateByUrl('/buy-stock-form');
   }
 
-  onEdit(rowData: any) {
+  onView(rowData: any) {
     this.router.navigate(['/buy-stock-form', rowData]);
   }
 
@@ -170,7 +170,7 @@ export class HomeComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.buyStockService.deletePurchaseById(rowData.id).subscribe({
+        this.buyStockService.deletePurchase(rowData.id).subscribe({
           next: () => {
             const updatedData = this.purchaseStockData().filter(
               (item) => item.id !== rowData.id

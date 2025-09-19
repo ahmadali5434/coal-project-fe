@@ -18,8 +18,8 @@ export class ActionCellRendererComponent implements ICellRendererAngularComp {
     return false;
   }
 
-  edit() {
-    this.params.onEdit(this.params.data);
+  view() {
+    this.params.onView(this.params.data);
   }
 
   delete() {

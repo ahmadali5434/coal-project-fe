@@ -70,10 +70,10 @@ export class CustomDialogComponent implements OnInit {
       };
 
       if (this.type === 'afghan') {
-        this.buyStockService.saveAfghanGumrakData(entry); 
+        //this.buyStockService.saveAfghanGumrakData(entry); 
         this._snackBar.open('Gumrak Record added successfully!', undefined, { duration: 3000 });
       } else {
-        this.buyStockService.savePakCustomData(entry);
+        //this.buyStockService.savePakCustomData(entry);
         this._snackBar.open('Custom Record added successfully!', undefined, { duration: 3000 });
       }
 

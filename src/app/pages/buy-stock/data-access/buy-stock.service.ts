@@ -1,12 +1,12 @@
 import { inject, Injectable, signal } from '@angular/core';
 import {
   CustomEntry,
-  FullPurchaseEntry,
   PurchaseRate,
+  PurchaseWithDetails,
 } from './buy-stock.dto';
 import { environment } from '../../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
-import { ApiResponse } from './api-response.model';
+import { ApiResponse } from './buy-stock.dto'; // using the unified ApiResponse<T>
 import { map, Observable } from 'rxjs';
 
 @Injectable({
@@ -15,77 +15,97 @@ import { map, Observable } from 'rxjs';
 export class BuyStockService {
   private readonly apiBaseUrl = environment.apiBaseUrl;
   private readonly http = inject(HttpClient);
-  
-  private purchaseEntries: FullPurchaseEntry[] = [];
 
-  savePartialPurchase(formData: FormData) {
-    return this.http.post<ApiResponse<FullPurchaseEntry>>(
+  private purchaseEntries: PurchaseWithDetails[] = [];
+
+  // ----------------- PURCHASE ENTRIES -----------------
+
+  createPurchase(formData: FormData) {
+    return this.http.post<ApiResponse<PurchaseWithDetails>>(
       `${this.apiBaseUrl}/purchase-entries`,
       formData
     );
   }
 
-  updatePartialPurchaseById(purchaseId: string, formData: FormData) {
-    return this.http.put<ApiResponse<FullPurchaseEntry>>(
+  updatePurchase(purchaseId: string, formData: FormData) {
+    return this.http.put<ApiResponse<PurchaseWithDetails>>(
       `${this.apiBaseUrl}/purchase-entries/${purchaseId}`,
       formData
     );
   }
 
-  attachRateToPurchase(purchaseId: string, rate: PurchaseRate) {
-    return this.http.post<ApiResponse<FullPurchaseEntry>>(
-      `${this.apiBaseUrl}/purchase-entries/${purchaseId}/rates`,
-      rate
+  getPurchases(): Observable<PurchaseWithDetails[]> {
+    return this.http
+      .get<ApiResponse<PurchaseWithDetails[]>>(
+        `${this.apiBaseUrl}/purchase-entries`
+      )
+      .pipe(map((res) => res.data ?? []));
+  }
+
+  getPurchase(purchaseId: string): Observable<PurchaseWithDetails | null> {
+    return this.http
+      .get<ApiResponse<PurchaseWithDetails>>(
+        `${this.apiBaseUrl}/purchase-entries/${purchaseId}`
+      )
+      .pipe(map((res) => res.data ?? null));
+  }
+
+  deletePurchase(purchaseId: string): Observable<void> {
+    return this.http.delete<void>(
+      `${this.apiBaseUrl}/purchase-entries/${purchaseId}`
     );
   }
 
-  getAllPurchases(): Observable<FullPurchaseEntry[]> {
+  // ----------------- PURCHASE RATE (1:1) -----------------
+
+  getPurchaseRate(purchaseId: string): Observable<PurchaseRate | null> {
     return this.http
-      .get<ApiResponse<FullPurchaseEntry[]>>(`${this.apiBaseUrl}/purchase-entries`)
-      .pipe(map((res) => res.data ?? []));
+      .get<ApiResponse<PurchaseRate>>(
+        `${this.apiBaseUrl}/purchase-entries/${purchaseId}/rate`
+      )
+      .pipe(map((res) => res.data ?? null));
   }
 
-  getFullPurchaseDataById(purchaseId: string): Observable<FullPurchaseEntry[]> {
-    return this.http
-      .get<ApiResponse<FullPurchaseEntry[]>>(`${this.apiBaseUrl}/purchase-entries`, { params: { purchaseId } })
-      .pipe(map((res) => res.data ?? []));
+  createPurchaseRate(purchaseId: string, rateData: PurchaseRate) {
+    return this.http.post<ApiResponse<PurchaseRate>>(
+      `${this.apiBaseUrl}/purchase-entries/${purchaseId}/rate`,
+      rateData
+    );
   }
 
-  getPurchaseById(purchaseId: string): Observable<FullPurchaseEntry[]> {
-    return this.http
-      .get<ApiResponse<FullPurchaseEntry[]>>(`${this.apiBaseUrl}/purchase-entries`,
-        { params: { purchaseId } }
-      ).pipe(map((res) => res.data ?? ''));
+  updatePurchaseRate(purchaseId: string, rateData: PurchaseRate) {
+    return this.http.put<ApiResponse<PurchaseRate>>(
+      `${this.apiBaseUrl}/purchase-entries/${purchaseId}/rate`,
+      rateData
+    );
   }
 
-  deletePurchaseById(purchaseId: string): Observable<void> {
-    return this.http
-      .delete<void>(`${this.apiBaseUrl}/purchase-entries/${purchaseId}`);
+  deletePurchaseRate(purchaseId: string) {
+    return this.http.delete<ApiResponse<void>>(
+      `${this.apiBaseUrl}/purchase-entries/${purchaseId}/rate`
+    );
   }
 
-  getRateById(purchaseId: string, rateId: string): Observable<PurchaseRate[]> {
-    return this.http
-      .get<ApiResponse<PurchaseRate[]>>(`${this.apiBaseUrl}/purchase-entries/${purchaseId}/rates/${rateId}`,
-        { params: { rateId } }
-      ).pipe(map((res) => res.data ?? ''));
-  }
+  // ----------------- HELPERS -----------------
 
-  getCompletedPurchases(): FullPurchaseEntry[] {
+  getCompletedPurchases(): PurchaseWithDetails[] {
     return this.purchaseEntries.filter((e) => e.status === 'complete');
   }
 
-  getIncompletePurchases(): FullPurchaseEntry[] {
+  getIncompletePurchases(): PurchaseWithDetails[] {
     return this.purchaseEntries.filter((e) => e.status === 'partial');
   }
+
+  // ----------------- CUSTOM ENTRIES -----------------
 
   afghanGumrakData = signal<CustomEntry | null>(null);
   pakCustomData = signal<CustomEntry | null>(null);
 
-  saveAfghanGumrakData(data: CustomEntry) {
+  setAfghanGumrakData(data: CustomEntry) {
     this.afghanGumrakData.set(data);
   }
 
-  savePakCustomData(data: CustomEntry) {
+  setPakCustomData(data: CustomEntry) {
     this.pakCustomData.set(data);
   }
 }
