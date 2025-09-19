@@ -44,9 +44,9 @@ export const routes: Routes = [
       },
       {
         path: 'Setting',
-        loadComponent: () =>
-          import('./pages/setting/setting.component').then(
-            (m) => m.SettingComponent
+        loadChildren: () =>
+          import('./pages/setting/setting.routes').then(
+            (m) => m.SETTINGROUTES
         ),  },
       {
   path: 'user-mang',
