@@ -2,25 +2,32 @@
   <div class="text-4xl font-semibold text-[#014367] mb-16">
     Jaji Trading Company
   </div>
-  <div class="min-w-96 flex flex-col gap-4">
+  <form class="min-w-96 flex flex-col gap-4" (ngSubmit)="onLoginClicked()">
+    <!-- Email -->
     <mat-form-field class="w-full">
-      <mat-label>Enter your email</mat-label>
+      <mat-label>Email</mat-label>
       <input
         matInput
         placeholder="pat@example.com"
         [formControl]="email"
-        (blur)="updateErrorMessage()"
         required
       />
       @if (email.invalid) {
-      <mat-error>{{ errorMessage() }}</mat-error>
+        <mat-error>{{ errorMessage() }}</mat-error>
       }
     </mat-form-field>
+
+    <!-- Password -->
     <mat-form-field class="w-full">
-      <mat-label>Enter your password</mat-label>
-      <input matInput [type]="hide() ? 'password' : 'text'" />
+      <mat-label>Password</mat-label>
+      <input
+        matInput
+        [type]="hide() ? 'password' : 'text'"
+        [formControl]="password"
+        required
+      />
       <button
-        matIconButton
+        mat-icon-button
         matSuffix
         (click)="clickEvent($event)"
         [attr.aria-label]="'Hide password'"
@@ -29,11 +36,22 @@
         <mat-icon>{{ hide() ? "visibility_off" : "visibility" }}</mat-icon>
       </button>
     </mat-form-field>
-  
-  <button matButton="filled" class="w-full" (click)="onloginClicked()">Login</button>
 
-  <a matButton (click)="onForgotPasswordClicked()" class="w-full">Forgot Password </a>
-</div>
+    <!-- Login Button -->
+    <button mat-flat-button color="primary" class="w-full" type="submit">
+      Login
+    </button>
+
+    <!-- Forgot Password -->
+    <a
+      mat-stroked-button
+      color="accent"
+      class="w-full"
+      (click)="onForgotPasswordClicked()"
+    >
+      Forgot Password
+    </a>
+  </form>
 </div>
 
 <router-outlet />

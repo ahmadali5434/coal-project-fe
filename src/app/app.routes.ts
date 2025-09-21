@@ -1,32 +1,36 @@
 import { Routes } from '@angular/router';
 import { LayoutComponent } from './layout/layout.component';
-
+import { AuthGuard } from './auth/auth.guard';
 
 export const routes: Routes = [
   {
     path: 'login',
-    loadChildren: () => import('./pages/login/login.routes')
-      .then(m => m.authRoutes),
+    loadChildren: () =>
+      import('./pages/login/login.routes').then((m) => m.authRoutes),
   },
   {
     path: '',
     component: LayoutComponent,
+    canActivate: [AuthGuard], // Protects all child routes
     children: [
       {
         path: 'home',
         loadComponent: () =>
           import('./pages/home/home.component').then((m) => m.HomeComponent),
       },
-
       {
         path: 'buy-stock-form',
         loadChildren: () =>
-          import('./pages/buy-stock/buy-stock.routes').then((m) => m.BUYSTOCKROUTES),
+          import('./pages/buy-stock/buy-stock.routes').then(
+            (m) => m.BUYSTOCKROUTES
+          ),
       },
       {
         path: 'stocks',
         loadComponent: () =>
-          import('./pages/warehouse/warehouse.component').then((m) => m.WarehouseComponent),
+          import('./pages/warehouse/warehouse.component').then(
+            (m) => m.WarehouseComponent
+          ),
       },
       {
         path: 'transfer',
@@ -43,13 +47,14 @@ export const routes: Routes = [
           ),
       },
       {
-        path: 'Setting',
+        path: 'setting',
         loadComponent: () =>
           import('./pages/setting/setting.component').then(
             (m) => m.SettingComponent
-        ),  },
+          ),
+      },
       {
-  path: 'user-mang',
+        path: 'user-mang',
         loadChildren: () =>
           import('./pages/user-management/user-management.routes').then(
             (m) => m.USERMANAGEMENTROUTES
@@ -67,7 +72,7 @@ export const routes: Routes = [
             (m) => m.NoPageFoundComponent
           ),
       },
-      // { path: '**', redirectTo: '/404', pathMatch: 'full' },
+      { path: '**', redirectTo: '/404' }, // fallback
     ],
   },
 ];
