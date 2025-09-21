@@ -10,7 +10,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-
 @Component({
   selector: 'app-signup',
   standalone: true,
@@ -26,43 +25,37 @@ import { MatButtonModule } from '@angular/material/button';
 })
 export class SignupComponent {
   form: FormGroup;
-
   hidePasswordField = true;
   hideConfirmPasswordField = true;
-
   constructor(private fb: FormBuilder) {
     this.form = this.fb.group(
       {
         name: ['', Validators.required],
         password: ['', [Validators.required, Validators.minLength(6)]],
         confirmPassword: ['', Validators.required],
-      },
-      { validators: this.passwordsMatchValidator }
-    );
+  },
+  { validators: this.passwordsMatchValidator }
+  );
   }
   passwordsMatchValidator(group: FormGroup) {
-    const password = group.get('password')?.value;
-    const confirm = group.get('confirmPassword')?.value;
-    return password === confirm ? null : { passwordsMismatch: true };
+  const password = group.get('password')?.value;
+  const confirm = group.get('confirmPassword')?.value;
+  return password === confirm ? null : { passwordsMismatch: true };
   }
-
   hidePassword() {
-    return this.hidePasswordField;
+  return this.hidePasswordField;
   }
-
   hideConfirmPassword() {
-    return this.hideConfirmPasswordField;
+  return this.hideConfirmPasswordField;
   }
-
   togglePasswordVisibility(field: 'password' | 'confirmPassword') {
     if (field === 'password') {
-      this.hidePasswordField = !this.hidePasswordField;
+    this.hidePasswordField = !this.hidePasswordField;
     } else {
-      this.hideConfirmPasswordField = !this.hideConfirmPasswordField;
+    this.hideConfirmPasswordField = !this.hideConfirmPasswordField;
     }
   }
-
-  onSignup() {
+  onAddUser() {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;

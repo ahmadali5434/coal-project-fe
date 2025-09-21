@@ -26,7 +26,7 @@ export const USERMANAGEMENTROUTES: Routes = [
    {
     path: 'add-user',
     loadComponent: () =>
-      import('../signup/signup.component').then(
+      import('../add-user/add-user.component').then(
         (m) => m.SignupComponent  
       ),
   },
