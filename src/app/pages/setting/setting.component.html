@@ -1,1 +1,16 @@
-<p>setting works!</p>
+<div class="p-6 bg-gray-50 min-h-screen">
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+    <a routerLink="roles/create"
+       class="flex flex-col items-center justify-center bg-white w-50 h-45 rounded-xl p-6 border hover:shadow-lg hover:border-indigo-500 transition-all cursor-pointer">
+      <mat-icon aria-label="Roles">admin_panel_settings</mat-icon>
+      <span class="text-lg font-bold text-gray-700">Roles</span>
+    </a>
+   <a routerLink="countries-cities"
+   class="flex flex-col items-center justify-center bg-white w-50 h-45 rounded-xl p-6 border hover:shadow-lg hover:border-indigo-500 transition-all cursor-pointer">
+  <mat-icon>public</mat-icon>
+  <span class="text-lg font-bold text-gray-700">Countries & Cities</span>
+</a>
+
+  </div>
+  <router-outlet></router-outlet>
+</div>
