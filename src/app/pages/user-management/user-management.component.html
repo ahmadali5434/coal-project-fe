@@ -21,6 +21,14 @@
         </mat-icon>
         <span class="text-lg font-bold text-gray-700">Drivers</span>
       </a>
+      <a [routerLink]="['add-user']"
+        class="flex flex-col items-center justify-center bg-white w-50 h-45 rounded-xl p-6 border hover:shadow-lg hover:border-indigo-500 transition-all cursor-pointer">
+
+        <mat-icon class="text-indigo-500 mb-3" style="font-size: 80px; width: 80px; height: 80px;">
+          person_add
+        </mat-icon>
+        <span class="text-lg font-bold text-gray-700">Create User</span>
+      </a>
     </div>
 <router-outlet></router-outlet>
   </div>

@@ -23,4 +23,12 @@ export const USERMANAGEMENTROUTES: Routes = [
         (m) => m.DirverDetailsComponent
       ),
   },
+   {
+    path: 'add-user',
+    loadComponent: () =>
+      import('../signup/signup.component').then(
+        (m) => m.SignupComponent  
+      ),
+  },
+
 ];
