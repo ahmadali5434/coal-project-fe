@@ -21,7 +21,7 @@ import { MatButtonModule } from '@angular/material/button';
     MatIconModule,
     MatButtonModule,
   ],
-  templateUrl: './signup.component.html',
+  templateUrl: './add-user.component.html',
 })
 export class SignupComponent {
   form: FormGroup;
