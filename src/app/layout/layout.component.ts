@@ -75,11 +75,11 @@ export class LayoutComponent {
       '/transfer': 'Transfer',
       '/expenses': 'Expenses',
       '/cdetails': 'Customer Details',
-      '/Setting': 'Settings',
-      '/user-mang': 'User Management',
-      '/dirvers': 'Dirver Details',
-    };
-    const matched = Object.keys(routesMap).find((key) => url.startsWith(key));
+      '/setting' : 'setting',
+      '/user-mang' : 'User Management',
+      '/dirvers' : 'Dirver Details'
+    }
+        const matched = Object.keys(routesMap).find(key => url.startsWith(key));
     this.headerTitle = matched ? routesMap[matched] : 'Coal Project';
   }
   private updateViwe() {

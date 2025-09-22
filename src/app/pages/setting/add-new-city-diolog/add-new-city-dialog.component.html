@@ -1,0 +1,23 @@
+<h2 mat-dialog-title style="display: flex; align-items: center; gap: 12px; padding: 4px 0;">
+  <mat-icon color="primary">location_city</mat-icon>
+  <span>{{ data.city ? 'Edit City' : 'Add New City' }}</span>
+</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form">
+    <mat-form-field appearance="fill" class="w-full">
+      <mat-label>City Name</mat-label>
+      <input matInput formControlName="name" placeholder="Enter city name" />
+      <mat-error *ngIf="form.controls['name'].touched && form.controls['name'].invalid">
+        City name is required
+      </mat-error>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-stroked-button mat-dialog-close color="warn">Cancel</button>
+  <button mat-flat-button color="primary" (click)="onSave()" [disabled]="form.invalid">
+    {{ data.city ? 'Update' : 'Save' }}
+  </button>
+</mat-dialog-actions>

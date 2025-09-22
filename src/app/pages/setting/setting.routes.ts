@@ -20,12 +20,12 @@ export const SETTINGROUTES: Routes = [
         (m) => m.RoleFormComponent
       ),
   },
-  // Uncomment when your component is ready
-  // {
-  //   path: 'countries-cities',
-  //   loadComponent: () =>
-  //     import('./country-city-table/country-city-table.component').then(
-  //       (m) => m.CountryCityTableComponent
-  //     ),
-  // },
+
+  {
+    path: 'countries-cities',
+    loadComponent: () =>
+      import('./country-city-table.component/country-city-table.component').then(
+        (m) => m.CountryCityTableComponent
+      ),
+  },
 ];
