@@ -9,9 +9,8 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { City, Country } from '../../../shared/model';
 import { AddNewCountryDialogComponent } from '../add-new-country-dailoge/add-new-country-dialog.component';
 import { AddNewCityDialogComponent } from '../add-new-city-diolog/add-new-city-dialog.component';
-import { CountryService } from '../city and country data accses/country.service';
-import { CityService } from '../city and country data accses/city.service';
 import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
+import { LocationService } from '../../../shared/services/location.service';
 
 @Component({
   selector: 'app-country-city-table',
@@ -27,8 +26,7 @@ import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialo
   templateUrl: './country-city-table.component.html',
 })
 export class CountryCityTableComponent implements OnInit {
-  private countryService = inject(CountryService);
-  private cityService = inject(CityService);
+private locationService = inject(LocationService);
   private dialog = inject(MatDialog);
   private _snackBar = inject(MatSnackBar);
 
@@ -41,7 +39,7 @@ export class CountryCityTableComponent implements OnInit {
   }
 
   loadCountries() {
-    this.countryService.fetchAllCountries().subscribe({
+    this.locationService.getCountries().subscribe({
       next: (countries) => {
         this.countries = countries;
         this.citiesByCountry = {};
@@ -55,7 +53,7 @@ export class CountryCityTableComponent implements OnInit {
   }
 
   loadCities(countryId: string) {
-    this.cityService.fetchCitiesByCountry(Number(countryId)).subscribe({
+    this.locationService.getCitiesByCountry(String(countryId)).subscribe({
       next: (cities) => (this.citiesByCountry[countryId] = cities || []),
       error: () =>
         this._snackBar.open('Failed to load cities', 'Close', {
@@ -63,7 +61,6 @@ export class CountryCityTableComponent implements OnInit {
         }),
     });
   }
-
   addCountry() {
     const dialogRef = this.dialog.open(AddNewCountryDialogComponent, {
       width: '400px',
@@ -94,7 +91,7 @@ export class CountryCityTableComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((confirmed) => {
       if (confirmed) {
-        this.countryService.deleteCountry(Number(country.id)).subscribe({
+        this.locationService.deleteCountry(Number(country.id)).subscribe({
           next: () => {
             this.countries = this.countries.filter(c => c.id !== country.id);
             delete this.citiesByCountry[country.id];
@@ -134,7 +131,7 @@ export class CountryCityTableComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((confirmed) => {
       if (confirmed) {
-        this.cityService.deleteCity(Number(city.id)).subscribe({
+        this.locationService.deleteCity(Number(city.id)).subscribe({
           next: () => {
             this.citiesByCountry[countryId] = this.citiesByCountry[countryId]
               .filter(c => c.id !== city.id);

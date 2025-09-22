@@ -65,14 +65,14 @@ export const routes: Routes = [
         redirectTo: 'home',
         pathMatch: 'full',
       },
-      // {
-      //   path: '404',
-      //   loadComponent: () =>
-      //     import('./pages/no-page-found/no-page-found.component').then(
-      //       (m) => m.NoPageFoundComponent
-      //     ),
-      // },
-      // { path: '**', redirectTo: '/404' }, // fallback
+      {
+        path: '404',
+        loadComponent: () =>
+          import('./pages/no-page-found/no-page-found.component').then(
+            (m) => m.NoPageFoundComponent
+          ),
+      },
+      { path: '**', redirectTo: '/404' }, // fallback
     ],
   },
 ];

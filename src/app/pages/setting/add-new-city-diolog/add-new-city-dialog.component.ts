@@ -7,9 +7,9 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
-
 import { City } from '../../../shared/model';
-import { CityService } from '../city and country data accses/city.service';
+import { LocationService } from '../../../shared/services/location.service';
+
 
 @Component({
   selector: 'app-add-new-city-dialog',
@@ -31,7 +31,7 @@ import { CityService } from '../city and country data accses/city.service';
 export class AddNewCityDialogComponent implements OnInit {
   private dialogRef = inject(MatDialogRef<AddNewCityDialogComponent>);
   private fb = inject(FormBuilder);
-  private cityService = inject(CityService);
+private locationService = inject(LocationService);
   private _snackBar = inject(MatSnackBar);
 
   constructor(
@@ -59,7 +59,7 @@ export class AddNewCityDialogComponent implements OnInit {
     };
 
     if (this.data?.city) {
-      this.cityService.updateCity(Number(this.data.city.id), payload).subscribe({
+      this.locationService.updateCity(Number(this.data.city.id), payload).subscribe({
         next: (city: City) => {
           this._snackBar.open('City updated successfully', 'Close', { duration: 3000 });
           this.dialogRef.close(city);
@@ -70,7 +70,7 @@ export class AddNewCityDialogComponent implements OnInit {
         }
       });
     } else {
-      this.cityService.createCity(payload).subscribe({
+      this.locationService.createCity(payload).subscribe({
         next: (city: City) => {
           this._snackBar.open('City created successfully', 'Close', { duration: 3000 });
           this.dialogRef.close(city);

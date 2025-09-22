@@ -8,7 +8,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { Country } from '../../../shared/model';
-import { CountryService } from '../city and country data accses/country.service';
+import { LocationService } from '../../../shared/services/location.service';
 
 @Component({
   selector: 'app-add-new-country-dialog',
@@ -30,7 +30,7 @@ import { CountryService } from '../city and country data accses/country.service'
 export class AddNewCountryDialogComponent {
   private dialogRef = inject(MatDialogRef<AddNewCountryDialogComponent>);
   private fb = inject(FormBuilder);
-  private countryService = inject(CountryService);
+  private locationService = inject(LocationService);
   private _snackBar = inject(MatSnackBar);
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: { country?: Country }
@@ -49,7 +49,7 @@ export class AddNewCountryDialogComponent {
     if (this.form.invalid) return;
     const payload = this.form.getRawValue();
     if (this.data?.country) {
-      this.countryService.updateCountry(Number(this.data.country.id), payload).subscribe({
+      this.locationService.updateCountry(Number(this.data.country.id), payload).subscribe({
         next: (country) => {
           this._snackBar.open('Country updated successfully', undefined, { duration: 3000 });
           this.dialogRef.close(country);
@@ -57,7 +57,7 @@ export class AddNewCountryDialogComponent {
         error: () => this._snackBar.open('Error updating country', undefined, { duration: 3000 }),
       });
     } else {
-      this.countryService.createCountry(payload).subscribe({
+      this.locationService.createCountry(payload).subscribe({
         next: (country) => {
           this._snackBar.open('Country created successfully', undefined, { duration: 3000 });
           this.dialogRef.close(country);
