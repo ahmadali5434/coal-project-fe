@@ -48,9 +48,9 @@ export const routes: Routes = [
       },
       {
         path: 'setting',
-        loadComponent: () =>
-          import('./pages/setting/setting.component').then(
-            (m) => m.SettingComponent
+        loadChildren: () =>
+          import('./pages/setting/setting.routes').then(
+            (m) => m.SETTINGROUTES
           ),
       },
       {
