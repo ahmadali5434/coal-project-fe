@@ -3,8 +3,8 @@
   <form [formGroup]="form" class="min-w-96 flex flex-col gap-4" (ngSubmit)="onAddUser()">
     <mat-form-field class="w-full">
       <mat-label>User Name</mat-label>
-      <input matInput placeholder="User name" formControlName="name" required />
-      <mat-error *ngIf="form.controls['name'].hasError('required')">
+      <input matInput placeholder="User name" formControlName="username" required />
+      <mat-error *ngIf="form.controls['username'].hasError('required')">
         Name is required
       </mat-error>
     </mat-form-field>
