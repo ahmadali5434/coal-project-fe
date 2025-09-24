@@ -17,6 +17,7 @@ export const routes: Routes = [
         path: 'home',
         loadComponent: () =>
           import('./pages/home/home.component').then((m) => m.HomeComponent),
+        data: { breadcrumb: 'Home' }
       },
       {
         path: 'buy-stock-form',
@@ -24,6 +25,7 @@ export const routes: Routes = [
           import('./pages/buy-stock/buy-stock.routes').then(
             (m) => m.BUYSTOCKROUTES
           ),
+        data: { breadcrumb: 'Buy Stock' },
       },
       {
         path: 'stocks',
@@ -31,6 +33,7 @@ export const routes: Routes = [
           import('./pages/warehouse/warehouse.component').then(
             (m) => m.WarehouseComponent
           ),
+            data: { breadcrumb: 'Warehouses' }
       },
       {
         path: 'transfer',
@@ -38,6 +41,7 @@ export const routes: Routes = [
           import('./pages/transfer/transfer.component').then(
             (m) => m.TransferComponent
           ),
+            data: { breadcrumb: 'Transfer' },
       },
       {
         path: 'expenses',
@@ -45,6 +49,7 @@ export const routes: Routes = [
           import('./pages/expenses/expenses.component').then(
             (m) => m.ExpensesComponent
           ),
+          data: { breadcrumb: 'Expenses' }
       },
       {
         path: 'setting',
@@ -52,6 +57,7 @@ export const routes: Routes = [
           import('./pages/setting/setting.routes').then(
             (m) => m.SETTINGROUTES
           ),
+           data: { breadcrumb: 'Settings' }
       },
       {
         path: 'user-mang',
@@ -59,6 +65,7 @@ export const routes: Routes = [
           import('./pages/user-management/user-management.routes').then(
             (m) => m.USERMANAGEMENTROUTES
           ),
+          data: { breadcrumb: 'User Management' },
       },
       {
         path: '',
@@ -71,7 +78,9 @@ export const routes: Routes = [
           import('./pages/no-page-found/no-page-found.component').then(
             (m) => m.NoPageFoundComponent
           ),
+          data: { breadcrumb: 'Not Found' },
       },
+      
       { path: '**', redirectTo: '/404' }, // fallback
     ],
   },

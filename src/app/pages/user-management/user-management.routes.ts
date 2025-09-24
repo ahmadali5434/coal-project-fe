@@ -7,6 +7,7 @@ export const USERMANAGEMENTROUTES: Routes = [
       import('./user-management.component').then(
         (m) => m.UserManagementComponent
       ),
+  
   },
 {
   path: 'cdetails',
@@ -14,6 +15,7 @@ export const USERMANAGEMENTROUTES: Routes = [
     import('../customerDetails/customerDetails.component').then(
       (m) => m.CdetailsComponent
     ),
+      data: { breadcrumb: 'Customers' },
 }
 ,
   {
@@ -22,6 +24,7 @@ export const USERMANAGEMENTROUTES: Routes = [
       import('../dirver-details/dirver-details.component').then(
         (m) => m.DirverDetailsComponent
       ),
+      data: { breadcrumb: 'Drivers' }, 
   },
    {
     path: 'add-user',
@@ -29,6 +32,7 @@ export const USERMANAGEMENTROUTES: Routes = [
       import('../add-user/add-user.component').then(
         (m) => m.AddUser  
       ),
+        data: { breadcrumb: 'Create User' },
   },
 
 ];
