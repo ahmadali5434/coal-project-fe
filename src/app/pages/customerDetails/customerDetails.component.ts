@@ -17,6 +17,7 @@ import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/c
 import { CustomerService } from '../buy-stock/data-access/customer.service';
 import { Customer } from '../buy-stock/data-access/buy-stock.dto';
 import { effect } from '@angular/core';
+import { ActionForDeleteEdit } from '../../shared/components/action-for-delte-edt/action-for-delte-edt';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -93,7 +94,7 @@ loadCustomers(): void {
     
     {
       headerName: 'Actions',
-      cellRenderer: ActionCellRendererComponent,
+      cellRenderer: ActionForDeleteEdit,
       cellRendererParams: {
         onEdit: this.onEdit.bind(this),
         onDelete: this.onDelete.bind(this),
