@@ -71,27 +71,11 @@ export class AddUser {
     this.authService.register(username, password).subscribe({
       next: () => {
         this.snackBar.open(
-          'Registration successful! Please log in.',
+          'Registration successful! .',
           'Close',
           { duration: 3000 }
-        );
-        this.authService.login(username, password).subscribe({
-          next: () => {
-            this.snackBar.open('Logged in successfully!', 'Close', {
-              duration: 2000,
-            });
-          },
-          error: (err) => {
-            this.snackBar.open(
-              err.error?.error || 'Login failed after signup.',
-              'Close',
-              { duration: 3000 }
-            );
-          },
-        });
-        this.router.navigate(['/login']);
+        );  
       },
-
       error: (err) => {
         if (err.status !== 409) {
           this.snackBar.open(
