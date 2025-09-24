@@ -7,10 +7,12 @@ import {
   RouterModule,
   RouterLink,
   RouterOutlet,
+  ActivatedRoute,
+
 } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from '../auth/auth.service';
-
+import { filter } from 'rxjs';
 @Component({
   selector: 'app-layout',
   standalone: true,
@@ -29,12 +31,14 @@ import { AuthService } from '../auth/auth.service';
 export class LayoutComponent {
   private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
+    private readonly activatedRoute = inject(ActivatedRoute);
 
   sidebarOpen = true;
   isSidebarOpen = false;
   isMobile = false;
   isDesktop = window.innerWidth >= 768;
   headerTitle = 'Coal Project';
+  breadcrumbs: { label: string; url: string }[] = [];
 
   logout() {
     this.authService.logout();
@@ -44,14 +48,16 @@ export class LayoutComponent {
   ngOnInit() {
     this.isDesktop = window.innerWidth >= 768;
     this.sidebarOpen = this.isDesktop;
+        this.router.events
+      .pipe(filter((event) => event instanceof NavigationEnd))
+      .subscribe(() => {
+        this.setBreadcrumbs();
+      });
+    this.setBreadcrumbs();
   }
 
   constructor() {
-    this.router.events.subscribe(() => {
-      this.updateHeaderTitale(this.router.url);
-      if (!this.isDesktop) this.sidebarOpen = false;
-      this.updateViwe();
-    });
+   
   }
 
   toggleSidebar() {
@@ -68,21 +74,42 @@ export class LayoutComponent {
     this.updateViwe();
   }
 
-  updateHeaderTitale(url: string): void {
-    const routesMap: { [key: string]: string } = {
-      '/home': 'Home',
-      '/stocks': 'Warehouses',
-      '/transfer': 'Transfer',
-      '/expenses': 'Expenses',
-      '/cdetails': 'Customer Details',
-      '/setting' : 'setting',
-      '/user-mang' : 'User Management',
-      '/dirvers' : 'Dirver Details'
-    }
-        const matched = Object.keys(routesMap).find(key => url.startsWith(key));
-    this.headerTitle = matched ? routesMap[matched] : 'Coal Project';
-  }
+
   private updateViwe() {
     this.isMobile = window.innerWidth < 768;
   }
+  private setBreadcrumbs() {
+    this.breadcrumbs = this.buildBreadcrumbs(this.activatedRoute.root);
+    if (this.breadcrumbs.length > 0) {
+      this.headerTitle = this.breadcrumbs[this.breadcrumbs.length - 1].label;
+    }
+  }
+private buildBreadcrumbs(
+  route: ActivatedRoute,
+  url: string = '',
+  breadcrumbs: { label: string; url: string }[] = []
+): { label: string; url: string }[] {
+  const children = route.children;
+
+  for (const child of children) {
+    const routeURL: string =
+      child.snapshot.url.map((segment) => segment.path).join('/') ||
+      child.routeConfig?.path || '';
+
+    if (routeURL !== '') {
+      url += `/${routeURL}`;
+    }
+
+    if (child.snapshot.data['breadcrumb']) {
+      const label = child.snapshot.data['breadcrumb'];
+      if (!breadcrumbs.some((bc) => bc.label === label)) {
+        breadcrumbs.push({ label, url });
+      }
+    }
+
+    this.buildBreadcrumbs(child, url, breadcrumbs);
+  }
+
+  return breadcrumbs;
+}
 }
