@@ -21,6 +21,7 @@ import { ActionCellRendererComponent } from '../../shared/components/action-cell
 import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Driver } from '../buy-stock/data-access/buy-stock.dto';
+import { ActionForDeleteEdit } from '../../shared/components/action-for-delte-edt/action-for-delte-edt';
 ModuleRegistry.registerModules([AllCommunityModule]);
 @Component({
   selector: 'app-dirver-details',
@@ -90,7 +91,7 @@ export class DirverDetailsComponent implements OnInit {
     },
     {
       headerName: 'Actions',
-      cellRenderer: ActionCellRendererComponent,
+      cellRenderer: ActionForDeleteEdit,
       cellRendererParams: {
         onEdit: this.openEditDriverDialog.bind(this),
         onDelete: this.onDelete.bind(this),
