@@ -27,7 +27,7 @@ export const USERMANAGEMENTROUTES: Routes = [
     path: 'add-user',
     loadComponent: () =>
       import('../add-user/add-user.component').then(
-        (m) => m.SignupComponent  
+        (m) => m.AddUser  
       ),
   },
 

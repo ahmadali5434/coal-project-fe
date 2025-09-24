@@ -30,7 +30,7 @@ import { AuthService } from '../../auth/auth.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoginComponent {
-  readonly email = new FormControl('', [Validators.required, Validators.email]);
+  readonly username = new FormControl('', [Validators.required]);
   readonly password = new FormControl('', [Validators.required]);
 
   private readonly router = inject(Router);
@@ -41,16 +41,15 @@ export class LoginComponent {
   hide = signal(true);
 
   constructor() {
-    merge(this.email.statusChanges, this.email.valueChanges)
+    merge(this.username.statusChanges, this.username.valueChanges)
       .pipe(takeUntilDestroyed())
       .subscribe(() => this.updateErrorMessage());
   }
 
   updateErrorMessage() {
-    if (this.email.hasError('required')) {
+    if (this.username.hasError('required')) {
       this.errorMessage.set('You must enter a value');
-    } else if (this.email.hasError('email')) {
-      this.errorMessage.set('Not a valid email');
+    } else if (this.username.hasError('username')) {
     } else {
       this.errorMessage.set('');
     }
@@ -62,30 +61,13 @@ export class LoginComponent {
   }
 
   onLoginClicked() {
-    if (this.email.invalid || this.password.invalid) {
+    if (this.username.invalid || this.password.invalid) {
       this.snackBar.open('Please enter valid credentials', 'Close', {
         duration: 3000,
       });
       return;
     }
-
-    //TODO: Put the following code when registration is implemented
-    // this.authService.register(this.email.value!, this.password.value!).subscribe({
-    //   next: () => {
-    //     this.snackBar.open('Registration successful! Please log in.', 'Close', { duration: 3000 });
-    //   },
-    //   error: (err) => {
-    //     if (err.status !== 409) { // Ignore conflict errors (user already exists)
-    //       this.snackBar.open(
-    //         err.error?.error || 'Registration failed. Try again.',
-    //         'Close',
-    //         { duration: 3000 }
-    //       );
-    //     }
-    //   },
-    // });
-
-    this.authService.login(this.email.value!, this.password.value!).subscribe({
+    this.authService.login(this.username.value!, this.password.value!).subscribe({
       next: () => {
         this.snackBar.open('Login successful!', 'Close', { duration: 2000 });
         this.router.navigate(['/home']);

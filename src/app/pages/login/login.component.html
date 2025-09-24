@@ -5,14 +5,14 @@
   <form class="min-w-96 flex flex-col gap-4" (ngSubmit)="onLoginClicked()">
     <!-- Email -->
     <mat-form-field class="w-full">
-      <mat-label>Email</mat-label>
+      <mat-label>Username</mat-label>
       <input
         matInput
-        placeholder="pat@example.com"
-        [formControl]="email"
+        placeholder="Username"
+        [formControl]="username"
         required
       />
-      @if (email.invalid) {
+      @if (username.invalid) {
         <mat-error>{{ errorMessage() }}</mat-error>
       }
     </mat-form-field>

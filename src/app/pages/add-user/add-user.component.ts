@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import {
   FormBuilder,
   Validators,
@@ -10,6 +10,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { AuthService } from '../../auth/auth.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-signup',
   standalone: true,
@@ -23,36 +26,40 @@ import { MatButtonModule } from '@angular/material/button';
   ],
   templateUrl: './add-user.component.html',
 })
-export class SignupComponent {
+export class AddUser {
   form: FormGroup;
   hidePasswordField = true;
   hideConfirmPasswordField = true;
+  private readonly authService = inject(AuthService);
+  private readonly snackBar = inject(MatSnackBar);
+  private readonly router = inject(Router);
+
   constructor(private fb: FormBuilder) {
     this.form = this.fb.group(
       {
-        name: ['', Validators.required],
+        username: ['', Validators.required],
         password: ['', [Validators.required, Validators.minLength(6)]],
         confirmPassword: ['', Validators.required],
-  },
-  { validators: this.passwordsMatchValidator }
-  );
+      },
+      { validators: this.passwordsMatchValidator }
+    );
   }
   passwordsMatchValidator(group: FormGroup) {
-  const password = group.get('password')?.value;
-  const confirm = group.get('confirmPassword')?.value;
-  return password === confirm ? null : { passwordsMismatch: true };
+    const password = group.get('password')?.value;
+    const confirm = group.get('confirmPassword')?.value;
+    return password === confirm ? null : { passwordsMismatch: true };
   }
   hidePassword() {
-  return this.hidePasswordField;
+    return this.hidePasswordField;
   }
   hideConfirmPassword() {
-  return this.hideConfirmPasswordField;
+    return this.hideConfirmPasswordField;
   }
   togglePasswordVisibility(field: 'password' | 'confirmPassword') {
     if (field === 'password') {
-    this.hidePasswordField = !this.hidePasswordField;
+      this.hidePasswordField = !this.hidePasswordField;
     } else {
-    this.hideConfirmPasswordField = !this.hideConfirmPasswordField;
+      this.hideConfirmPasswordField = !this.hideConfirmPasswordField;
     }
   }
   onAddUser() {
@@ -60,6 +67,24 @@ export class SignupComponent {
       this.form.markAllAsTouched();
       return;
     }
-    console.log('User created:', this.form.value);
+    const { username, password } = this.form.value;
+    this.authService.register(username, password).subscribe({
+      next: () => {
+        this.snackBar.open(
+          'Registration successful! .',
+          'Close',
+          { duration: 3000 }
+        );  
+      },
+      error: (err) => {
+        if (err.status !== 409) {
+          this.snackBar.open(
+            err.error?.error || 'Registration failed. Try again.',
+            'Close',
+            { duration: 3000 }
+          );
+        }
+      },
+    });
   }
 }
