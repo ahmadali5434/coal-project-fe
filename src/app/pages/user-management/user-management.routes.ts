@@ -30,7 +30,7 @@ export const USERMANAGEMENTROUTES: Routes = [
     path: 'add-user',
     loadComponent: () =>
       import('../add-user/add-user.component').then(
-        (m) => m.AddUser  
+        (m) => m.AddUserComponent  
       ),
         data: { breadcrumb: 'Create User' },
   },
