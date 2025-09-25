@@ -6,7 +6,7 @@ import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private apiUrl = environment.apiBaseUrl + '/auth'; // change for production
+  private apiUrl = environment.apiBaseUrl + '/auth';
   private userSubject = new BehaviorSubject<User | null>(null);
   user$ = this.userSubject.asObservable();
 
@@ -16,20 +16,40 @@ export class AuthService {
       try {
         this.userSubject.next(JSON.parse(savedUser));
       } catch {
-        localStorage.removeItem('user'); // remove bad data
+        localStorage.removeItem('user');
       }
     }
   }
-  
 
   login(email: string, password: string) {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, { email, password }).pipe(
-      tap(res => this.setSession(res))
-    );
+    return this.http
+      .post<AuthResponse>(`${this.apiUrl}/login`, { email, password })
+      .pipe(tap((res) => this.setSession(res)));
   }
 
   register(email: string, password: string) {
-    return this.http.post<{ message: string; user: User }>(`${this.apiUrl}/register`, { email, password });
+    return this.http.post<{ message: string; user: User }>(
+      `${this.apiUrl}/register`,
+      { email, password }
+    );
+  }
+
+  /** ✅ Admin-only create user (with role) */
+  adminCreateUser(
+    username: string,
+    password: string,
+    role: 'user' | 'admin'
+  ) {
+    const token = localStorage.getItem('accessToken');
+    return this.http.post<{ message: string; user: User }>(
+      `${this.apiUrl}/admin/create`,
+      { email: username, password, role },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
   }
 
   logout() {
@@ -37,9 +57,9 @@ export class AuthService {
   }
 
   refreshToken() {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/refresh`, {}, { withCredentials: true }).pipe(
-      tap(res => this.setSession(res))
-    );
+    return this.http
+      .post<AuthResponse>(`${this.apiUrl}/refresh`, {}, { withCredentials: true })
+      .pipe(tap((res) => this.setSession(res)));
   }
 
   private setSession(res: AuthResponse) {
