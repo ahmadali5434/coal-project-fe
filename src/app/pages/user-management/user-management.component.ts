@@ -16,7 +16,6 @@ export class UserManagementComponent {
   ngOnInit() {
     const user = this.authService.currentUser;
     this.isAdmin = !!(user && user.role === 'admin');
-    this.isAdmin = true; // Remove or modify this line in production
   }
 
 }
