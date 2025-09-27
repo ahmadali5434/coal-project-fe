@@ -51,43 +51,53 @@ export class DirverDetailsComponent implements OnInit {
       this.drivers = list;
     });
   }
-
+private wrapCell(params: any): string {
+    const value = params.value ?? '';
+    return `<div style="white-space: normal; word-break: break-word; line-height: 1.4;">
+              ${value}
+            </div>`;
+  }
   colDefs: ColDef[] = [
-    { field: 'id', headerName: 'ID', width: 70 },
+    { field: 'id', headerName: 'ID', width: 70 ,cellRenderer: this.wrapCell},
     {
       field: 'idCardNo',
       headerName: 'Id Card No',
       sortable: true,
       filter: true,
       width: 160,
+      cellRenderer: this.wrapCell
     },
-    { field: 'name', headerName: 'Driver Name', filter: true, width: 170 },
+    { field: 'name', headerName: 'Driver Name', filter: true, width: 170 , cellRenderer: this.wrapCell},
     {
       field: 'driverFatherName',
       headerName: 'Dirver Father Name',
       filter: true,
       width: 180,
+      cellRenderer: this.wrapCell
     },
-    { field: 'country.name', headerName: 'Country', filter: true, width: 110 },
-    { field: 'province', headerName: 'Province', filter: true, width: 160 },
-    { field: 'city.name', headerName: 'City', filter: true, width: 130 },
+    { field: 'country.name', headerName: 'Country', filter: true, width: 110 ,cellRenderer: this.wrapCell},
+    { field: 'province', headerName: 'Province', filter: true, width: 160 , cellRenderer: this.wrapCell},
+    { field: 'city.name', headerName: 'City', filter: true, width: 130 , cellRenderer: this.wrapCell},
     {
       field: 'areaAddress',
       headerName: 'Area Address',
       filter: true,
       width: 170,
+      cellRenderer: this.wrapCell
     },
     {
       field: 'afghanContactNo',
       headerName: 'Afghan Contact No',
       filter: true,
       width: 180,
+      cellRenderer: this.wrapCell
     },
     {
       field: 'pakistanContactNo',
       headerName: 'Pakistan Contact No',
       filter: true,
       width: 180,
+      cellRenderer: this.wrapCell
     },
     {
       headerName: 'Actions',
@@ -105,7 +115,7 @@ export class DirverDetailsComponent implements OnInit {
   ];
 
   gridOptions: GridOptions = {
-    rowHeight: 60,
+    rowHeight: 66,
     rowStyle: { paddingTop: '10px' },
   };
 

@@ -12,11 +12,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { AddNewCustomerDialogComponent } from '../buy-stock/add-new-customer-dialog/add-new-customer-dialog.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { ActionCellRendererComponent } from '../../shared/components/action-cell-renderer/action-cell-renderer.component';
 import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog.component';
 import { CustomerService } from '../buy-stock/data-access/customer.service';
 import { Customer } from '../buy-stock/data-access/buy-stock.dto';
-import { effect } from '@angular/core';
 import { ActionForDeleteEdit } from '../../shared/components/action-for-delte-edt/action-for-delte-edt';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -62,34 +60,43 @@ loadCustomers(): void {
       error: (err) => console.error('Error fetching customers', err),
     });
   }
-
+ private wrapCell(params: any): string {
+    const value = params.value ?? '';
+    return `<div style="white-space: normal; word-break: break-word; line-height: 1.4;">
+              ${value}
+            </div>`;
+  }
   CustomerCol: ColDef[] = [
-    { field: 'id', headerName: 'ID', width: 70 },
+    { field: 'id', headerName: 'ID', width: 70 ,cellRenderer: this.wrapCell},
     {
       field: 'fullName',
       headerName: 'Customer Name',
       sortable: true,
       filter: true,
-      width: 180,
+      width: 170,
+      cellRenderer: this.wrapCell
     },
     {
       field: 'country.name',
       headerName: 'County ',
       filter: true,
-      width: 180,
+      width: 150
+      ,cellRenderer: this.wrapCell
     },
-    { field: 'city.name', headerName: 'City', filter: true, width: 160 },
+    { field: 'city.name', headerName: 'City', filter: true, width: 160 ,cellRenderer: this.wrapCell },
     {
       field: 'address',
       headerName: 'Area Address',
       filter: true,
-      width: 190,
+      width: 150
+      ,cellRenderer: this.wrapCell
     },
     {
       field: 'phoneNumber',
       headerName: 'Phone No',
       filter: true,
-      width: 180,
+      width: 180
+      ,cellRenderer: this.wrapCell
     },
     
     {
@@ -108,7 +115,7 @@ loadCustomers(): void {
   ];
 
   gridOptions: GridOptions = {
-    rowHeight: 60,
+    rowHeight: 65,
     rowStyle: {
       paddingTop: '10px',
     },
