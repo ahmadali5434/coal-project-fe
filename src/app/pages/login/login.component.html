@@ -1,57 +1,58 @@
-<div class="h-full flex flex-col justify-center items-center">
-  <div class="text-4xl font-semibold text-[#014367] mb-16">
-    Jaji Trading Company
-  </div>
-  <form class="min-w-96 flex flex-col gap-4" (ngSubmit)="onLoginClicked()">
-    <!-- Email -->
-    <mat-form-field class="w-full">
-      <mat-label>Username</mat-label>
-      <input
-        matInput
-        placeholder="Username"
-        [formControl]="username"
-        required
-      />
-      @if (username.invalid) {
-        <mat-error>{{ errorMessage() }}</mat-error>
-      }
-    </mat-form-field>
+  <div class="h-full flex flex-col justify-center items-center">
+    <div class="text-4xl font-semibold text-[#014367] mb-16">
+      Jaji Trading Company
+    </div>
+    <form class="min-w-96 flex flex-col gap-4" (ngSubmit)="onLoginClicked()">
+      <!-- Email -->
+      <mat-form-field class="w-full">
+        <mat-label>Username</mat-label>
+        <input
+          matInput
+          placeholder="Username"
+          [formControl]="username"
+          required
+        />
+        @if (username.invalid) {
+          <mat-error>{{ errorMessage() }}</mat-error>
+        }
+      </mat-form-field>
 
-    <!-- Password -->
-    <mat-form-field class="w-full">
-      <mat-label>Password</mat-label>
-      <input
-        matInput
-        [type]="hide() ? 'password' : 'text'"
-        [formControl]="password"
-        required
-      />
-      <button
-        mat-icon-button
-        matSuffix
-        (click)="clickEvent($event)"
-        [attr.aria-label]="'Hide password'"
-        [attr.aria-pressed]="hide()"
-      >
-        <mat-icon>{{ hide() ? "visibility_off" : "visibility" }}</mat-icon>
+      <!-- Password -->
+      <mat-form-field class="w-full">
+        <mat-label>Password</mat-label>
+        <input
+          matInput
+          [type]="hide() ? 'password' : 'text'"
+          [formControl]="password"
+          required
+        />
+        <button
+        type="button" 
+          mat-icon-button
+          matSuffix
+          (click)="clickEvent($event)"
+          [attr.aria-label]="'Hide password'"
+          [attr.aria-pressed]="hide()"
+        >
+          <mat-icon>{{ hide() ? "visibility_off" : "visibility" }}</mat-icon>
+        </button>
+      </mat-form-field>
+
+      <!-- Login Button -->
+      <button mat-flat-button color="primary" class="w-full" type="submit">
+        Login
       </button>
-    </mat-form-field>
 
-    <!-- Login Button -->
-    <button mat-flat-button color="primary" class="w-full" type="submit">
-      Login
-    </button>
+      <!-- Forgot Password -->
+      <a
+        mat-stroked-button
+        color="accent"
+        class="w-full"
+        (click)="onForgotPasswordClicked()"
+      >
+        Forgot Password
+      </a>
+    </form>
+  </div>
 
-    <!-- Forgot Password -->
-    <a
-      mat-stroked-button
-      color="accent"
-      class="w-full"
-      (click)="onForgotPasswordClicked()"
-    >
-      Forgot Password
-    </a>
-  </form>
-</div>
-
-<router-outlet />
+  <router-outlet />
