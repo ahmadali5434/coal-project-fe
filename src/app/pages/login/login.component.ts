@@ -13,6 +13,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 // Auth
 import { AuthService } from '../../auth/auth.service';
+import { RbacService } from '../../core/rbac.service';
 
 @Component({
   selector: 'app-login',
@@ -30,12 +31,15 @@ import { AuthService } from '../../auth/auth.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoginComponent {
-  readonly username = new FormControl('', [Validators.required]);
-  readonly password = new FormControl('', [Validators.required]);
+  private readonly rbacService = inject(RbacService);
 
   private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
   private readonly snackBar = inject(MatSnackBar);
+
+  
+  readonly username = new FormControl('', [Validators.required]);
+  readonly password = new FormControl('', [Validators.required]);
 
   errorMessage = signal('');
   hide = signal(true);
@@ -69,8 +73,16 @@ export class LoginComponent {
     }
     this.authService.login(this.username.value!, this.password.value!).subscribe({
       next: () => {
-        this.snackBar.open('Login successful!', 'Close', { duration: 2000 });
-        this.router.navigate(['/home']);
+        this.authService.fetchPermissions().subscribe({
+          next: (perms) => {
+            console.log('Permissions fetched:', perms);
+            this.rbacService.setPermissions(perms);
+            this.router.navigate(['/home']);
+          },
+          error: () => {
+            this.snackBar.open('Failed to load permissions', 'Close', { duration: 3000 });
+          },
+        });
       },
       error: (err) => {
         this.snackBar.open(
