@@ -2,20 +2,20 @@ import { Component, inject } from '@angular/core';
 import { MatIcon, MatIconModule } from '@angular/material/icon';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { AuthService } from '../../auth/auth.service';
+import { HasPermissionDirective } from '../../core/directives/has-permission.directive';
 
 @Component({
   selector: 'app-user-management',
-  imports: [MatIcon, MatIconModule, RouterLink , RouterOutlet],
+  imports: [
+    MatIcon, 
+    MatIconModule, 
+    RouterLink, 
+    RouterOutlet,
+    HasPermissionDirective,
+  ],
   templateUrl: './user-management.component.html',
 
 })
 export class UserManagementComponent {
-  private readonly authService = inject(AuthService);
-  isAdmin = false;
-
-  ngOnInit() {
-    const user = this.authService.currentUser;
-    this.isAdmin = !!(user && user.role === 'admin');
-  }
-
+  
 }
