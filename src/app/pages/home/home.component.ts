@@ -13,13 +13,14 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog.component';
 import { BuyStockService } from '../buy-stock/data-access/buy-stock.service';
+import { HasPermissionDirective } from "../../core/directives/has-permission.directive";
 
 // Register all Community features
 ModuleRegistry.registerModules([AllCommunityModule]);
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, AgGridAngular, MatButtonModule],
+  imports: [CommonModule, AgGridAngular, MatButtonModule, HasPermissionDirective],
   templateUrl: './home.component.html',
 })
 export class HomeComponent implements OnInit {

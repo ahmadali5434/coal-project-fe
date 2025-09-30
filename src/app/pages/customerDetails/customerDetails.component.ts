@@ -21,7 +21,6 @@ import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/c
 import { CustomerService } from '../buy-stock/data-access/customer.service';
 import { Customer } from '../buy-stock/data-access/buy-stock.dto';
 import { HasPermissionDirective } from '../../core/directives/has-permission.directive';
-import { RbacService } from '../../core/rbac.service';
 import { ActionCellRendererComponent } from '../../shared/components/action-cell-renderer/action-cell-renderer.component';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -47,11 +46,6 @@ export class CdetailsComponent implements OnInit {
   private customerService = inject(CustomerService);
   private readonly _snackBar = inject(MatSnackBar);
   private readonly dialog = inject(MatDialog);
-  private readonly rbacService = inject(RbacService);
-
-  private readonly hasEditPermission = this.rbacService.has('customer:update');
-  private readonly hasDeletePermission =
-    this.rbacService.has('customer:delete');
 
   customerDetails: Customer[] = [];
 
