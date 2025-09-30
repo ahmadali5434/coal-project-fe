@@ -5,6 +5,7 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
       <a
         [routerLink]="['cdetails']"
+        *hasPermission="'customer:read'"
         class="flex flex-col items-center justify-center bg-white w-50 h-45 rounded-xl p-6 border hover:shadow-lg hover:border-indigo-500 transition-all cursor-pointer"
       >
         <mat-icon
@@ -17,6 +18,7 @@
       </a>
       <a
         [routerLink]="['dirvers']"
+        *hasPermission="'driver:read'"
         class="flex flex-col items-center justify-center bg-white w-50 h-45 rounded-xl p-6 border hover:shadow-lg hover:border-indigo-500 transition-all cursor-pointer"
       >
         <mat-icon

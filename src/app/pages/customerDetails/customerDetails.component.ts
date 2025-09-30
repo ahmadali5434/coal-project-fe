@@ -1,23 +1,28 @@
-import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AgGridModule } from 'ag-grid-angular';
-import { AllCommunityModule, ColDef, GridOptions, GridReadyEvent, ModuleRegistry } from 'ag-grid-community';
+import {
+  AllCommunityModule,
+  ColDef,
+  GridOptions,
+  GridReadyEvent,
+  ModuleRegistry,
+} from 'ag-grid-community';
 import { MatButtonModule } from '@angular/material/button';
-import { MatInputModule } from "@angular/material/input";
-import { MatDividerModule } from "@angular/material/divider";
-import { MatSelectModule } from "@angular/material/select";
-import { Router } from '@angular/router';
+import { MatInputModule } from '@angular/material/input';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatSelectModule } from '@angular/material/select';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { AddNewCustomerDialogComponent } from '../buy-stock/add-new-customer-dialog/add-new-customer-dialog.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { ActionCellRendererComponent } from '../../shared/components/action-cell-renderer/action-cell-renderer.component';
 import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog.component';
 import { CustomerService } from '../buy-stock/data-access/customer.service';
 import { Customer } from '../buy-stock/data-access/buy-stock.dto';
-import { effect } from '@angular/core';
-import { ActionForDeleteEdit } from '../../shared/components/action-for-delte-edt/action-for-delte-edt';
+import { HasPermissionDirective } from '../../core/directives/has-permission.directive';
+import { RbacService } from '../../core/rbac.service';
+import { ActionCellRendererComponent } from '../../shared/components/action-cell-renderer/action-cell-renderer.component';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -33,26 +38,31 @@ ModuleRegistry.registerModules([AllCommunityModule]);
     MatDividerModule,
     MatSelectModule,
     MatIconModule,
-],
-  templateUrl: './customerDetails.component.html'
+    HasPermissionDirective,
+  ],
+  templateUrl: './customerDetails.component.html',
 })
 export class CdetailsComponent implements OnInit {
   [x: string]: any;
-  private customerService = inject(CustomerService)
-  private readonly router = inject(Router);
+  private customerService = inject(CustomerService);
   private readonly _snackBar = inject(MatSnackBar);
   private readonly dialog = inject(MatDialog);
+  private readonly rbacService = inject(RbacService);
+
+  private readonly hasEditPermission = this.rbacService.has('customer:update');
+  private readonly hasDeletePermission =
+    this.rbacService.has('customer:delete');
 
   customerDetails: Customer[] = [];
 
   gridApi: any;
-  
 
   ngOnInit(): void {
-   this.loadCustomers();
+    this.loadCustomers();
   }
-loadCustomers(): void {
- this.customerService.fetchAllCustomers().subscribe({
+
+  loadCustomers(): void {
+    this.customerService.fetchAllCustomers().subscribe({
       next: (customers: Customer[]) => {
         this.customerDetails = customers;
         if (this.gridApi) {
@@ -91,13 +101,26 @@ loadCustomers(): void {
       filter: true,
       width: 180,
     },
-    
     {
       headerName: 'Actions',
-      cellRenderer: ActionForDeleteEdit,
+      cellRenderer: ActionCellRendererComponent,
       cellRendererParams: {
-        onEdit: this.onEdit.bind(this),
-        onDelete: this.onDelete.bind(this),
+        actions: [
+          {
+            type: 'edit',
+            icon: 'edit',
+            label: 'Edit Customer',
+            permission: 'customer:update',
+            callback: (row: any) => this.onEdit(row),
+          },
+          {
+            type: 'delete',
+            icon: 'delete',
+            label: 'Delete Customer',
+            permission: 'customer:delete',
+            callback: (row: any) => this.onDelete(row),
+          },
+        ],
       },
       pinned: 'right',
       maxWidth: 100,
@@ -128,25 +151,29 @@ loadCustomers(): void {
 
     dialogRef.afterClosed().subscribe((saved) => {
       if (saved) {
-
-       this.loadCustomers(); 
-          this._snackBar.open('Customer updated successfully!', 'Close', { duration: 3000 });
-
+        this.loadCustomers();
+        this._snackBar.open('Customer updated successfully!', 'Close', {
+          duration: 3000,
+        });
       }
     });
   }
 
   onDelete(rowData: any) {
-     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: { message: 'Are you sure you want to delete this customer?' },
     });
-      
-     dialogRef.afterClosed().subscribe((confirmed) => {
+
+    dialogRef.afterClosed().subscribe((confirmed) => {
       if (confirmed) {
-        this.customerService.deleteCustomer(String(rowData.id)).subscribe(() => {
-          this._snackBar.open('Customer deleted successfully!', 'Close', { duration: 3000 });
-          this.loadCustomers();
-        });
+        this.customerService
+          .deleteCustomer(String(rowData.id))
+          .subscribe(() => {
+            this._snackBar.open('Customer deleted successfully!', 'Close', {
+              duration: 3000,
+            });
+            this.loadCustomers();
+          });
       }
     });
   }
@@ -156,9 +183,11 @@ loadCustomers(): void {
       panelClass: 'dialog-container-lg',
       width: '800px',
     });
-     dialogRef.afterClosed().subscribe((saved) => {
+    dialogRef.afterClosed().subscribe((saved) => {
       if (saved) {
-        this._snackBar.open('Customer added successfully!', 'Close', { duration: 3000 });
+        this._snackBar.open('Customer added successfully!', 'Close', {
+          duration: 3000,
+        });
         this.loadCustomers();
       }
     });
