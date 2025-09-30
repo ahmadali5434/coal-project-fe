@@ -1,5 +1,15 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  signal,
+} from '@angular/core';
+import {
+  FormControl,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { Router, RouterOutlet } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { merge } from 'rxjs';
@@ -37,7 +47,6 @@ export class LoginComponent {
   private readonly authService = inject(AuthService);
   private readonly snackBar = inject(MatSnackBar);
 
-  
   readonly username = new FormControl('', [Validators.required]);
   readonly password = new FormControl('', [Validators.required]);
 
@@ -71,27 +80,20 @@ export class LoginComponent {
       });
       return;
     }
-    this.authService.login(this.username.value!, this.password.value!).subscribe({
-      next: () => {
-        this.authService.fetchPermissions().subscribe({
-          next: (perms) => {
-            console.log('Permissions fetched:', perms);
-            this.rbacService.setPermissions(perms);
-            this.router.navigate(['/home']);
-          },
-          error: () => {
-            this.snackBar.open('Failed to load permissions', 'Close', { duration: 3000 });
-          },
-        });
-      },
-      error: (err) => {
-        this.snackBar.open(
-          err.error?.error || 'Login failed. Try again.',
-          'Close',
-          { duration: 3000 }
-        );
-      },
-    });
+    this.authService
+      .login(this.username.value!, this.password.value!)
+      .subscribe({
+        next: () => {
+          this.router.navigate(['/home']);
+        },
+        error: (err) => {
+          this.snackBar.open(
+            err.error?.error || 'Login failed. Try again.',
+            'Close',
+            { duration: 3000 }
+          );
+        },
+      });
   }
 
   onForgotPasswordClicked() {
