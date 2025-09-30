@@ -3,41 +3,52 @@
     Warehouses
   </div>
 
-  <mat-card appearance="outlined" class="box-border w-full min-h-148 no-rounded-sides">
+  <mat-card
+    appearance="outlined"
+    class="box-border w-full min-h-148 no-rounded-sides"
+  >
     <mat-card-content>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 w-full">
+      <div
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 w-full"
+      >
         @for(warehouse of warehousesDetail; track warehouse) {
-        <mat-card appearance="outlined" class="h-60 flex flex-col justify-between relative">
+        <mat-card
+          appearance="outlined"
+          class="h-60 flex flex-col justify-between relative"
+        >
           <mat-card-content>
-        <div class="absolute top-2 right-2">
-             <button mat-icon-button [matMenuTriggerFor]="menu">
-  <mat-icon>more_vert</mat-icon>
-</button>
+            <div class="absolute top-2 right-2">
+              <button mat-icon-button [matMenuTriggerFor]="menu">
+                <mat-icon>more_vert</mat-icon>
+              </button>
 
-<mat-menu #menu="matMenu">
-  <button mat-menu-item (click)="editWarehouse(warehouse)">
-    <mat-icon>edit</mat-icon>
-    <span>Edit</span>
-  </button>
-  <button mat-menu-item (click)="deleteWarehouse(warehouse.id)">
-    <mat-icon>delete</mat-icon>
-    <span>Delete</span>
-  </button>
-                </mat-menu>
-              </div>
+              <mat-menu #menu="matMenu">
+                <button mat-menu-item *hasPermission="'warehouse:update'" (click)="editWarehouse(warehouse)">
+                  <mat-icon>edit</mat-icon>
+                  <span>Edit</span>
+                </button>
+                <button mat-menu-item *hasPermission="'warehouse:delete'" (click)="deleteWarehouse(warehouse.id)">
+                  <mat-icon>delete</mat-icon>
+                  <span>Delete</span>
+                </button>
+              </mat-menu>
+            </div>
 
             <div class="flex flex-col h-full justify-between p-2 gap-1">
-              <div class="text-lg font-semibold mb-3 text-[#1f2937]">{{ warehouse.name }}</div>
+              <div class="text-lg font-semibold mb-3 text-[#1f2937]">
+                {{ warehouse.name }}
+              </div>
               <div class="text-sm">
                 <span class="font-medium">Country:</span>
-                {{ warehouse.country?.name || 'N/A' }}
+                {{ warehouse.country?.name || "N/A" }}
               </div>
               <div class="text-sm">
                 <span class="font-medium">City:</span>
-                {{ warehouse.city?.name || 'N/A' }}
+                {{ warehouse.city?.name || "N/A" }}
               </div>
-              <div class="text-sm"><span class="font-medium">Warehouse Address:</span> {{ warehouse.warehouseLocation }}
+              <div class="text-sm">
+                <span class="font-medium">Warehouse Address:</span>
+                {{ warehouse.warehouseLocation }}
               </div>
             </div>
           </mat-card-content>
@@ -45,16 +56,20 @@
         }
 
         <!-- Add New -->
-        <mat-card appearance="outlined"
+        <mat-card
+          appearance="outlined"
+          *hasPermission="'warehouse:create'"
           class="h-60 flex items-center justify-center cursor-pointer hover:bg-gray-100 transition"
-          (click)="addNewWarehouse()">
-          <mat-card-content class="flex flex-col justify-center items-center w-full h-full text-center">
+          (click)="addNewWarehouse()"
+        >
+          <mat-card-content
+            class="flex flex-col justify-center items-center w-full h-full text-center"
+          >
             <div class="text-xl font-medium mb-2">Add New Warehouse</div>
             <div class="text-8xl text-gray-400 mt-3">+</div>
           </mat-card-content>
         </mat-card>
       </div>
-
     </mat-card-content>
   </mat-card>
 </div>

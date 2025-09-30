@@ -13,13 +13,14 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog.component';
 import { BuyStockService } from '../buy-stock/data-access/buy-stock.service';
+import { HasPermissionDirective } from "../../core/directives/has-permission.directive";
 
 // Register all Community features
 ModuleRegistry.registerModules([AllCommunityModule]);
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, AgGridAngular, MatButtonModule],
+  imports: [CommonModule, AgGridAngular, MatButtonModule, HasPermissionDirective],
   templateUrl: './home.component.html',
 })
 export class HomeComponent implements OnInit {
@@ -130,10 +131,25 @@ export class HomeComponent implements OnInit {
     // },
     {
       headerName: 'Actions',
+      field: 'actions',
       cellRenderer: ActionCellRendererComponent,
       cellRendererParams: {
-        onView: this.onView.bind(this),
-        onDelete: this.onDelete.bind(this),
+        actions: [
+          {
+            type: 'view',
+            icon: 'visibility',
+            label: 'View Purchase',
+            permission: 'purchase:read',
+            callback: (row: any) => this.onView(row),
+          },
+          {
+            type: 'delete',
+            icon: 'delete',
+            label: 'Delete Purchase',
+            permission: 'purchase:delete',
+            callback: (row: any) => this.onDelete(row),
+          }
+        ],
       },
       pinned: 'right',
       minWidth: 120,

@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AgGridModule } from 'ag-grid-angular';
@@ -21,7 +21,7 @@ import { ActionCellRendererComponent } from '../../shared/components/action-cell
 import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Driver } from '../buy-stock/data-access/buy-stock.dto';
-import { ActionForDeleteEdit } from '../../shared/components/action-for-delte-edt/action-for-delte-edt';
+import { HasPermissionDirective } from '../../core/directives/has-permission.directive';
 ModuleRegistry.registerModules([AllCommunityModule]);
 @Component({
   selector: 'app-dirver-details',
@@ -35,11 +35,12 @@ ModuleRegistry.registerModules([AllCommunityModule]);
     MatDividerModule,
     MatSelectModule,
     MatIconModule,
+    HasPermissionDirective,
   ],
   templateUrl: './dirver-details.component.html',
 })
 export class DirverDetailsComponent implements OnInit {
-  private dirverService = inject(DriverService);
+  private readonly dirverService = inject(DriverService);
   private readonly router = inject(Router);
   private readonly dialog = inject(MatDialog);
   private readonly _snackBar = inject(MatSnackBar);
@@ -91,10 +92,24 @@ export class DirverDetailsComponent implements OnInit {
     },
     {
       headerName: 'Actions',
-      cellRenderer: ActionForDeleteEdit,
+      cellRenderer: ActionCellRendererComponent,
       cellRendererParams: {
-        onEdit: this.openEditDriverDialog.bind(this),
-        onDelete: this.onDelete.bind(this),
+        actions: [
+          {
+            type: 'edit',
+            icon: 'edit',
+            label: 'Edit Driver',
+            permission: 'driver:update',
+            callback: (row: any) => this.openEditDriverDialog(row),
+          },
+          {
+            type: 'delete',
+            icon: 'delete',
+            label: 'Delete Driver',
+            permission: 'driver:delete',
+            callback: (row: any) => this.onDelete(row),
+          }
+        ],
       },
       pinned: 'right',
       maxWidth: 100,
