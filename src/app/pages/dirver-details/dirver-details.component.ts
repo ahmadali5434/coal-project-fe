@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AgGridModule } from 'ag-grid-angular';
@@ -21,7 +21,7 @@ import { ActionCellRendererComponent } from '../../shared/components/action-cell
 import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Driver } from '../buy-stock/data-access/buy-stock.dto';
-import { HasPermissionDirective } from '../../core/directives/has-permission.directive';
+import { ActionForDeleteEdit } from '../../shared/components/action-for-delte-edt/action-for-delte-edt';
 ModuleRegistry.registerModules([AllCommunityModule]);
 @Component({
   selector: 'app-dirver-details',
@@ -35,12 +35,11 @@ ModuleRegistry.registerModules([AllCommunityModule]);
     MatDividerModule,
     MatSelectModule,
     MatIconModule,
-    HasPermissionDirective,
   ],
   templateUrl: './dirver-details.component.html',
 })
 export class DirverDetailsComponent implements OnInit {
-  private readonly dirverService = inject(DriverService);
+  private dirverService = inject(DriverService);
   private readonly router = inject(Router);
   private readonly dialog = inject(MatDialog);
   private readonly _snackBar = inject(MatSnackBar);
@@ -52,64 +51,60 @@ export class DirverDetailsComponent implements OnInit {
       this.drivers = list;
     });
   }
-
+private wrapCell(params: any): string {
+    const value = params.value ?? '';
+    return `<div style="white-space: normal; word-break: break-word; line-height: 1.4;">
+              ${value}
+            </div>`;
+  }
   colDefs: ColDef[] = [
-    { field: 'id', headerName: 'ID', width: 70 },
+    { field: 'id', headerName: 'ID', width: 70 ,cellRenderer: this.wrapCell},
     {
       field: 'idCardNo',
       headerName: 'Id Card No',
       sortable: true,
       filter: true,
       width: 160,
+      cellRenderer: this.wrapCell
     },
-    { field: 'name', headerName: 'Driver Name', filter: true, width: 170 },
+    { field: 'name', headerName: 'Driver Name', filter: true, width: 170 , cellRenderer: this.wrapCell},
     {
       field: 'driverFatherName',
       headerName: 'Dirver Father Name',
       filter: true,
       width: 180,
+      cellRenderer: this.wrapCell
     },
-    { field: 'country.name', headerName: 'Country', filter: true, width: 110 },
-    { field: 'province', headerName: 'Province', filter: true, width: 160 },
-    { field: 'city.name', headerName: 'City', filter: true, width: 130 },
+    { field: 'country.name', headerName: 'Country', filter: true, width: 110 ,cellRenderer: this.wrapCell},
+    { field: 'province', headerName: 'Province', filter: true, width: 160 , cellRenderer: this.wrapCell},
+    { field: 'city.name', headerName: 'City', filter: true, width: 130 , cellRenderer: this.wrapCell},
     {
       field: 'areaAddress',
       headerName: 'Area Address',
       filter: true,
       width: 170,
+      cellRenderer: this.wrapCell
     },
     {
       field: 'afghanContactNo',
       headerName: 'Afghan Contact No',
       filter: true,
       width: 180,
+      cellRenderer: this.wrapCell
     },
     {
       field: 'pakistanContactNo',
       headerName: 'Pakistan Contact No',
       filter: true,
       width: 180,
+      cellRenderer: this.wrapCell
     },
     {
       headerName: 'Actions',
-      cellRenderer: ActionCellRendererComponent,
+      cellRenderer: ActionForDeleteEdit,
       cellRendererParams: {
-        actions: [
-          {
-            type: 'edit',
-            icon: 'edit',
-            label: 'Edit Driver',
-            permission: 'driver:update',
-            callback: (row: any) => this.openEditDriverDialog(row),
-          },
-          {
-            type: 'delete',
-            icon: 'delete',
-            label: 'Delete Driver',
-            permission: 'driver:delete',
-            callback: (row: any) => this.onDelete(row),
-          }
-        ],
+        onEdit: this.openEditDriverDialog.bind(this),
+        onDelete: this.onDelete.bind(this),
       },
       pinned: 'right',
       maxWidth: 100,
@@ -120,7 +115,7 @@ export class DirverDetailsComponent implements OnInit {
   ];
 
   gridOptions: GridOptions = {
-    rowHeight: 60,
+    rowHeight: 66,
     rowStyle: { paddingTop: '10px' },
   };
 

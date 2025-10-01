@@ -13,14 +13,13 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog.component';
 import { BuyStockService } from '../buy-stock/data-access/buy-stock.service';
-import { HasPermissionDirective } from "../../core/directives/has-permission.directive";
 
 // Register all Community features
 ModuleRegistry.registerModules([AllCommunityModule]);
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, AgGridAngular, MatButtonModule, HasPermissionDirective],
+  imports: [CommonModule, AgGridAngular, MatButtonModule],
   templateUrl: './home.component.html',
 })
 export class HomeComponent implements OnInit {
@@ -65,52 +64,63 @@ export class HomeComponent implements OnInit {
       status: data.status,
     }));
   }
-
+ private wrapCell(params: any): string {
+    const value = params.value ?? '';
+    return `<div style="white-space: normal; word-break: break-word; line-height: 1.4;">
+              ${value}
+            </div>`;
+  }
   colDefs: ColDef[] = [
-    { field: 'id', headerName: 'Stock No', minWidth: 100, flex: 1 },
+    { field: 'id', headerName: 'Stock No', minWidth: 100, flex: 1 ,  cellRenderer: this.wrapCell,},
     {
       field: 'customerName',
       headerName: 'Customer Name',
       minWidth: 180,
       flex: 2,
+      cellRenderer: this.wrapCell,
     },
     {
       field: 'placeOfPurchaseName',
       headerName: 'Place of Buying',
       minWidth: 180,
       flex: 2,
+       cellRenderer: this.wrapCell,
     },
     {
       field: 'stockDestinationName',
       headerName: 'Destination',
       minWidth: 180,
       flex: 2,
+       cellRenderer: this.wrapCell,
     },
     {
       field: 'purchaseDate',
       headerName: 'Purchase Date',
       minWidth: 130,
       flex: 1,
+       cellRenderer: this.wrapCell,
     },
-    { field: 'driverName', headerName: 'Driver', minWidth: 180, flex: 1 },
-    { field: 'truckNo', headerName: 'Truck No', minWidth: 100, flex: 1 },
-    { field: 'metricTon', headerName: 'Metric Ton', minWidth: 120, flex: 1 },
+    { field: 'driverName', headerName: 'Driver', minWidth: 150, flex: 1, cellRenderer: this.wrapCell, },
+    { field: 'truckNo', headerName: 'Truck No', minWidth: 100, flex: 1, cellRenderer: this.wrapCell, },
+    { field: 'metricTon', headerName: 'Metric Ton', minWidth: 120, flex: 1, cellRenderer: this.wrapCell, },
     {
       field: 'freightPerTon',
       headerName: 'Freight Per Ton',
       minWidth: 140,
       flex: 1,
+       cellRenderer: this.wrapCell,
     },
-    { field: 'expense', headerName: 'Expenses', minWidth: 120, flex: 1 },
+    { field: 'expense', headerName: 'Expenses', minWidth: 120, flex: 1 , cellRenderer: this.wrapCell,},
     {
       field: 'advancePayment',
       headerName: 'Advance Payment',
       minWidth: 150,
       flex: 1,
+       cellRenderer: this.wrapCell,
     },
-    { field: 'amountAFN', headerName: 'Amount (AFN)', minWidth: 140, flex: 1 },
-    { field: 'exchangeRate', headerName: 'Ex. Rate', minWidth: 120, flex: 1 },
-    { field: 'amountPKR', headerName: 'Amount (PKR)', minWidth: 140, flex: 1 },
+    { field: 'amountAFN', headerName: 'Amount (AFN)', minWidth: 140, flex: 1, cellRenderer: this.wrapCell, },
+    { field: 'exchangeRate', headerName: 'Ex. Rate', minWidth: 120, flex: 1 , cellRenderer: this.wrapCell,},
+    { field: 'amountPKR', headerName: 'Amount (PKR)', minWidth: 140, flex: 1 , cellRenderer: this.wrapCell,},
     //TODO: The following field with be included later when status feature is implemented
     // {
     //   field: 'status',
@@ -131,25 +141,10 @@ export class HomeComponent implements OnInit {
     // },
     {
       headerName: 'Actions',
-      field: 'actions',
       cellRenderer: ActionCellRendererComponent,
       cellRendererParams: {
-        actions: [
-          {
-            type: 'view',
-            icon: 'visibility',
-            label: 'View Purchase',
-            permission: 'purchase:read',
-            callback: (row: any) => this.onView(row),
-          },
-          {
-            type: 'delete',
-            icon: 'delete',
-            label: 'Delete Purchase',
-            permission: 'purchase:delete',
-            callback: (row: any) => this.onDelete(row),
-          }
-        ],
+        onView: this.onView.bind(this),
+        onDelete: this.onDelete.bind(this),
       },
       pinned: 'right',
       minWidth: 120,
@@ -161,7 +156,7 @@ export class HomeComponent implements OnInit {
   ];
 
   gridOptions: GridOptions = {
-    rowHeight: 60,
+    rowHeight: 65,
     rowStyle: { paddingTop: '10px' },
     domLayout: 'normal',
     suppressHorizontalScroll: false,

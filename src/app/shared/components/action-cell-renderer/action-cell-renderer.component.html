@@ -1,13 +1,8 @@
 <div class="flex gap-2 items-center justify-center">
-  @for (action of actions; track action.type) {
-    @if (action.permission) {
-      <button
-        mat-icon-button
-        [attr.aria-label]="(action.label || action.type) + ' action'"
-        (click)="onAction(action)"
-      >
-        <mat-icon>{{ action.icon }}</mat-icon>
-      </button>
-    }
-  }
-</div>
+    <button mat-icon-button color="primary" class="cursor-pointer" (click)="view()">
+      <mat-icon>visibility</mat-icon>
+    </button>
+    <button mat-icon-button color="warn" class="cursor-pointer" (click)="delete()">
+      <mat-icon>delete</mat-icon>
+    </button>
+  </div>

@@ -1,16 +1,11 @@
 export interface User {
-  id: string;
-  email: string;
-  role: 'user' | 'admin';
-}
-
-export interface AuthResponse {
-  success: boolean;
-  data: {
     id: string;
     email: string;
     role: 'user' | 'admin';
+  }
+  
+  export interface AuthResponse {
     accessToken: string;
-    refreshToken: string;
-  };
-}
+    user: User;
+  }
+  

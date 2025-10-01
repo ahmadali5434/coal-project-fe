@@ -1,15 +1,5 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  inject,
-  signal,
-} from '@angular/core';
-import {
-  FormControl,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterOutlet } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { merge } from 'rxjs';
@@ -23,7 +13,6 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 // Auth
 import { AuthService } from '../../auth/auth.service';
-import { RbacService } from '../../core/rbac.service';
 
 @Component({
   selector: 'app-login',
@@ -41,14 +30,12 @@ import { RbacService } from '../../core/rbac.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoginComponent {
-  private readonly rbacService = inject(RbacService);
+  readonly username = new FormControl('', [Validators.required]);
+  readonly password = new FormControl('', [Validators.required]);
 
   private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
   private readonly snackBar = inject(MatSnackBar);
-
-  readonly username = new FormControl('', [Validators.required]);
-  readonly password = new FormControl('', [Validators.required]);
 
   errorMessage = signal('');
   hide = signal(true);
@@ -80,20 +67,19 @@ export class LoginComponent {
       });
       return;
     }
-    this.authService
-      .login(this.username.value!, this.password.value!)
-      .subscribe({
-        next: () => {
-          this.router.navigate(['/home']);
-        },
-        error: (err) => {
-          this.snackBar.open(
-            err.error?.error || 'Login failed. Try again.',
-            'Close',
-            { duration: 3000 }
-          );
-        },
-      });
+    this.authService.login(this.username.value!, this.password.value!).subscribe({
+      next: () => {
+        this.snackBar.open('Login successful!', 'Close', { duration: 2000 });
+        this.router.navigate(['/home']);
+      },
+      error: (err) => {
+        this.snackBar.open(
+          err.error?.error || 'Login failed. Try again.',
+          'Close',
+          { duration: 3000 }
+        );
+      },
+    });
   }
 
   onForgotPasswordClicked() {

@@ -15,7 +15,6 @@ import { City, Country } from '../../shared/model';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog.component';
-import { HasPermissionDirective } from "../../core/directives/has-permission.directive";
 @Component({
   selector: 'app-warehouses',
   imports: [
@@ -24,8 +23,7 @@ import { HasPermissionDirective } from "../../core/directives/has-permission.dir
     MatButtonModule,
     MatIconModule,
     MatMenuModule,
-    HasPermissionDirective
-],
+  ],
   templateUrl: './warehouse.component.html',
 })
 export class WarehouseComponent implements OnInit {
