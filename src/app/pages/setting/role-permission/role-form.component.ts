@@ -42,11 +42,15 @@ export class RoleFormComponent implements OnInit {
   private router = inject(Router);
 
   resources = [
-    { key: 'customers', label: 'Customers' },
-    { key: 'drivers', label: 'Drivers' },
-    { key: 'warehouses', label: 'Warehouses' },
-    { key: 'expenses', label: 'Expenses' },
-    { key: 'stocks', label: 'Stocks' },
+    { key: 'user', label: 'User' },
+    { key: 'customer', label: 'Customer' },
+    { key: 'driver', label: 'Driver' },
+    { key: 'warehouse', label: 'Warehouse' },
+    { key: 'purchase', label: 'Purchase' },
+    { key: 'purchaseRate', label: 'Purchase Rate' },
+    { key: 'custom', label: 'Custom' },
+    { key: 'expense', label: 'Expense' },
+    { key: 'stock', label: 'Stock' },
   ];
 
   actions: { key: ActionKey; icon: string; title: string }[] = [
@@ -54,8 +58,8 @@ export class RoleFormComponent implements OnInit {
     { key: 'read', icon: 'visibility', title: 'Read' },
     { key: 'update', icon: 'edit', title: 'Update' },
     { key: 'delete', icon: 'delete', title: 'Delete' },
-    { key: 'export', icon: 'file_download', title: 'Export' },
-    { key: 'uploadPicture', icon: 'image', title: 'Upload picture' },
+    // { key: 'export', icon: 'file_download', title: 'Export' },
+    // { key: 'uploadPicture', icon: 'image', title: 'Upload picture' },
   ];
 
   displayedColumns: string[] = [];
@@ -107,7 +111,6 @@ onSubmit() {
     this.form.markAllAsTouched();
     return;
   }
-console.log(' Sending to:', this.roleService['baseUrl']);
 
   const payload: Role = {
     name: this.form.get('name')?.value ?? '',

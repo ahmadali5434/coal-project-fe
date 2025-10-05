@@ -8,6 +8,7 @@
   <div class="w-full my-8 px-2 flex flex-start gap-4">
     @if(!purchaseRateData() ) {
     <button
+      *hasPermission="'purchaseRate:create'"
       mat-flat-button
       color="primary"
       cdkFocusInitial
@@ -17,6 +18,7 @@
     </button>
     } @if(!afghanGumrakData() ) {
     <button
+      *hasPermission="'custom:create'"
       mat-flat-button
       color="primary"
       cdkFocusInitial
@@ -26,6 +28,7 @@
     </button>
     } @if(!pakCustomData() ) {
     <button
+      *hasPermission="'custom:create'"
       mat-flat-button
       color="primary"
       cdkFocusInitial
@@ -40,6 +43,7 @@
     title="Purchase Detail"
     [data]="purchaseData()!"
     imageKey="builtyImage"
+    permission="purchase:update"
     class="w-full"
     (edit)="openEditPurchaseDialog(purchaseData().id!)"
   ></app-summary-card>
@@ -48,6 +52,7 @@
     title="Rate Detail"
     [data]="purchaseRateData()!"
     imageKey="builtyImage"
+    permission="purchaseRate:update"
     class="w-full"
     (edit)="openEditRateDialog(purchaseData().id!)"
   ></app-summary-card>
@@ -56,6 +61,7 @@
     title="Afghan Gumrak Detail"
     [data]="afghanGumrakData()!"
     imageKey="customImage"
+    permission="custom:update"
     class="w-full"
     (edit)="openAfghanGumrakDialog()"
   ></app-summary-card>
@@ -64,6 +70,7 @@
     title="Pakistan Custom Detail"
     [data]="pakCustomData()!"
     imageKey="customImage"
+    permission="custom:update"
     class="w-full"
     (edit)="openPakCustomDialog()"
   ></app-summary-card>

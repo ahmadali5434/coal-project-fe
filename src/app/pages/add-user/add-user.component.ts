@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import {
   FormBuilder,
   Validators,
@@ -14,6 +14,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { AuthService } from '../../auth/auth.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { RoleService } from '../setting/role-permission/role.servicet';
+import { Role } from '../setting/role-permission/role.model';
 
 @Component({
   selector: 'app-add-user',
@@ -29,13 +31,15 @@ import { Router } from '@angular/router';
   ],
   templateUrl: './add-user.component.html',
 })
-export class AddUserComponent {
+export class AddUserComponent implements OnInit {
   form: FormGroup;
   hidePasswordField = true;
   hideConfirmPasswordField = true;
   private readonly authService = inject(AuthService);
+  private readonly roleService = inject(RoleService);
   private readonly snackBar = inject(MatSnackBar);
   private readonly router = inject(Router);
+  roles: Role[] = [];
 
   constructor(private fb: FormBuilder) {
     this.form = this.fb.group(
@@ -52,6 +56,17 @@ export class AddUserComponent {
     // if (this.authService.currentUser?.role !== 'admin') {
     //   this.router.navigate(['/']);
     // }
+  }
+  ngOnInit(): void {
+    this.roleService.getRoles().subscribe({
+      next: (roles) => {
+        console.log('Available roles:');
+        roles.forEach((role) => {
+          this.roles = roles;
+        });
+      },
+      error: (err) => console.error('Error fetching roles:', err),
+    });
   }
 
   passwordsMatchValidator(group: FormGroup) {

@@ -97,9 +97,13 @@
     <mat-form-field class="w-full">
       <mat-label>Role</mat-label>
       <mat-select formControlName="role">
-        <mat-option value="user">User</mat-option>
-        <mat-option value="admin">Admin</mat-option>
+        <mat-option *ngFor="let role of roles" [value]="role.name">
+          {{ role.name | titlecase }}
+        </mat-option>
       </mat-select>
+      <mat-error *ngIf="form.controls['role'].hasError('required')">
+        Role is required
+      </mat-error>
     </mat-form-field>
 
     <button
