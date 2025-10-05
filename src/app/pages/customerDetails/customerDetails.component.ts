@@ -22,6 +22,7 @@ import { CustomerService } from '../buy-stock/data-access/customer.service';
 import { Customer } from '../buy-stock/data-access/buy-stock.dto';
 import { HasPermissionDirective } from '../../core/directives/has-permission.directive';
 import { ActionCellRendererComponent } from '../../shared/components/action-cell-renderer/action-cell-renderer.component';
+import { AuthService } from '../../auth/auth.service';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -46,13 +47,17 @@ export class CdetailsComponent implements OnInit {
   private customerService = inject(CustomerService);
   private readonly _snackBar = inject(MatSnackBar);
   private readonly dialog = inject(MatDialog);
-
+  private readonly authService = inject(AuthService);
   customerDetails: Customer[] = [];
-
+CustomerCol: ColDef[] = [];
   gridApi: any;
+  isAdmin = false;
 
   ngOnInit(): void {
+    const currentUser = this.authService.currentUser;
+    this.isAdmin = currentUser?.role === 'admin';
     this.loadCustomers();
+    this.setupColumns();
   }
 
   loadCustomers(): void {
@@ -66,8 +71,8 @@ export class CdetailsComponent implements OnInit {
       error: (err) => console.error('Error fetching customers', err),
     });
   }
-
-  CustomerCol: ColDef[] = [
+ private setupColumns() {
+ this.CustomerCol = [
     { field: 'id', headerName: 'ID', width: 70 },
     {
       field: 'fullName',
@@ -95,35 +100,37 @@ export class CdetailsComponent implements OnInit {
       filter: true,
       width: 180,
     },
-    {
-      headerName: 'Actions',
-      cellRenderer: ActionCellRendererComponent,
-      cellRendererParams: {
-        actions: [
-          {
-            type: 'edit',
-            icon: 'edit',
-            label: 'Edit Customer',
-            permission: 'customer:update',
-            callback: (row: any) => this.onEdit(row),
-          },
-          {
-            type: 'delete',
-            icon: 'delete',
-            label: 'Delete Customer',
-            permission: 'customer:delete',
-            callback: (row: any) => this.onDelete(row),
-          },
-        ],
-      },
-      pinned: 'right',
-      maxWidth: 100,
-      sortable: false,
-      filter: false,
-      resizable: false,
-    },
   ];
-
+  if (this.isAdmin) {
+      this.CustomerCol.push({
+        headerName: 'Actions',
+        cellRenderer: ActionCellRendererComponent,
+        cellRendererParams: {
+          actions: [
+            {
+              type: 'edit',
+              icon: 'edit',
+              label: 'Edit Customer',
+              permission: 'customer:update',
+              callback: (row: any) => this.onEdit(row),
+            },
+            {
+              type: 'delete',
+              icon: 'delete',
+              label: 'Delete Customer',
+              permission: 'customer:delete',
+              callback: (row: any) => this.onDelete(row),
+            },
+          ],
+        },
+        pinned: 'right',
+        maxWidth: 100,
+        sortable: false,
+        filter: false,
+        resizable: false,
+      });
+    }
+ }
   gridOptions: GridOptions = {
     rowHeight: 60,
     rowStyle: {
