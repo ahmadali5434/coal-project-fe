@@ -86,15 +86,17 @@ export class AddUserComponent {
 
     this.authService.adminCreateUser(username, password, role).subscribe({
       next: () => {
-        this.snackBar.open('User created successfully!', 'Close', {
+        const roleName = role === 'admin' ? 'Admin' : 'User';
+        this.snackBar.open(`${roleName} created successfully!`, 'Close',  {
           duration: 3000,
         });
         this.form.reset({ role: 'user' });
       },
       error: (err) => {
-        this.snackBar.open(
-          err.error?.error || 'Failed to create user',
-          'Close',
+          const roleName = role === 'admin' ? 'Admin' : 'User';
+        const message =
+          err.error?.error || `Failed to create ${roleName}`;
+        this.snackBar.open(message, 'Close',
           { duration: 3000 }
         );
       },

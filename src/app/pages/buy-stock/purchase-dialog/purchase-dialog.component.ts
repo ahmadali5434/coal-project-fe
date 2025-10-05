@@ -102,6 +102,8 @@ export class PurchaseDialogComponent implements OnInit {
   // #region State
   selectedImage: string | null = null;
   selectedFile: File | null = null;
+
+  dialogTitle = 'Add Purchase Detail';
   // #endregion
 
   // #region Lifecycle
@@ -116,6 +118,7 @@ export class PurchaseDialogComponent implements OnInit {
     this.purchaseData = this.data?.purchaseData ?? null;
     if (this.purchaseData) {
       this.patchFormData(this.purchaseData);
+      this.dialogTitle = 'Update Purchase Detail';
     }
   }
   // #endregion
@@ -196,13 +199,13 @@ export class PurchaseDialogComponent implements OnInit {
   private updatePurchaseById(id: string, formData: FormData) {
     this.buyStockService.updatePurchase(id, formData).subscribe({
       next: (res: any) => {
-        this._snackBar.open('Purchase saved!', undefined, { duration: 3000 });
+        this._snackBar.open('Purchase updated!', undefined, { duration: 3000 });
         this.resetForm();
         this.dialogRef.close(res.id);
       },
       error: (err) => {
         this._snackBar.open(
-          'Error saving purchase. Please try again.',
+          'Error updating purchase. Please try again.',
           undefined,
           { duration: 3000 }
         );
