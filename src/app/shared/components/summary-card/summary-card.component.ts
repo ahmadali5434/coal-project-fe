@@ -2,13 +2,15 @@ import { CommonModule, } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
+import { HasPermissionDirective } from '../../../core/directives/has-permission.directive';
 
 @Component({
   selector: 'app-summary-card',
   imports: [
     CommonModule,
     MatCardModule,
-    MatIcon, 
+    MatIcon,
+    HasPermissionDirective 
   ],
   templateUrl: './summary-card.component.html',
 })
@@ -17,6 +19,7 @@ export class SummaryCardComponent {
   @Input() data: Record<string, any> = {};
   @Input() imageKey: string | null = null;
 
+  @Input() permission = '';
   @Output() edit = new EventEmitter<void>();
 
   objectKeys(obj: any): string[] {

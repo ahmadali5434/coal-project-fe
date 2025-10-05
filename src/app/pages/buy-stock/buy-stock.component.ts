@@ -21,6 +21,7 @@ import { SummaryCardComponent } from '../../shared/components/summary-card/summa
 import { RateDialogComponent } from './rate-dialog/rate-dialog.component';
 import { PurchaseDialogComponent } from './purchase-dialog/purchase-dialog.component';
 import { ActivatedRoute, Router } from '@angular/router';
+import { HasPermissionDirective } from "../../core/directives/has-permission.directive";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 @Component({
@@ -39,7 +40,8 @@ ModuleRegistry.registerModules([AllCommunityModule]);
     MatSnackBarModule,
     MatDividerModule,
     SummaryCardComponent,
-  ],
+    HasPermissionDirective
+],
   templateUrl: './buy-stock.component.html',
 })
 export class BuyStockComponent implements OnInit {
