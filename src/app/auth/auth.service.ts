@@ -30,9 +30,9 @@ export class AuthService {
 
   // ------------------- AUTH APIS -------------------
 
-  login(email: string, password: string): Observable<AuthResponse> {
+  login(username: string, password: string): Observable<AuthResponse> {
     return this.http
-      .post<AuthResponse>(`${this.apiUrl}/login`, { email, password })
+      .post<AuthResponse>(`${this.apiUrl}/login`, { username, password })
       .pipe(
         tap((res) => {
           this.setSession(res);
@@ -41,10 +41,10 @@ export class AuthService {
       );
   }
 
-  register(email: string, password: string) {
+  register(username: string, password: string) {
     return this.http.post<{ message: string; user: User }>(
       `${this.apiUrl}/register`,
-      { email, password }
+      { username, password }
     );
   }
 
@@ -52,7 +52,7 @@ export class AuthService {
     const token = localStorage.getItem('accessToken');
     return this.http.post<{ message: string; user: User }>(
       `${this.apiUrl}/admin/create`,
-      { email: username, password, role },
+      { username: username, password, role },
       { headers: { Authorization: `Bearer ${token}` } }
     );
   }
@@ -112,8 +112,8 @@ export class AuthService {
   // ------------------- SESSION MANAGEMENT -------------------
 
   private setSession(res: AuthResponse) {
-    const { id, email, role, accessToken, refreshToken } = res.data;
-    const user: User = { id, email, role };
+    const { id, username, role, accessToken, refreshToken } = res.data;
+    const user: User = { id, username, role };
 
     localStorage.setItem('user', JSON.stringify(user));
     localStorage.setItem('accessToken', accessToken);
