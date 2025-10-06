@@ -1,6 +1,6 @@
 export interface User {
   id: string;
-  email: string;
+  username: string;
   role: 'user' | 'admin';
 }
 
@@ -8,7 +8,7 @@ export interface AuthResponse {
   success: boolean;
   data: {
     id: string;
-    email: string;
+    username: string;
     role: 'user' | 'admin';
     accessToken: string;
     refreshToken: string;
