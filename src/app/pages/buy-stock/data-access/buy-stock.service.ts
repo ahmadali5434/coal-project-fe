@@ -93,7 +93,7 @@ export class BuyStockService {
   }
 
   getIncompletePurchases(): PurchaseWithDetails[] {
-    return this.purchaseEntries.filter((e) => e.status === 'partial');
+    return this.purchaseEntries.filter((e) => e.status === 'initial_purchase');
   }
 
   // ----------------- CUSTOM ENTRIES -----------------

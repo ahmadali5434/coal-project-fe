@@ -168,7 +168,7 @@ export class PurchaseDialogComponent implements OnInit {
       purchaseDate: formValue.purchaseDate
         ? new Date(formValue.purchaseDate).toISOString()
         : null,
-      //status: 'partial',
+      //status: 'initial_purchase',
     };
     const formData = toFormData(payload);
     const purchaseId = this.purchaseData?.id;
