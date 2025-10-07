@@ -17,7 +17,10 @@
           class="h-60 flex flex-col justify-between relative"
         >
           <mat-card-content>
-            <div class="absolute top-2 right-2">
+                <div
+              class="absolute top-2 right-2"
+              *ngIf="canManageWarehouse" 
+            >
               <button mat-icon-button [matMenuTriggerFor]="menu">
                 <mat-icon>more_vert</mat-icon>
               </button>

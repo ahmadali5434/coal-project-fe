@@ -183,6 +183,9 @@ export class AuthService {
     return this.userSubject.value;
   }
 
+  get isAdmin():boolean{
+    return this.userSubject.value?.role === 'admin';
+  }
   isLoggedIn(): boolean {
     return !!this.accessToken;
   }
