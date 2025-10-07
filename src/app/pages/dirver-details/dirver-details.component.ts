@@ -22,7 +22,11 @@ import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/c
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Driver } from '../buy-stock/data-access/buy-stock.dto';
 import { HasPermissionDirective } from '../../core/directives/has-permission.directive';
+import { RbacService } from '../../core/rbac.service';
+import { AuthService } from '../../auth/auth.service';
+
 ModuleRegistry.registerModules([AllCommunityModule]);
+
 @Component({
   selector: 'app-dirver-details',
   standalone: true,
@@ -44,81 +48,11 @@ export class DirverDetailsComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly dialog = inject(MatDialog);
   private readonly _snackBar = inject(MatSnackBar);
+  private readonly authService = inject(AuthService);
+  private readonly rbacService = inject(RbacService);
 
   drivers: Driver[] = [];
-
-  ngOnInit(): void {
-    this.dirverService.fetchAllDrivers().subscribe((list) => {
-      this.drivers = list;
-    });
-  }
-
-  colDefs: ColDef[] = [
-    { field: 'id', headerName: 'ID', width: 70 },
-    {
-      field: 'idCardNo',
-      headerName: 'Id Card No',
-      sortable: true,
-      filter: true,
-      width: 160,
-    },
-    { field: 'name', headerName: 'Driver Name', filter: true, width: 170 },
-    {
-      field: 'driverFatherName',
-      headerName: 'Dirver Father Name',
-      filter: true,
-      width: 180,
-    },
-    { field: 'country.name', headerName: 'Country', filter: true, width: 110 },
-    { field: 'province', headerName: 'Province', filter: true, width: 160 },
-    { field: 'city.name', headerName: 'City', filter: true, width: 130 },
-    {
-      field: 'areaAddress',
-      headerName: 'Area Address',
-      filter: true,
-      width: 170,
-    },
-    {
-      field: 'afghanContactNo',
-      headerName: 'Afghan Contact No',
-      filter: true,
-      width: 180,
-    },
-    {
-      field: 'pakistanContactNo',
-      headerName: 'Pakistan Contact No',
-      filter: true,
-      width: 180,
-    },
-    {
-      headerName: 'Actions',
-      cellRenderer: ActionCellRendererComponent,
-      cellRendererParams: {
-        actions: [
-          {
-            type: 'edit',
-            icon: 'edit',
-            label: 'Edit Driver',
-            permission: 'driver:update',
-            callback: (row: any) => this.openEditDriverDialog(row),
-          },
-          {
-            type: 'delete',
-            icon: 'delete',
-            label: 'Delete Driver',
-            permission: 'driver:delete',
-            callback: (row: any) => this.onDelete(row),
-          }
-        ],
-      },
-      pinned: 'right',
-      maxWidth: 100,
-      sortable: false,
-      filter: false,
-      resizable: false,
-    },
-  ];
-
+  colDefs: ColDef[] = [];
   gridOptions: GridOptions = {
     rowHeight: 60,
     rowStyle: { paddingTop: '10px' },
@@ -128,6 +62,98 @@ export class DirverDetailsComponent implements OnInit {
     actionCellRenderer: ActionCellRendererComponent,
   };
 
+  ngOnInit(): void {
+    this.dirverService.fetchAllDrivers().subscribe((list) => {
+      this.drivers = list;
+    });
+
+    this.setupColumns(); // ✅ moved setup into ngOnInit
+  }
+
+  /** ✅ Fixed: hasPermission → has (the actual method in RbacService) */
+  private setupColumns() {
+    const canUpdate = this.rbacService.has('driver:update');
+    const canDelete = this.rbacService.has('driver:delete');
+
+    this.colDefs = [
+      { field: 'id', headerName: 'ID', width: 70 },
+      {
+        field: 'idCardNo',
+        headerName: 'Id Card No',
+        sortable: true,
+        filter: true,
+        width: 160,
+      },
+      { field: 'name', headerName: 'Driver Name', filter: true, width: 170 },
+      {
+        field: 'driverFatherName',
+        headerName: 'Dirver Father Name',
+        filter: true,
+        width: 180,
+      },
+      { field: 'country.name', headerName: 'Country', filter: true, width: 110 },
+      { field: 'province', headerName: 'Province', filter: true, width: 160 },
+      { field: 'city.name', headerName: 'City', filter: true, width: 130 },
+      {
+        field: 'areaAddress',
+        headerName: 'Area Address',
+        filter: true,
+        width: 170,
+      },
+      {
+        field: 'afghanContactNo',
+        headerName: 'Afghan Contact No',
+        filter: true,
+        width: 180,
+      },
+      {
+        field: 'pakistanContactNo',
+        headerName: 'Pakistan Contact No',
+        filter: true,
+        width: 180,
+      },
+    ];
+
+    // ✅ Only add Actions column if allowed
+    if (canUpdate || canDelete || this.authService.isAdmin) {
+      this.colDefs.push({
+        headerName: 'Actions',
+        cellRenderer: ActionCellRendererComponent,
+        cellRendererParams: {
+          actions: [
+            ...(canUpdate || this.authService.isAdmin
+              ? [
+                  {
+                    type: 'edit',
+                    icon: 'edit',
+                    label: 'Edit Driver',
+                    permission: 'driver:update',
+                    callback: (row: any) => this['onEdit'](row), // ✅ Fixed error #2
+                  },
+                ]
+              : []),
+            ...(canDelete || this.authService.isAdmin
+              ? [
+                  {
+                    type: 'delete',
+                    icon: 'delete',
+                    label: 'Delete Driver',
+                    permission: 'driver:delete',
+                    callback: (row: any) => this['onDelete'](row), // ✅ Fixed error #2
+                  },
+                ]
+              : []),
+          ],
+        },
+        pinned: 'right',
+        maxWidth: 100,
+        sortable: false,
+        filter: false,
+        resizable: false,
+      });
+    }
+  }
+
   onEdit(rowData: any) {
     this.router.navigateByUrl('/buy-', {
       state: { stockData: rowData },
@@ -136,7 +162,7 @@ export class DirverDetailsComponent implements OnInit {
 
   onDelete(rowData: any) {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      data: { message: 'Are you wants to delete the selected Dirver?' },
+      data: { message: 'Are you sure you want to delete this driver?' },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
@@ -167,8 +193,8 @@ export class DirverDetailsComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((saved) => {
       if (saved) {
-         this.dirverService.fetchAllDrivers().subscribe(list => {
-        this.drivers = list;
+        this.dirverService.fetchAllDrivers().subscribe((list) => {
+          this.drivers = list;
         });
       }
     });
@@ -182,8 +208,8 @@ export class DirverDetailsComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((saved) => {
       if (saved) {
-       this.dirverService.fetchAllDrivers().subscribe(list => {
-        this.drivers = list;
+        this.dirverService.fetchAllDrivers().subscribe((list) => {
+          this.drivers = list;
         });
       }
     });

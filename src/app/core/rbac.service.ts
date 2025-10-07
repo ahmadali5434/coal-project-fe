@@ -27,7 +27,9 @@ export class RbacService {
     this._permissions.set([]);
     localStorage.removeItem('permissions');
   }
-
+ hasPermission(permission: string): boolean {
+    return this._permissions().includes(permission);
+  }
   /** Check a single permission */
   has(permission: string): boolean {
     return this._permissions().includes(permission);

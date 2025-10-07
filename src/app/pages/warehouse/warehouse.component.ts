@@ -16,6 +16,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog.component';
 import { HasPermissionDirective } from "../../core/directives/has-permission.directive";
+import { RbacService } from '../../core/rbac.service'; // ✅ Added import
+
 @Component({
   selector: 'app-warehouses',
   imports: [
@@ -33,10 +35,18 @@ export class WarehouseComponent implements OnInit {
   private readonly warehouseService = inject(WarehouseService);
   private readonly locationService = inject(LocationService);
   private readonly snackBar = inject(MatSnackBar);
+  private readonly rbacService = inject(RbacService); // ✅ Injected here
 
   protected warehousesDetail: Warehouse[] = [];
   private countries: Country[] = [];
   private cities: City[] = [];
+
+  get canManageWarehouse(): boolean {
+  return (
+    this.rbacService.hasPermission('warehouse:update') ||
+    this.rbacService.hasPermission('warehouse:delete')
+  );
+  }
 
   addNewWarehouse() {
     const dialogRef = this.dialog.open(AddNewWarehouseDialogComponent, {

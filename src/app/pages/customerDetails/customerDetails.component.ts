@@ -22,6 +22,8 @@ import { CustomerService } from '../buy-stock/data-access/customer.service';
 import { Customer } from '../buy-stock/data-access/buy-stock.dto';
 import { HasPermissionDirective } from '../../core/directives/has-permission.directive';
 import { ActionCellRendererComponent } from '../../shared/components/action-cell-renderer/action-cell-renderer.component';
+import { AuthService } from '../../auth/auth.service';
+import { RbacService } from '../../core/rbac.service';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -42,17 +44,19 @@ ModuleRegistry.registerModules([AllCommunityModule]);
   templateUrl: './customerDetails.component.html',
 })
 export class CdetailsComponent implements OnInit {
-  [x: string]: any;
   private customerService = inject(CustomerService);
   private readonly _snackBar = inject(MatSnackBar);
   private readonly dialog = inject(MatDialog);
+  private readonly authService = inject(AuthService);
+  private readonly rbacService = inject(RbacService);
 
   customerDetails: Customer[] = [];
-
+  CustomerCol: ColDef[] = [];
   gridApi: any;
 
   ngOnInit(): void {
     this.loadCustomers();
+    this.setupColumns();
   }
 
   loadCustomers(): void {
@@ -67,62 +71,76 @@ export class CdetailsComponent implements OnInit {
     });
   }
 
-  CustomerCol: ColDef[] = [
-    { field: 'id', headerName: 'ID', width: 70 },
-    {
-      field: 'fullName',
-      headerName: 'Customer Name',
-      sortable: true,
-      filter: true,
-      width: 180,
-    },
-    {
-      field: 'country.name',
-      headerName: 'County ',
-      filter: true,
-      width: 180,
-    },
-    { field: 'city.name', headerName: 'City', filter: true, width: 160 },
-    {
-      field: 'address',
-      headerName: 'Area Address',
-      filter: true,
-      width: 190,
-    },
-    {
-      field: 'phoneNumber',
-      headerName: 'Phone No',
-      filter: true,
-      width: 180,
-    },
-    {
-      headerName: 'Actions',
-      cellRenderer: ActionCellRendererComponent,
-      cellRendererParams: {
-        actions: [
-          {
-            type: 'edit',
-            icon: 'edit',
-            label: 'Edit Customer',
-            permission: 'customer:update',
-            callback: (row: any) => this.onEdit(row),
-          },
-          {
-            type: 'delete',
-            icon: 'delete',
-            label: 'Delete Customer',
-            permission: 'customer:delete',
-            callback: (row: any) => this.onDelete(row),
-          },
-        ],
+  private setupColumns() {
+    this.CustomerCol = [
+      { field: 'id', headerName: 'ID', width: 70 },
+      {
+        field: 'fullName',
+        headerName: 'Customer Name',
+        sortable: true,
+        filter: true,
+        width: 180,
       },
-      pinned: 'right',
-      maxWidth: 100,
-      sortable: false,
-      filter: false,
-      resizable: false,
-    },
-  ];
+      {
+        field: 'country.name',
+        headerName: 'County ',
+        filter: true,
+        width: 180,
+      },
+      { field: 'city.name', headerName: 'City', filter: true, width: 160 },
+      {
+        field: 'address',
+        headerName: 'Area Address',
+        filter: true,
+        width: 190,
+      },
+      {
+        field: 'phoneNumber',
+        headerName: 'Phone No',
+        filter: true,
+        width: 180,
+      },
+    ];
+    const canUpdate = this.rbacService.has('customer:update');
+    const canDelete = this.rbacService.has('customer:delete');
+    if (canUpdate || canDelete) {
+      this.CustomerCol.push({
+        headerName: 'Actions',
+        cellRenderer: ActionCellRendererComponent,
+        cellRendererParams: {
+          actions: [
+            ...(canUpdate
+              ? [
+                  {
+                    type: 'edit',
+                    icon: 'edit',
+                    label: 'Edit Customer',
+                    permission: 'customer:update',
+                    callback: (row: any) => this.onEdit(row),
+                  },
+                ]
+              : []),
+            ...(canDelete
+              ? [
+                  {
+                    type: 'delete',
+                    icon: 'delete',
+                    label: 'Delete Customer',
+                    permission: 'customer:delete',
+                    callback: (row: any) => this.onDelete(row),
+                  },
+                ]
+              : []),
+          ],
+        },
+        pinned: 'right',
+        maxWidth: 100,
+        sortable: false,
+        filter: false,
+        resizable: false,
+      });
+    }
+  }
 
   gridOptions: GridOptions = {
     rowHeight: 60,
@@ -160,14 +178,12 @@ export class CdetailsComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((confirmed) => {
       if (confirmed) {
-        this.customerService
-          .deleteCustomer(String(rowData.id))
-          .subscribe(() => {
-            this._snackBar.open('Customer deleted successfully!', 'Close', {
-              duration: 3000,
-            });
-            this.loadCustomers();
+        this.customerService.deleteCustomer(String(rowData.id)).subscribe(() => {
+          this._snackBar.open('Customer deleted successfully!', 'Close', {
+            duration: 3000,
           });
+          this.loadCustomers();
+        });
       }
     });
   }
