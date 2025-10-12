@@ -54,7 +54,7 @@ export interface PurchaseRate {
 // ----------------- PURCHASE STATUS -----------------
 
 export type PurchaseStatus =
-  | 'partial'
+  | 'initial_purchase'
   | 'rate_added'
   | 'gumrak_added'
   | 'custom_added'
