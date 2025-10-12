@@ -34,13 +34,17 @@ export class BuyStockService {
     );
   }
 
-  getPurchases(): Observable<PurchaseWithDetails[]> {
+  getPurchases(filters?: { status?: string }): Observable<PurchaseWithDetails[]> {
+    const params = new URLSearchParams();
+    if (filters?.status) params.append('status', filters.status);
+  
+    const url = `${this.apiBaseUrl}/purchase-entries?${params.toString()}`;
+  
     return this.http
-      .get<ApiResponse<PurchaseWithDetails[]>>(
-        `${this.apiBaseUrl}/purchase-entries`
-      )
+      .get<ApiResponse<PurchaseWithDetails[]>>(url)
       .pipe(map((res) => res.data ?? []));
   }
+  
 
   getPurchase(purchaseId: string): Observable<PurchaseWithDetails | null> {
     return this.http
@@ -54,6 +58,42 @@ export class BuyStockService {
     return this.http.delete<void>(
       `${this.apiBaseUrl}/purchase-entries/${purchaseId}`
     );
+  }
+
+  // ----------------- PURCHASE COUNT -----------------
+
+  getPurchaseCount(filters?: {
+    warehouseId?: number;
+    vendorId?: number;
+    fromDate?: string;
+    toDate?: string;
+    status?: string;
+  }): Observable<number> {
+    const params = new URLSearchParams();
+
+    if (filters?.warehouseId)
+      params.append('warehouseId', filters.warehouseId.toString());
+    if (filters?.vendorId)
+      params.append('vendorId', filters.vendorId.toString());
+    if (filters?.fromDate) params.append('fromDate', filters.fromDate);
+    if (filters?.toDate) params.append('toDate', filters.toDate);
+    if (filters?.status) params.append('status', filters.status);
+
+    const url = `${
+      this.apiBaseUrl
+    }/purchase-entries/count?${params.toString()}`;
+
+    return this.http
+      .get<ApiResponse<{ count: number }>>(url)
+      .pipe(map((res) => res.data?.count ?? 0));
+  }
+
+  getPurchaseCountByStatus(): Observable<Record<string, number>> {
+    return this.http
+      .get<ApiResponse<Record<string, number>>>(
+        `${this.apiBaseUrl}/purchase-entries/status-count`
+      )
+      .pipe(map((res) => res.data ?? {}));
   }
 
   // ----------------- PURCHASE RATE (1:1) -----------------

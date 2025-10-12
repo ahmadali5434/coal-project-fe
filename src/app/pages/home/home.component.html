@@ -1,16 +1,30 @@
-<div class="content" class="flex flex-col" style="width: 100%; height: 100%">
-  <div class="flex py-4 px-6 justify-between">
+<div class="p-6 space-y-8">
+  <!-- === Status Cards === -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
     <div
-      class="flex justify-between items-center text-[#101828] text-lg font-medium"
+      *ngFor="let stat of purchaseStats()"
+      class="rounded-2xl p-5 text-white shadow cursor-pointer transition-transform hover:scale-105"
+      [style.background-color]="stat.color"
+      [class.opacity-50]="selectedStatus() === stat.status"
+      (click)="filterByStatus(stat.status)"
     >
-      Total No. of stocks
-      <span
-        class="text-xs bg-blue-50 text-blue-900 px-3 py-0.5 rounded-2xl ml-2"
-      >
-        {{ purchaseStockData().length }} stocks</span
-      >
+      <div class="text-lg font-semibold">{{ stat.title }}</div>
+      <div class="text-3xl font-bold mt-2">{{ stat.count }}</div>
     </div>
-    <button
+  </div>
+
+  <!-- === Filter Info + Reset Button === -->
+  <div class="flex flex-row-reverse justify-between items-center mt-6">
+    <div class="flex gap-2">
+      <button
+      *ngIf="selectedStatus()"
+      mat-stroked-button
+      color="primary"
+      (click)="resetFilter()"
+    >
+      Show All
+    </button>
+      <button
       *hasPermission="'purchase:create'"
       mat-flat-button
       color="primary"
@@ -19,13 +33,28 @@
     >
       Buy Stock
     </button>
+    </div>
+    <div *ngIf="selectedStatus()" class="text-gray-700 text-sm">
+      Showing purchases with status:
+      <span class="font-semibold text-blue-700">{{ selectedStatus() }}</span>
+    </div>
+    
   </div>
-  <ag-grid-angular
+
+  <!-- === Purchase Table === -->
+  <div *ngIf="purchaseList().length > 0" class="mt-8">
+    <ag-grid-angular
     style="width: 100%; height: 90vh"
-    [rowData]="purchaseStockData()"
+    [rowData]="purchaseList()"
     [gridOptions]="gridOptions"
     [columnDefs]="colDefs"
     [theme]="'legacy'"
     class="ag-theme-alpine"
   />
+  </div>
+
+  <!-- === Empty State === -->
+  <div *ngIf="purchaseList().length === 0" class="text-center text-gray-500 py-12">
+    <p>No purchases found for the selected status.</p>
+  </div>
 </div>
