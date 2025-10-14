@@ -13,44 +13,53 @@
     </div>
   </div>
 
-  <!-- === Filter Info + Reset Button === -->
+  <!-- === Filter Info + Buttons === -->
   <div class="flex flex-row-reverse justify-between items-center mt-6">
     <div class="flex gap-2">
-      <button
-      *ngIf="selectedStatus()"
-      mat-stroked-button
-      color="primary"
-      (click)="resetFilter()"
-    >
-      Show All
-    </button>
-      <button
-      *hasPermission="'purchase:create'"
-      mat-flat-button
-      color="primary"
-      cdkFocusInitial
-      (click)="onBuyStock()"
-    >
-      Buy Stock
-    </button>
+      <button *ngIf="selectedStatus()" mat-stroked-button color="primary" (click)="resetFilter()">
+        Show All
+      </button>
+      <button *hasPermission="'purchase:create'" mat-flat-button color="primary" cdkFocusInitial (click)="onBuyStock()">
+        Buy Stock
+      </button>
     </div>
     <div *ngIf="selectedStatus()" class="text-gray-700 text-sm">
       Showing purchases with status:
       <span class="font-semibold text-blue-700">{{ selectedStatus() }}</span>
     </div>
-    
   </div>
 
-  <!-- === Purchase Table === -->
+  <!-- === Table === -->
   <div *ngIf="purchaseList().length > 0" class="mt-8">
     <ag-grid-angular
-    style="width: 100%; height: 90vh"
-    [rowData]="purchaseList()"
-    [gridOptions]="gridOptions"
-    [columnDefs]="colDefs"
-    [theme]="'legacy'"
-    class="ag-theme-alpine"
-  />
+      style="width: 100%; height: 75vh"
+      [rowData]="purchaseList()"
+      [gridOptions]="gridOptions"
+      [columnDefs]="colDefs"
+      [theme]="'legacy'"
+      class="ag-theme-alpine"
+    ></ag-grid-angular>
+
+    <!-- === Pagination Controls === -->
+    <div class="flex justify-between items-center mt-4 px-4">
+      <button mat-stroked-button color="primary" [disabled]="currentPage() === 1" (click)="prevPage()">
+        Previous
+      </button>
+
+      <div class="text-sm text-gray-600">
+        Page {{ currentPage() }} of {{ totalPages() }} —
+        Total Records: {{ totalRecords() }}
+      </div>
+
+      <button
+        mat-stroked-button
+        color="primary"
+        [disabled]="currentPage() === totalPages()"
+        (click)="nextPage()"
+      >
+        Next
+      </button>
+    </div>
   </div>
 
   <!-- === Empty State === -->

@@ -3,10 +3,11 @@ import {
   CustomEntry,
   PurchaseRate,
   PurchaseWithDetails,
+  ApiResponse,
+  ApiPaginatedResponse,
 } from './buy-stock.dto';
 import { environment } from '../../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
-import { ApiResponse } from './buy-stock.dto'; // using the unified ApiResponse<T>
 import { map, Observable } from 'rxjs';
 
 @Injectable({
@@ -34,17 +35,25 @@ export class BuyStockService {
     );
   }
 
-  getPurchases(filters?: { status?: string }): Observable<PurchaseWithDetails[]> {
-    const params = new URLSearchParams();
-    if (filters?.status) params.append('status', filters.status);
-  
-    const url = `${this.apiBaseUrl}/purchase-entries?${params.toString()}`;
-  
-    return this.http
-      .get<ApiResponse<PurchaseWithDetails[]>>(url)
-      .pipe(map((res) => res.data ?? []));
+  getPurchases(params?: {
+    status?: string;
+    page?: number;
+    pageSize?: number;
+  }): Observable<{ data: PurchaseWithDetails[]; pagination: any }> {
+    const searchParams = new URLSearchParams();
+    if (params?.status) searchParams.append('status', params.status);
+    if (params?.page) searchParams.append('page', params.page.toString());
+    if (params?.pageSize) searchParams.append('pageSize', params.pageSize.toString());
+
+    const url = `${this.apiBaseUrl}/purchase-entries?${searchParams.toString()}`;
+
+    return this.http.get<ApiPaginatedResponse<any>>(url).pipe(
+      map((res) => ({
+        data: res.data ?? [],
+        pagination: res.pagination ?? {},
+      }))
+    );
   }
-  
 
   getPurchase(purchaseId: string): Observable<PurchaseWithDetails | null> {
     return this.http

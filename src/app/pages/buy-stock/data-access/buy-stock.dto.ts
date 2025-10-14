@@ -154,6 +154,18 @@ export interface CreateOrUpdateWarehousePayload {
 
 export interface ApiResponse<T> {
   success: boolean;
-  data: T;
   message?: string;
+  data: T;
+}
+
+export interface ApiPaginatedResponse<T> {
+  success: boolean;
+  message?: string;
+  data?: T;
+  pagination?: {
+    total: number;
+    page: number;
+    pageSize: number;
+    totalPages: number;
+  };
 }
