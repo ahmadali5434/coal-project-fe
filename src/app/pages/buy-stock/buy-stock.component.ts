@@ -22,6 +22,7 @@ import { RateDialogComponent } from './rate-dialog/rate-dialog.component';
 import { PurchaseDialogComponent } from './purchase-dialog/purchase-dialog.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HasPermissionDirective } from "../../core/directives/has-permission.directive";
+import { GumrakFormComponent } from './gumrak-form/gumrak-form.component';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 @Component({
@@ -158,9 +159,9 @@ export class BuyStockComponent implements OnInit {
   
 
   openAfghanGumrakDialog() {
-    const dialogRef = this.dialog.open(CustomDialogComponent, {
-      panelClass: 'dialog-container-md',
-      data: {type: 'afghan'},
+    const dialogRef = this.dialog.open(GumrakFormComponent, {
+      panelClass: 'dialog-container-lg',
+      data: { purchaseData: this.purchaseData() },
     });
     dialogRef.afterClosed().subscribe((result) => {});
   }

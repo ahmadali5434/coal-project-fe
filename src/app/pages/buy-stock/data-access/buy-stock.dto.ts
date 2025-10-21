@@ -77,6 +77,22 @@ export interface CustomEntry {
   customImage: string;
 }
 
+// ----------------- GUMRAK ENTRY -----------------
+export interface GumrakEntry {
+  id?: number;
+  purchaseEntryId?: number;
+  islamicDate: string;
+  englishDate: string;
+  invoice: string;
+  spendAfg: string; // Stored as string/numeric in DB
+  product: string;
+  shTax: string;
+  totalAmount: string;
+  gumrakImage?: File | null;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
 // ----------------- CUSTOMER -----------------
 
 export interface Customer {
