@@ -29,25 +29,22 @@ export class LayoutComponent implements OnInit {
   private readonly authService = inject(AuthService);
   private readonly activatedRoute = inject(ActivatedRoute);
 
-  sidebarOpen = true;
   sidebarExpanded = true;
-  isMobile = false;
   isDesktop = window.innerWidth >= 1024;
   headerTitle = 'Coal Project';
   breadcrumbs: { label: string; url: string }[] = [];
 
   ngOnInit() {
-    this.checkScreenSize();
+    this.updateLayoutState();
+  
     const savedSidebarState = localStorage.getItem('sidebarExpanded');
     if (savedSidebarState !== null) {
       this.sidebarExpanded = savedSidebarState === 'true';
     }
-    this.sidebarOpen = this.isDesktop;
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
-      .subscribe(() => {
-        this.setBreadcrumbs();
-      });
+      .subscribe(() => 
+        this.setBreadcrumbs());
     this.setBreadcrumbs();
   }
 
@@ -56,29 +53,22 @@ export class LayoutComponent implements OnInit {
     this.router.navigate(['/login']);
   }
 
-  toggleSidebar() {
-    this.sidebarOpen = !this.sidebarOpen;
-  }
-
   toggleSidebarExpand() {
+    if (!this.isDesktop) return;
     this.sidebarExpanded = !this.sidebarExpanded;
     localStorage.setItem('sidebarExpanded', this.sidebarExpanded.toString());
   }
 
   @HostListener('window:resize')
   onResize() {
-    this.checkScreenSize();
+    this.updateLayoutState();
   }
-
-  private checkScreenSize() {
-    this.isDesktop = window.innerWidth >= 1024;
-    this.isMobile = window.innerWidth < 1024;
-    if (this.isMobile) {
-      this.sidebarOpen = false;
-    } else {
-      this.sidebarOpen = true;
-    }
+private updateLayoutState(){
+  this.isDesktop = window.innerWidth >= 1024;
+  if (!this.isDesktop) {
+    this.sidebarExpanded = false;
   }
+}
 
   private setBreadcrumbs() {
     this.breadcrumbs = this.buildBreadcrumbs(this.activatedRoute.root);
