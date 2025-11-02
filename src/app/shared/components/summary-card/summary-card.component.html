@@ -35,8 +35,9 @@
       <span>{{ prettifyKey(imageKey) }}:</span><br />
       <img
         [src]="data[imageKey]"
-        class="h-60 object-cover rounded mt-2"
+        class="h-60 object-cover rounded mt-2 cursor-pointer"
         alt="Image"
+         (click)="openImage(data[imageKey]);" 
       />
     </div>
     }

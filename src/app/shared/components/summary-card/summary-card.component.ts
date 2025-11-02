@@ -1,8 +1,10 @@
 import { CommonModule, } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import { HasPermissionDirective } from '../../../core/directives/has-permission.directive';
+import { DownloadImgComponent } from '../../../pages/download-img/download-img.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-summary-card',
@@ -21,7 +23,7 @@ export class SummaryCardComponent {
 
   @Input() permission = '';
   @Output() edit = new EventEmitter<void>();
-
+private readonly dialog = inject(MatDialog);
   objectKeys(obj: any): string[] {
     return obj ? Object.keys(obj) : [];
   }
@@ -56,7 +58,16 @@ export class SummaryCardComponent {
     }
     return value;
   }
+openImage(imageUrl: string) {
+    if (!imageUrl) return;
 
+    this.dialog.open(DownloadImgComponent, {
+      data: { imageUrl, fileName: 'summary-image' },
+      panelClass: 'full-screen-dialog',
+      width: '100vw',
+      height: '100vh',
+    });
+  }
   onEdit() {
     this.edit.emit();
   }
