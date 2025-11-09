@@ -66,6 +66,7 @@ export interface PurchaseWithDetails {
   id?: string;
   purchase: Purchase;
   purchaseRate?: PurchaseRate | null;   // single object (1:1)
+  gumrakEntry?: GumrakEntry | null;
   status: PurchaseStatus;
 }
 
@@ -75,6 +76,22 @@ export interface CustomEntry {
   paymentDate: string;
   customAmount: number;
   customImage: string;
+}
+
+// ----------------- GUMRAK ENTRY -----------------
+export interface GumrakEntry {
+  id?: number;
+  purchaseEntryId?: number;
+  islamicDate: string;
+  englishDate: string;
+  invoice: string;
+  spendAfg: string; // Stored as string/numeric in DB
+  product: string;
+  shTax: string;
+  totalAmount: string;
+  gumrakImage?: File | null;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 // ----------------- CUSTOMER -----------------

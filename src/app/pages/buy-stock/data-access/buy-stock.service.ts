@@ -3,10 +3,11 @@ import {
   CustomEntry,
   PurchaseRate,
   PurchaseWithDetails,
+  ApiResponse,
+  GumrakEntry,
 } from './buy-stock.dto';
 import { environment } from '../../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
-import { ApiResponse } from './buy-stock.dto'; // using the unified ApiResponse<T>
 import { map, Observable } from 'rxjs';
 
 @Injectable({
@@ -126,6 +127,58 @@ export class BuyStockService {
     );
   }
 
+  // ----------------- GUMRAK ENTRY (1:1 with File Upload) -----------------
+
+  /**
+   * GET /purchase-entries/:purchaseId/gumrak
+   * Retrieves the Gumrak entry for a specific purchase.
+   */
+  getGumrakEntry(purchaseId: string): Observable<GumrakEntry | null> {
+    return this.http
+      .get<ApiResponse<GumrakEntry>>(
+        `${this.apiBaseUrl}/purchase-entries/${purchaseId}/gumrak`
+      )
+      .pipe(map((res) => res.data ?? null));
+  }
+
+  /**
+   * POST /purchase-entries/:purchaseId/gumrak
+   * Creates a new Gumrak entry. Requires FormData because of the potential 'gumrakImage' file.
+   *
+   * @param purchaseId The ID of the parent purchase entry.
+   * @param gumrakData A FormData object containing the fields and the 'gumrakImage' file.
+   */
+  createGumrakEntry(purchaseId: string, gumrakData: FormData) {
+    return this.http.post<ApiResponse<GumrakEntry>>(
+      `${this.apiBaseUrl}/purchase-entries/${purchaseId}/gumrak`,
+      gumrakData
+    );
+  }
+
+  /**
+   * PUT /purchase-entries/:purchaseId/gumrak
+   * Updates an existing Gumrak entry. Requires FormData because of the potential 'gumrakImage' file.
+   *
+   * @param purchaseId The ID of the parent purchase entry.
+   * @param gumrakData A FormData object containing the fields and the optional new 'gumrakImage' file.
+   */
+  updateGumrakEntry(purchaseId: string, gumrakData: FormData) {
+    return this.http.put<ApiResponse<GumrakEntry>>(
+      `${this.apiBaseUrl}/purchase-entries/${purchaseId}/gumrak`,
+      gumrakData
+    );
+  }
+
+  /**
+   * DELETE /purchase-entries/:purchaseId/gumrak
+   * Deletes the Gumrak entry for a specific purchase.
+   */
+  deleteGumrakEntry(purchaseId: string): Observable<ApiResponse<void>> {
+    return this.http.delete<ApiResponse<void>>(
+      `${this.apiBaseUrl}/purchase-entries/${purchaseId}/gumrak`
+    );
+  }
+
   // ----------------- HELPERS -----------------
 
   getCompletedPurchases(): PurchaseWithDetails[] {
@@ -138,14 +191,4 @@ export class BuyStockService {
 
   // ----------------- CUSTOM ENTRIES -----------------
 
-  afghanGumrakData = signal<CustomEntry | null>(null);
-  pakCustomData = signal<CustomEntry | null>(null);
-
-  setAfghanGumrakData(data: CustomEntry) {
-    this.afghanGumrakData.set(data);
-  }
-
-  setPakCustomData(data: CustomEntry) {
-    this.pakCustomData.set(data);
-  }
 }

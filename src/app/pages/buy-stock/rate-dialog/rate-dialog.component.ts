@@ -47,7 +47,7 @@ export class RateDialogComponent implements OnInit {
         disabled: true,
       }),
       driverName: new FormControl({
-        value: purchase?.driverName ?? '',
+        value: rateData ? purchase?.driver?.name : purchase?.driverName ?? '',
         disabled: true,
       }),
       metricTon: new FormControl({
