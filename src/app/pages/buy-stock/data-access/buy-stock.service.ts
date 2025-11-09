@@ -191,14 +191,4 @@ export class BuyStockService {
 
   // ----------------- CUSTOM ENTRIES -----------------
 
-  afghanGumrakData = signal<CustomEntry | null>(null);
-  pakCustomData = signal<CustomEntry | null>(null);
-
-  setAfghanGumrakData(data: CustomEntry) {
-    this.afghanGumrakData.set(data);
-  }
-
-  setPakCustomData(data: CustomEntry) {
-    this.pakCustomData.set(data);
-  }
 }

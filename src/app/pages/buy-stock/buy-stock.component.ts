@@ -16,7 +16,7 @@ import {
   ModuleRegistry,
   AllCommunityModule,
 } from 'ag-grid-community';
-import { CustomEntry, PurchaseRate } from './data-access/buy-stock.dto';
+import { CustomEntry, GumrakEntry, PurchaseRate } from './data-access/buy-stock.dto';
 import { SummaryCardComponent } from '../../shared/components/summary-card/summary-card.component';
 import { RateDialogComponent } from './rate-dialog/rate-dialog.component';
 import { PurchaseDialogComponent } from './purchase-dialog/purchase-dialog.component';
@@ -54,10 +54,8 @@ export class BuyStockComponent implements OnInit {
 
   purchaseData = signal<any | null>(null);
   purchaseRateData = signal<PurchaseRate | null>(null);
-  afghanGumrakData: Signal<CustomEntry | null> =
-    this.buyStockService.afghanGumrakData;
-  pakCustomData: Signal<CustomEntry | null> =
-    this.buyStockService.pakCustomData;
+  gumrakData = signal<GumrakEntry | null>(null);
+  pakCustomData = signal<CustomEntry | null>(null);
 
   ngOnInit(): void {
     const purchaseId = this.route.snapshot.paramMap.get('id');
@@ -113,6 +111,10 @@ export class BuyStockComponent implements OnInit {
             const rateData = this.mapToRateSummary(data.purchaseRate);
             this.purchaseRateData.set(rateData);
           }
+          if (data.gumrakEntry?.id) {
+            const gumrakData = this.mapToGumrakSummary(data.gumrakEntry);
+            this.gumrakData.set(gumrakData);
+          }
         }
       },
       error: (err) => {},
@@ -154,6 +156,33 @@ export class BuyStockComponent implements OnInit {
     this.buyStockService.getPurchaseRate(purchaseId).subscribe((res) => {
       const mappedData = this.mapToRateSummary(res);
       this.purchaseRateData.set(mappedData);   // keep separate signal/store for rate
+    });
+  }
+
+  openEditGumrakDialog(purchaseId: string) {
+    this.buyStockService.getPurchase(purchaseId).subscribe({
+      next: (res) => {
+        const purchaseData = res;
+  
+        const dialogRef = this.dialog.open(GumrakFormComponent, {
+          panelClass: 'dialog-container-lg',
+          data: { purchaseData },
+        });
+  
+        dialogRef.afterClosed().subscribe((updatedGumrakId: string) => {
+          if (updatedGumrakId) {
+            this.refreshGumrakSummary(purchaseId);
+          }
+        });
+      },
+      error: (err) => {}
+    });
+  }
+  
+  private refreshGumrakSummary(purchaseId: string) {
+    this.buyStockService.getGumrakEntry(purchaseId).subscribe((res) => {
+      const mappedData = this.mapToGumrakSummary(res);
+      this.gumrakData.set(mappedData);
     });
   }
   
@@ -201,6 +230,21 @@ export class BuyStockComponent implements OnInit {
       amountAFN: data?.amountAFN ?? 0,
       exchangeRate: data?.exchangeRate ?? 0,
       amountPKR: data?.amountPKR ?? 0,
+    };
+  }
+
+  private mapToGumrakSummary(data: any) {
+    return {
+      id: data?.id ?? null,
+      purchaseEntryId: data?.purchaseEntryId ?? null,
+      islamicDate: data?.islamicDate ?? '',
+      englishDate: data?.englishDate ?? '',
+      invoice: data?.invoice ?? '',
+      spendAfg: data?.spendAfg ?? 0,
+      product: data?.product ?? '',
+      shTax: data?.shTax ?? 0,
+      totalAmount: data?.totalAmount ?? 0,
+      gumrakImage: null,
     };
   }
 }

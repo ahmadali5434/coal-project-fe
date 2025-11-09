@@ -66,6 +66,7 @@ export interface PurchaseWithDetails {
   id?: string;
   purchase: Purchase;
   purchaseRate?: PurchaseRate | null;   // single object (1:1)
+  gumrakEntry?: GumrakEntry | null;
   status: PurchaseStatus;
 }
 

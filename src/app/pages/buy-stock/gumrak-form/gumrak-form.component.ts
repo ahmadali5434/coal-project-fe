@@ -87,11 +87,22 @@ export class GumrakFormComponent implements OnInit {
   // #region Lifecycle
   ngOnInit(): void {
     const purchase = this.data?.purchaseData;
-    const gumrakData = purchase?.gumrakData;
+    console.log('Purchase Data:', purchase);
+    const gumrakData = purchase?.gumrakEntry;
+
+    if (!gumrakData) {
+      this.gumrakForm.patchValue({
+        truckNo: purchase?.truckNo ?? '',
+        driverName: purchase?.driver?.name ?? '',
+        metricTon: purchase?.metricTon ?? 0,
+      });
+    } else {
+      
+    }
 
     this.gumrakForm.patchValue({
       truckNo: purchase?.truckNo ?? '',
-      driverName: purchase?.driverName ?? '',
+      driverName: gumrakData ? purchase?.driver?.name : purchase?.driverName ?? '',
       metricTon: purchase?.metricTon ?? 0,
       islamicDate: gumrakData?.islamicDate ?? '',
       englishDate: gumrakData?.englishDate ?? '',
@@ -140,7 +151,7 @@ export class GumrakFormComponent implements OnInit {
     }
   
     const formData = toFormData(payload);
-    const gumrakId = this.data?.purchaseData?.gumrakData?.id;
+    const gumrakId = this.data?.purchaseData?.gumrakEntry?.id;
   
     gumrakId
       ? this.updateGumrakData(formData)
