@@ -16,6 +16,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog.component';
 import { HasPermissionDirective } from "../../core/directives/has-permission.directive";
+import { AuthService } from '../../auth/auth.service';
+
 @Component({
   selector: 'app-warehouses',
   imports: [
@@ -33,11 +35,11 @@ export class WarehouseComponent implements OnInit {
   private readonly warehouseService = inject(WarehouseService);
   private readonly locationService = inject(LocationService);
   private readonly snackBar = inject(MatSnackBar);
-
+private readonly authService = inject(AuthService);
   protected warehousesDetail: Warehouse[] = [];
   private countries: Country[] = [];
   private cities: City[] = [];
-
+isAdmin = false;
   addNewWarehouse() {
     const dialogRef = this.dialog.open(AddNewWarehouseDialogComponent, {
       panelClass: 'dialog-container-lg',
@@ -116,6 +118,9 @@ export class WarehouseComponent implements OnInit {
   }
 
   ngOnInit() {
+     const currentUser = this.authService.currentUser;
+    this.isAdmin = currentUser?.role === 'admin';
+    
     this.locationService.getCountries().subscribe({
       next: (countries) => {
         this.countries = countries;
