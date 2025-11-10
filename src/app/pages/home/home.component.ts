@@ -39,31 +39,13 @@ export class HomeComponent implements OnInit {
     // --- Grid ---
     colDefs: ColDef[] = [
       { field: 'id', headerName: 'Stock No', minWidth: 100, flex: 1 },
-      {
-        field: 'customerName',
-        headerName: 'Customer Name',
-        minWidth: 180,
-        flex: 2,
-      },
-      {
-        field: 'placeOfPurchaseName',
-        headerName: 'Place of Buying',
-        minWidth: 180,
-        flex: 2,
-      },
-      {
-        field: 'stockDestinationName',
-        headerName: 'Destination',
-        minWidth: 180,
-        flex: 2,
-      },
+      
       {
         field: 'purchaseDate',
         headerName: 'Purchase Date',
         minWidth: 130,
         flex: 1,
       },
-      { field: 'driverName', headerName: 'Driver', minWidth: 180, flex: 1 },
       { field: 'truckNo', headerName: 'Truck No', minWidth: 100, flex: 1 },
       { field: 'metricTon', headerName: 'Metric Ton', minWidth: 120, flex: 1 },
       {
@@ -72,16 +54,8 @@ export class HomeComponent implements OnInit {
         minWidth: 140,
         flex: 1,
       },
-      { field: 'expense', headerName: 'Expenses', minWidth: 120, flex: 1 },
-      {
-        field: 'advancePayment',
-        headerName: 'Advance Payment',
-        minWidth: 150,
-        flex: 1,
-      },
-      { field: 'amountAFN', headerName: 'Amount (AFN)', minWidth: 140, flex: 1 },
       { field: 'exchangeRate', headerName: 'Ex. Rate', minWidth: 120, flex: 1 },
-      { field: 'amountPKR', headerName: 'Amount (PKR)', minWidth: 140, flex: 1 },
+  
       //TODO: The following field with be included later when status feature is implemented
       // {
       //   field: 'status',
