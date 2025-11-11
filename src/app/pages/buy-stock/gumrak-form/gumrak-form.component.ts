@@ -165,8 +165,8 @@ export class GumrakFormComponent implements OnInit {
       next: (res) => {
         this._snackBar.open('Gumrak entry saved!', undefined, { duration: 3000 });
         this.resetForm();
-        this.dialogRef.close();
-        //this.dialogRef.close(res.id);
+        //this.dialogRef.close();
+        this.dialogRef.close(res.data);
       },
       error: () => {
         this._snackBar.open('Error saving Gumrak entry.', undefined, {
@@ -182,8 +182,8 @@ export class GumrakFormComponent implements OnInit {
       next: (res) => {
         this._snackBar.open('Gumrak entry updated!', undefined, { duration: 3000 });
         this.resetForm();
-        this.dialogRef.close(res);
-        //this.dialogRef.close(res.id);
+        //this.dialogRef.close(res);
+        this.dialogRef.close(res.data);
       },
       error: () => {
         this._snackBar.open('Error updating Gumrak entry.', undefined, {

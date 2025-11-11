@@ -11,12 +11,12 @@ import {
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
-import { PurchaseRate } from '../data-access/buy-stock.dto';
+import { PurchaseFreight } from '../data-access/buy-stock.dto';
 import { BuyStockService } from '../data-access/buy-stock.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
-  selector: 'app-rate-dialog',
+  selector: 'app-freight-dialog',
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -27,11 +27,11 @@ import { MatSnackBar } from '@angular/material/snack-bar';
     MatButtonModule,
     MatDialogClose,
   ],
-  templateUrl: './rate-dialog.component.html',
+  templateUrl: './freight-dialog.component.html',
 })
-export class RateDialogComponent implements OnInit {
+export class FreightDialogComponent implements OnInit {
   readonly data = inject(MAT_DIALOG_DATA);
-  private readonly dialogRef = inject(MatDialogRef<RateDialogComponent>);
+  private readonly dialogRef = inject(MatDialogRef<FreightDialogComponent>);
   private readonly buyStockService = inject(BuyStockService);
   private readonly _snackBar = inject(MatSnackBar);
 
@@ -40,7 +40,7 @@ export class RateDialogComponent implements OnInit {
   ngOnInit(): void {
     console.log('Dialog Data:', this.data);
     const purchase = this.data?.purchaseData;
-    const rateData = purchase?.purchaseRate;
+    const rateData = purchase?.purchaseFreight;
     this.rateForm = new FormGroup({
       truckNo: new FormControl({
         value: purchase?.truckNo ?? '',
@@ -93,7 +93,7 @@ export class RateDialogComponent implements OnInit {
     if (this.rateForm.valid) {
       const formData = this.rateForm.value;
 
-      const data: PurchaseRate = {
+      const data: PurchaseFreight = {
         freightPerTon: formData.freightPerTon ?? 0,
         expense: formData.expense ?? '',
         advancePayment: formData.advancePayment ?? 0,
@@ -102,28 +102,28 @@ export class RateDialogComponent implements OnInit {
         amountPKR: Number(formData.amountPKR ?? 0),
       };
 
-      const purchaseRateId = this.data?.purchaseData?.purchaseRate?.id;
-      purchaseRateId
-        ? this.updatePurchaseRate(data)
-        : this.saveNewPurchaseRate(data);
+      const purchaseFreightId = this.data?.purchaseData?.purchaseFreight?.id;
+      purchaseFreightId
+        ? this.updatePurchaseFreight(data)
+        : this.saveNewPurchaseFreight(data);
     } else {
       this.rateForm.markAllAsTouched();
     }
   }
 
-  private saveNewPurchaseRate(formData: PurchaseRate) {
+  private saveNewPurchaseFreight(formData: PurchaseFreight) {
     this.buyStockService
-      .createPurchaseRate(this.data?.purchaseData?.id, formData)
+      .createPurchaseFreight(this.data?.purchaseData?.id, formData)
       .subscribe({
         next: (res) => {
-          this._snackBar.open('Purchase Rate saved!', undefined, {
+          this._snackBar.open('Purchase Freight saved!', undefined, {
             duration: 3000,
           });
           this.dialogRef.close(formData);
         },
         error: (err) => {
           this._snackBar.open(
-            'Error saving Purchase Rate. Please try again.',
+            'Error saving Purchase Freight. Please try again.',
             undefined,
             { duration: 3000 }
           );
@@ -131,20 +131,20 @@ export class RateDialogComponent implements OnInit {
       });
   }
 
-  private updatePurchaseRate(formData: PurchaseRate) {
+  private updatePurchaseFreight(formData: PurchaseFreight) {
     const purchaseId = this.data?.purchaseData?.id;
     this.buyStockService
-      .updatePurchaseRate(purchaseId, formData)
+      .updatePurchaseFreight(purchaseId, formData)
       .subscribe({
         next: (res) => {
-          this._snackBar.open('Purchase Rate updated!', undefined, {
+          this._snackBar.open('Purchase Freight updated!', undefined, {
             duration: 3000,
           });
           this.dialogRef.close(formData);
         },
         error: (err) => {
           this._snackBar.open(
-            'Error updating Purchase Rate. Please try again.',
+            'Error updating Purchase Freight. Please try again.',
             undefined,
             { duration: 3000 }
           );

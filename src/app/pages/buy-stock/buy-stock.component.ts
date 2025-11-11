@@ -16,13 +16,13 @@ import {
   ModuleRegistry,
   AllCommunityModule,
 } from 'ag-grid-community';
-import { CustomEntry, GumrakEntry, PurchaseRate } from './data-access/buy-stock.dto';
+import { CustomEntry, GumrakEntry, PurchaseFreight } from './data-access/buy-stock.dto';
 import { SummaryCardComponent } from '../../shared/components/summary-card/summary-card.component';
-import { RateDialogComponent } from './rate-dialog/rate-dialog.component';
 import { PurchaseDialogComponent } from './purchase-dialog/purchase-dialog.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HasPermissionDirective } from "../../core/directives/has-permission.directive";
 import { GumrakFormComponent } from './gumrak-form/gumrak-form.component';
+import { FreightDialogComponent } from './freight-dialog/freight-dialog.component';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 @Component({
@@ -53,7 +53,7 @@ export class BuyStockComponent implements OnInit {
   purchaseFormEditMode = signal(false);
 
   purchaseData = signal<any | null>(null);
-  purchaseRateData = signal<PurchaseRate | null>(null);
+  purchaseFreightData = signal<PurchaseFreight | null>(null);
   gumrakData = signal<GumrakEntry | null>(null);
   pakCustomData = signal<CustomEntry | null>(null);
 
@@ -106,10 +106,10 @@ export class BuyStockComponent implements OnInit {
           const mappedData = this.mapToPurchaseSummary(data);
           this.purchaseData.set(mappedData);
           console.log('Purchase Data:', data);
-          console.log('Purchase Rate Data:', data.purchaseRate);
-          if (data.purchaseRate?.id) {
-            const rateData = this.mapToRateSummary(data.purchaseRate);
-            this.purchaseRateData.set(rateData);
+          console.log('Purchase Freight Data:', data.purchaseFreight);
+          if (data.purchaseFreight?.id) {
+            const freightData = this.mapToFreightSummary(data.purchaseFreight);
+            this.purchaseFreightData.set(freightData);
           }
           if (data.gumrakEntry?.id) {
             const gumrakData = this.mapToGumrakSummary(data.gumrakEntry);
@@ -121,30 +121,30 @@ export class BuyStockComponent implements OnInit {
     });
   }
 
-  openRateDialog() {
-    const dialogRef = this.dialog.open(RateDialogComponent, {
+  openFreightDialog() {
+    const dialogRef = this.dialog.open(FreightDialogComponent, {
       panelClass: 'dialog-container-lg',
       data: { purchaseData: this.purchaseData() },
     });
 
-    dialogRef.afterClosed().subscribe((resp: PurchaseRate) => {
-      this.purchaseRateData.set(resp);
+    dialogRef.afterClosed().subscribe((resp: PurchaseFreight) => {
+      this.purchaseFreightData.set(resp);
     });
   }
   
-  openEditRateDialog(purchaseId: string) {
+  openEditFreightDialog(purchaseId: string) {
     this.buyStockService.getPurchase(purchaseId).subscribe({
       next: (res) => {
         const purchaseData = res;
   
-        const dialogRef = this.dialog.open(RateDialogComponent, {
+        const dialogRef = this.dialog.open(FreightDialogComponent, {
           panelClass: 'dialog-container-lg',
           data: { purchaseData },
         });
   
-        dialogRef.afterClosed().subscribe((updatedRateId: string) => {
-          if (updatedRateId) {
-            this.refreshRateSummary(purchaseId);
+        dialogRef.afterClosed().subscribe((updatedFreightId: string) => {
+          if (updatedFreightId) {
+            this.refreshFreightSummary(purchaseId);
           }
         });
       },
@@ -152,10 +152,20 @@ export class BuyStockComponent implements OnInit {
     });
   }
   
-  private refreshRateSummary(purchaseId: string) {
-    this.buyStockService.getPurchaseRate(purchaseId).subscribe((res) => {
-      const mappedData = this.mapToRateSummary(res);
-      this.purchaseRateData.set(mappedData);   // keep separate signal/store for rate
+  private refreshFreightSummary(purchaseId: string) {
+    this.buyStockService.getPurchaseFreight(purchaseId).subscribe((res) => {
+      const mappedData = this.mapToFreightSummary(res);
+      this.purchaseFreightData.set(mappedData);   // keep separate signal/store for freight
+    });
+  }
+
+  openGumrakDialog() {
+    const dialogRef = this.dialog.open(GumrakFormComponent, {
+      panelClass: 'dialog-container-lg',
+      data: { purchaseData: this.purchaseData() },
+    });
+    dialogRef.afterClosed().subscribe((resp: GumrakEntry) => {
+      this.gumrakData.set(resp);
     });
   }
 
@@ -185,15 +195,6 @@ export class BuyStockComponent implements OnInit {
       this.gumrakData.set(mappedData);
     });
   }
-  
-
-  openAfghanGumrakDialog() {
-    const dialogRef = this.dialog.open(GumrakFormComponent, {
-      panelClass: 'dialog-container-lg',
-      data: { purchaseData: this.purchaseData() },
-    });
-    dialogRef.afterClosed().subscribe((result) => {});
-  }
 
   openPakCustomDialog() {
     const dialogRef = this.dialog.open(CustomDialogComponent, {
@@ -221,7 +222,7 @@ export class BuyStockComponent implements OnInit {
     };
   }
 
-  private mapToRateSummary(data: any) {
+  private mapToFreightSummary(data: any) {
     return {
       id: data?.id ?? null,
       freightPerTon: data?.freightPerTon ?? 0,
