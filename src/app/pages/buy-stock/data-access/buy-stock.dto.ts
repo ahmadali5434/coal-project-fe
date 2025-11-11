@@ -41,7 +41,7 @@ export interface CreateOrUpdatePurchasePayload {
 
 // ----------------- PURCHASE RATE -----------------
 
-export interface PurchaseRate {
+export interface PurchaseFreight {
   id?: string;
   freightPerTon: number;
   expense: string;
@@ -65,7 +65,7 @@ export type PurchaseStatus =
 export interface PurchaseWithDetails {
   id?: string;
   purchase: Purchase;
-  purchaseRate?: PurchaseRate | null;   // single object (1:1)
+  purchaseFreight?: PurchaseFreight | null;   // single object (1:1)
   gumrakEntry?: GumrakEntry | null;
   status: PurchaseStatus;
 }

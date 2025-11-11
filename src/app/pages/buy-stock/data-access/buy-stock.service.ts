@@ -1,7 +1,7 @@
 import { inject, Injectable, signal } from '@angular/core';
 import {
   CustomEntry,
-  PurchaseRate,
+  PurchaseFreight,
   PurchaseWithDetails,
   ApiResponse,
   GumrakEntry,
@@ -99,31 +99,31 @@ export class BuyStockService {
 
   // ----------------- PURCHASE RATE (1:1) -----------------
 
-  getPurchaseRate(purchaseId: string): Observable<PurchaseRate | null> {
+  getPurchaseFreight(purchaseId: string): Observable<PurchaseFreight | null> {
     return this.http
-      .get<ApiResponse<PurchaseRate>>(
-        `${this.apiBaseUrl}/purchase-entries/${purchaseId}/rate`
+      .get<ApiResponse<PurchaseFreight>>(
+        `${this.apiBaseUrl}/purchase-entries/${purchaseId}/freight`
       )
       .pipe(map((res) => res.data ?? null));
   }
 
-  createPurchaseRate(purchaseId: string, rateData: PurchaseRate) {
-    return this.http.post<ApiResponse<PurchaseRate>>(
-      `${this.apiBaseUrl}/purchase-entries/${purchaseId}/rate`,
-      rateData
+  createPurchaseFreight(purchaseId: string, freightData: PurchaseFreight) {
+    return this.http.post<ApiResponse<PurchaseFreight>>(
+      `${this.apiBaseUrl}/purchase-entries/${purchaseId}/freight`,
+      freightData
     );
   }
 
-  updatePurchaseRate(purchaseId: string, rateData: PurchaseRate) {
-    return this.http.put<ApiResponse<PurchaseRate>>(
-      `${this.apiBaseUrl}/purchase-entries/${purchaseId}/rate`,
-      rateData
+  updatePurchaseFreight(purchaseId: string, freightData: PurchaseFreight) {
+    return this.http.put<ApiResponse<PurchaseFreight>>(
+      `${this.apiBaseUrl}/purchase-entries/${purchaseId}/freight`,
+      freightData
     );
   }
 
-  deletePurchaseRate(purchaseId: string) {
+  deletePurchaseFreight(purchaseId: string) {
     return this.http.delete<ApiResponse<void>>(
-      `${this.apiBaseUrl}/purchase-entries/${purchaseId}/rate`
+      `${this.apiBaseUrl}/purchase-entries/${purchaseId}/freight`
     );
   }
 
