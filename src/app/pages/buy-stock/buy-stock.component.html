@@ -17,9 +17,8 @@
       Freight Entry
     </button>
     } @if(!gumrakData() ) {
-      <!-- TODO: Apply correct permissions -->
       <button
-      *hasPermission="'custom:create'"
+      *hasPermission="'gumrak:create'"
       mat-flat-button
       color="primary"
       cdkFocusInitial
@@ -62,7 +61,7 @@
     title="Afghan Gumrak Detail"
     [data]="gumrakData()!"
     imageKey="gumrakImage"
-    permission="custom:update"
+    permission="gumrak:update"
     class="w-full"
     (edit)="openEditGumrakDialog(purchaseData().id!)"
   ></app-summary-card>
