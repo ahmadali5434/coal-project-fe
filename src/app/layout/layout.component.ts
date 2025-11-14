@@ -1,5 +1,4 @@
-import { NgClass, NgIf } from '@angular/common';
-import { Component, HostListener, inject } from '@angular/core';
+import { Component, HostListener, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   Router,
@@ -8,11 +7,11 @@ import {
   RouterLink,
   RouterOutlet,
   ActivatedRoute,
-
 } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from '../auth/auth.service';
 import { filter } from 'rxjs';
+
 @Component({
   selector: 'app-layout',
   standalone: true,
@@ -22,94 +21,91 @@ import { filter } from 'rxjs';
     MatIconModule,
     CommonModule,
     RouterModule,
-    MatIconModule,
-    NgClass,
-    NgIf,
   ],
   templateUrl: './layout.component.html',
 })
-export class LayoutComponent {
+export class LayoutComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
-    private readonly activatedRoute = inject(ActivatedRoute);
+  private readonly activatedRoute = inject(ActivatedRoute);
 
-  sidebarOpen = true;
-  isSidebarOpen = false;
-  isMobile = false;
-  isDesktop = window.innerWidth >= 768;
+  sidebarExpanded = true;
+  isDesktop = window.innerWidth >= 1024;
   headerTitle = 'Coal Project';
   breadcrumbs: { label: string; url: string }[] = [];
+
+  ngOnInit() {
+    this.updateLayoutState();
+  
+    const savedSidebarState = localStorage.getItem('sidebarExpanded');
+    if (savedSidebarState !== null) {
+      this.sidebarExpanded = savedSidebarState === 'true';
+    }
+    this.router.events
+      .pipe(filter((event) => event instanceof NavigationEnd))
+      .subscribe(() => 
+        this.setBreadcrumbs());
+    this.setBreadcrumbs();
+  }
 
   logout() {
     this.authService.logout();
     this.router.navigate(['/login']);
   }
 
-  ngOnInit() {
-    this.isDesktop = window.innerWidth >= 768;
-    this.sidebarOpen = this.isDesktop;
-        this.router.events
-      .pipe(filter((event) => event instanceof NavigationEnd))
-      .subscribe(() => {
-        this.setBreadcrumbs();
-      });
-    this.setBreadcrumbs();
+  toggleSidebarExpand() {
+    if (!this.isDesktop) return;
+    this.sidebarExpanded = !this.sidebarExpanded;
+    localStorage.setItem('sidebarExpanded', this.sidebarExpanded.toString());
   }
 
-  constructor() {
-   
-  }
-
-  toggleSidebar() {
-    this.sidebarOpen = !this.sidebarOpen;
-  }
-
-  @HostListener('window:resize', ['$event'])
+  @HostListener('window:resize')
   onResize() {
-    this.isDesktop = window.innerWidth >= 786;
-    if (this.isDesktop) this.sidebarOpen = true;
-    else {
-      this.sidebarOpen = false;
-    }
-    this.updateViwe();
+    this.updateLayoutState();
   }
-
-
-  private updateViwe() {
-    this.isMobile = window.innerWidth < 768;
+private updateLayoutState(){
+  this.isDesktop = window.innerWidth >= 1024;
+  if (!this.isDesktop) {
+    this.sidebarExpanded = false;
   }
+}
+
   private setBreadcrumbs() {
     this.breadcrumbs = this.buildBreadcrumbs(this.activatedRoute.root);
     if (this.breadcrumbs.length > 0) {
       this.headerTitle = this.breadcrumbs[this.breadcrumbs.length - 1].label;
+    } else {
+      this.headerTitle = 'Coal Project';
     }
   }
-private buildBreadcrumbs(
-  route: ActivatedRoute,
-  url: string = '',
-  breadcrumbs: { label: string; url: string }[] = []
-): { label: string; url: string }[] {
-  const children = route.children;
 
-  for (const child of children) {
-    const routeURL: string =
-      child.snapshot.url.map((segment) => segment.path).join('/') ||
-      child.routeConfig?.path || '';
+  private buildBreadcrumbs(
+    route: ActivatedRoute,
+    url: string = '',
+    breadcrumbs: { label: string; url: string }[] = []
+  ): { label: string; url: string }[] {
+    const children = route.children;
 
-    if (routeURL !== '') {
-      url += `/${routeURL}`;
-    }
+    for (const child of children) {
+      const routeURL: string =
+        child.snapshot.url.map((segment) => segment.path).join('/') ||
+        child.routeConfig?.path ||
+        '';
 
-    if (child.snapshot.data['breadcrumb']) {
-      const label = child.snapshot.data['breadcrumb'];
-      if (!breadcrumbs.some((bc) => bc.label === label)) {
-        breadcrumbs.push({ label, url });
+      if (routeURL !== '') {
+        url += `/${routeURL}`;
       }
+
+      if (child.snapshot.data['breadcrumb']) {
+        const label = child.snapshot.data['breadcrumb'];
+        if (!breadcrumbs.some((bc) => bc.label === label)) {
+          breadcrumbs.push({ label, url });
+        }
+      }
+
+      this.buildBreadcrumbs(child, url, breadcrumbs);
     }
 
-    this.buildBreadcrumbs(child, url, breadcrumbs);
+    return breadcrumbs;
   }
-
-  return breadcrumbs;
-}
 }
