@@ -245,7 +245,7 @@ export class BuyStockComponent implements OnInit {
       product: data?.product ?? '',
       shTax: data?.shTax ?? 0,
       totalAmount: data?.totalAmount ?? 0,
-      gumrakImage: null,
+      gumrakImage: data?.gumrakImage ?? null,
     };
   }
 }
