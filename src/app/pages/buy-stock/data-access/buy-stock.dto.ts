@@ -39,7 +39,7 @@ export interface CreateOrUpdatePurchasePayload {
   status: PurchaseStatus;      // enum
 }
 
-// ----------------- PURCHASE RATE -----------------
+// ----------------- PURCHASE FREIGHT -----------------
 
 export interface PurchaseFreight {
   id?: string;
@@ -55,7 +55,7 @@ export interface PurchaseFreight {
 
 export type PurchaseStatus =
   | 'initial_purchase'
-  | 'rate_added'
+  | 'freight_added'
   | 'gumrak_added'
   | 'custom_added'
   | 'complete';

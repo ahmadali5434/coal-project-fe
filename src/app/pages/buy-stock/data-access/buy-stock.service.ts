@@ -97,7 +97,7 @@ export class BuyStockService {
       .pipe(map((res) => res.data ?? {}));
   }
 
-  // ----------------- PURCHASE RATE (1:1) -----------------
+  // ----------------- PURCHASE FREIGHT (1:1) -----------------
 
   getPurchaseFreight(purchaseId: string): Observable<PurchaseFreight | null> {
     return this.http
