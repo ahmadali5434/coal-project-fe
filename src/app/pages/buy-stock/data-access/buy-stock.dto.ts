@@ -55,9 +55,9 @@ export interface PurchaseFreight {
 
 export type PurchaseStatus =
   | 'initial_purchase'
-  | 'freight_added'
-  | 'gumrak_added'
-  | 'custom_added'
+  | 'add_freight'
+  | 'add_gumrak'
+  | 'add_custom'
   | 'complete';
 
 // ----------------- FULL PURCHASE ENTRY -----------------

@@ -12,6 +12,7 @@ import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/c
 import { BuyStockService } from '../buy-stock/data-access/buy-stock.service';
 import { HasPermissionDirective } from "../../core/directives/has-permission.directive";
 import { PurchaseWithDetails } from '../buy-stock/data-access/buy-stock.dto';
+import { PurchaseProgressService } from '../buy-stock/data-access/purchase-progress.service';
 
 // Register all Community features
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -24,6 +25,7 @@ ModuleRegistry.registerModules([AllCommunityModule]);
 export class HomeComponent implements OnInit {
   
     private readonly buyStockService = inject(BuyStockService);
+    private readonly purhcaseProgressService = inject(PurchaseProgressService);
     private readonly router = inject(Router);
     private readonly snackBar = inject(MatSnackBar);
     private readonly dialog = inject(MatDialog);
@@ -153,7 +155,7 @@ export class HomeComponent implements OnInit {
   
     // --- Load stats for all statuses ---
     loadStats() {
-      this.buyStockService.getPurchaseCountByStatus().subscribe({
+      this.purhcaseProgressService.getAllPurchasesProgress().subscribe({
         next: (data) => {
           this.purchaseStats.set(this.mapToCardData(data));
         },
@@ -199,32 +201,32 @@ export class HomeComponent implements OnInit {
         {
           title: 'Initial Purchase',
           status: 'initial_purchase',
-          count: data['initial_purchase'] || 0,
+          count: data['initialPurchase'] || 0,
           color: '#216B96',
         },
         {
-          title: 'Freight Added',
-          status: 'freight_added',
-          count: data['freight_added'] || 0,
-          color: '#0B874B',
+          title: 'Add Freight',
+          status: 'add_freight',
+          count: data['addFreight'] || 0,
+          color: '#1E293B',
         },
         {
-          title: 'Gumrak Added',
-          status: 'gumrak_added',
-          count: data['gumrak_added'] || 0,
+          title: 'Add Gumrak',
+          status: 'add_gumrak',
+          count: data['addGumrak'] || 0,
           color: '#F59E0B',
         },
         {
-          title: 'Custom Added',
-          status: 'custom_added',
-          count: data['custom_added'] || 0,
+          title: 'Add Custom',
+          status: 'add_custom',
+          count: data['addCustom'] || 0,
           color: '#8B5CF6',
         },
         {
-          title: 'Complete',
+          title: 'Completed Purchases',
           status: 'complete',
           count: data['complete'] || 0,
-          color: '#1E293B',
+          color: '#0B874B',
         },
       ];
     }
