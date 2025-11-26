@@ -35,52 +35,52 @@ export class FreightDialogComponent implements OnInit {
   private readonly buyStockService = inject(BuyStockService);
   private readonly _snackBar = inject(MatSnackBar);
 
-  rateForm!: FormGroup;
+  freightForm!: FormGroup;
 
   ngOnInit(): void {
     console.log('Dialog Data:', this.data);
     const purchase = this.data?.purchaseData;
-    const rateData = purchase?.purchaseFreight;
-    this.rateForm = new FormGroup({
+    const freightData = purchase?.purchaseFreight;
+    this.freightForm = new FormGroup({
       truckNo: new FormControl({
         value: purchase?.truckNo ?? '',
         disabled: true,
       }),
       driverName: new FormControl({
-        value: rateData ? purchase?.driver?.name : purchase?.driverName ?? '',
+        value: freightData ? purchase?.driver?.name : purchase?.driverName ?? '',
         disabled: true,
       }),
       metricTon: new FormControl({
         value: purchase?.metricTon ?? 0,
         disabled: true,
       }),
-      freightPerTon: new FormControl(rateData?.freightPerTon ?? 0),
-      expense: new FormControl(rateData?.expense ?? 0),
-      advancePayment: new FormControl(rateData?.advancePayment ?? 0),
-      amountAFN: new FormControl(rateData?.amountAFN ?? 0),
-      exchangeRate: new FormControl(rateData?.exchangeRate ?? 0),
-      amountPKR: new FormControl(rateData?.amountPKR ?? 0),
+      freightPerTon: new FormControl(freightData?.freightPerTon ?? 0),
+      expense: new FormControl(freightData?.expense ?? 0),
+      advancePayment: new FormControl(freightData?.advancePayment ?? 0),
+      amountAFN: new FormControl(freightData?.amountAFN ?? 0),
+      exchangeRate: new FormControl(freightData?.exchangeRate ?? 0),
+      amountPKR: new FormControl(freightData?.amountPKR ?? 0),
     });
 
     this.setupAmountPKRCalculation();
   }
 
   setupAmountPKRCalculation() {
-    this.rateForm.get('amountAFN')?.valueChanges.subscribe(() => {
+    this.freightForm.get('amountAFN')?.valueChanges.subscribe(() => {
       this.updateAmountPKR();
     });
 
-    this.rateForm.get('exchangeRate')?.valueChanges.subscribe(() => {
+    this.freightForm.get('exchangeRate')?.valueChanges.subscribe(() => {
       this.updateAmountPKR();
     });
   }
 
   updateAmountPKR() {
-    const afn = Number(this.rateForm.get('amountAFN')?.value) || 0;
-    const rate = Number(this.rateForm.get('exchangeRate')?.value) || 0;
+    const afn = Number(this.freightForm.get('amountAFN')?.value) || 0;
+    const rate = Number(this.freightForm.get('exchangeRate')?.value) || 0;
     const pkr = afn * rate;
 
-    this.rateForm
+    this.freightForm
       .get('amountPKR')
       ?.setValue(pkr.toString(), { emitEvent: false });
   }
@@ -90,8 +90,8 @@ export class FreightDialogComponent implements OnInit {
   }
 
   onSave() {
-    if (this.rateForm.valid) {
-      const formData = this.rateForm.value;
+    if (this.freightForm.valid) {
+      const formData = this.freightForm.value;
 
       const data: PurchaseFreight = {
         freightPerTon: formData.freightPerTon ?? 0,
@@ -107,7 +107,7 @@ export class FreightDialogComponent implements OnInit {
         ? this.updatePurchaseFreight(data)
         : this.saveNewPurchaseFreight(data);
     } else {
-      this.rateForm.markAllAsTouched();
+      this.freightForm.markAllAsTouched();
     }
   }
 

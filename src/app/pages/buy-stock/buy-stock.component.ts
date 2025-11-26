@@ -23,6 +23,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { HasPermissionDirective } from "../../core/directives/has-permission.directive";
 import { GumrakFormComponent } from './gumrak-form/gumrak-form.component';
 import { FreightDialogComponent } from './freight-dialog/freight-dialog.component';
+import { PurchaseProgressService } from './data-access/purchase-progress.service';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 @Component({
@@ -47,6 +48,7 @@ ModuleRegistry.registerModules([AllCommunityModule]);
 })
 export class BuyStockComponent implements OnInit {
   private readonly buyStockService = inject(BuyStockService);
+  private readonly purchaseProgressService = inject(PurchaseProgressService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly dialog = inject(MatDialog);
@@ -60,6 +62,7 @@ export class BuyStockComponent implements OnInit {
   ngOnInit(): void {
     const purchaseId = this.route.snapshot.paramMap.get('id');
     purchaseId ? this.refreshSummary(purchaseId) : this.openNewPurchaseDialog();
+    this.purchaseProgressService.getAllPurchasesProgress();
   }
 
   openNewPurchaseDialog() {

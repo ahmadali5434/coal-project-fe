@@ -47,7 +47,7 @@ export class RoleFormComponent implements OnInit {
     { key: 'driver', label: 'Driver' },
     { key: 'warehouse', label: 'Warehouse' },
     { key: 'purchase', label: 'Purchase' },
-    { key: 'purchaseRate', label: 'Purchase Rate' },
+    { key: 'purchaseFreight', label: 'Purchase Freight' },
     { key: 'custom', label: 'Custom' },
     { key: 'expense', label: 'Expense' },
     { key: 'stock', label: 'Stock' },

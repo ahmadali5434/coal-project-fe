@@ -92,12 +92,12 @@ export class BuyStockService {
   getPurchaseCountByStatus(): Observable<Record<string, number>> {
     return this.http
       .get<ApiResponse<Record<string, number>>>(
-        `${this.apiBaseUrl}/purchase-entries/status-count`
+        `${this.apiBaseUrl}/purchase-entries/purchase-progress/progress-count`
       )
       .pipe(map((res) => res.data ?? {}));
   }
 
-  // ----------------- PURCHASE RATE (1:1) -----------------
+  // ----------------- PURCHASE FREIGHT (1:1) -----------------
 
   getPurchaseFreight(purchaseId: string): Observable<PurchaseFreight | null> {
     return this.http
