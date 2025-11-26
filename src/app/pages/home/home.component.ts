@@ -198,12 +198,12 @@ export class HomeComponent implements OnInit {
     // --- Card data mapping ---
     private mapToCardData(data: Record<string, number>) {
       return [
-        {
-          title: 'Initial Purchase',
-          status: 'initial_purchase',
-          count: data['initialPurchase'] || 0,
-          color: '#216B96',
-        },
+        // {
+        //   title: 'Initial Purchase',
+        //   status: 'initial_purchase',
+        //   count: data['initialPurchase'] || 0,
+        //   color: '#216B96',
+        // },
         {
           title: 'Add Freight',
           status: 'add_freight',
@@ -223,7 +223,7 @@ export class HomeComponent implements OnInit {
           color: '#8B5CF6',
         },
         {
-          title: 'Completed Purchases',
+          title: 'Completed',
           status: 'complete',
           count: data['complete'] || 0,
           color: '#0B874B',
