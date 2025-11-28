@@ -22,6 +22,7 @@ import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/c
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Driver } from '../buy-stock/data-access/buy-stock.dto';
 import { HasPermissionDirective } from '../../core/directives/has-permission.directive';
+import { AuthService } from '../../auth/auth.service'; 
 ModuleRegistry.registerModules([AllCommunityModule]);
 @Component({
   selector: 'app-dirver-details',
@@ -44,16 +45,24 @@ export class DirverDetailsComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly dialog = inject(MatDialog);
   private readonly _snackBar = inject(MatSnackBar);
+  private readonly authService = inject(AuthService);
 
   drivers: Driver[] = [];
+isAdmin = false; 
 
   ngOnInit(): void {
+        const currentUser = this.authService.currentUser;
+    this.isAdmin = currentUser?.role === 'admin';
     this.dirverService.fetchAllDrivers().subscribe((list) => {
       this.drivers = list;
     });
+     this.setupColumns();
   }
+  
+  colDefs: ColDef[] = [];
 
-  colDefs: ColDef[] = [
+private setupColumns() {
+   this.colDefs  = [
     { field: 'id', headerName: 'ID', width: 70 },
     {
       field: 'idCardNo',
@@ -90,35 +99,37 @@ export class DirverDetailsComponent implements OnInit {
       filter: true,
       width: 180,
     },
-    {
-      headerName: 'Actions',
-      cellRenderer: ActionCellRendererComponent,
-      cellRendererParams: {
-        actions: [
-          {
-            type: 'edit',
-            icon: 'edit',
-            label: 'Edit Driver',
-            permission: 'driver:update',
-            callback: (row: any) => this.openEditDriverDialog(row),
-          },
-          {
-            type: 'delete',
-            icon: 'delete',
-            label: 'Delete Driver',
-            permission: 'driver:delete',
-            callback: (row: any) => this.onDelete(row),
-          }
-        ],
-      },
-      pinned: 'right',
-      maxWidth: 100,
-      sortable: false,
-      filter: false,
-      resizable: false,
-    },
   ];
-
+      if (this.isAdmin) {
+      this.colDefs.push({
+        headerName: 'Actions',
+        cellRenderer: ActionCellRendererComponent,
+        cellRendererParams: {
+          actions: [
+            {
+              type: 'edit',
+              icon: 'edit',
+              label: 'Edit Driver',
+              permission: 'driver:update',
+              callback: (row: any) => this.openEditDriverDialog(row),
+            },
+            {
+              type: 'delete',
+              icon: 'delete',
+              label: 'Delete Driver',
+              permission: 'driver:delete',
+              callback: (row: any) => this.onDelete(row),
+            },
+          ],
+        },
+        pinned: 'right',
+        maxWidth: 100,
+        sortable: false,
+        filter: false,
+        resizable: false,
+      });
+    }
+}
   gridOptions: GridOptions = {
     rowHeight: 60,
     rowStyle: { paddingTop: '10px' },
