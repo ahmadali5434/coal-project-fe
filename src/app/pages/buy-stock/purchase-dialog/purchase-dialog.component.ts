@@ -96,6 +96,9 @@ export class PurchaseDialogComponent implements OnInit {
     driverId: new FormControl('', Validators.required),
     metricTon: new FormControl<number | null>(null, Validators.required),
     builtyImage: new FormControl<File | null>(null),
+    coalType: new FormControl<string | null>(null),
+    ratePerTon: new FormControl<number | null>(null),
+    totalAmount: new FormControl<number | null>(null),
   });
   // #endregion
 
@@ -123,7 +126,12 @@ export class PurchaseDialogComponent implements OnInit {
   // #region Form Helpers
   private patchFormData(data: Purchase) {
     const { builtyImage, ...rest } = data;
-    this.purchaseForm.patchValue(rest);
+    this.purchaseForm.patchValue({
+      ...rest,
+      coalType: data.coalType ?? '',
+      ratePerTon: data.ratePerTon ?? null,
+      totalAmount: data.totalAmount ?? null,
+    });
 
     if (builtyImage) {
       this.convertToFile(builtyImage, 'builty.jpg').then((file) => {
@@ -168,6 +176,9 @@ export class PurchaseDialogComponent implements OnInit {
       purchaseDate: formValue.purchaseDate
         ? new Date(formValue.purchaseDate).toISOString()
         : null,
+        coalType: formValue.coalType ?? '',
+      ratePerTon: formValue.ratePerTon ?? 0,
+      totalAmount: formValue.totalAmount ?? 0,
       //status: 'initial_purchase',
     };
     const formData = toFormData(payload);

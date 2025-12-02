@@ -20,11 +20,15 @@ export interface Purchase {
   purchaseDate: string;
   customerName: string;
   placeOfPurchase: string;
-  stockDestination: string;
+  stockDestination: string; 
   truckNo: string;
   driverName: string;
   metricTon: number;
   builtyImage: string;
+ coalType?: string;
+  ratePerTon?: number;
+  totalAmount?: number;
+
 }
 
 export interface CreateOrUpdatePurchasePayload {
@@ -84,10 +88,10 @@ export interface GumrakEntry {
   purchaseEntryId?: number;
   islamicDate: string;
   englishDate: string;
-  invoice: string;
-  spendAfg: string; // Stored as string/numeric in DB
-  product: string;
-  shTax: string;
+  invoiceExpense: string;
+  otherExpense: string; // Stored as string/numeric in DB
+  afghanTax: string;
+  commission: string;
   totalAmount: string;
   gumrakImage?: File | null;
   createdAt?: string;

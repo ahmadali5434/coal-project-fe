@@ -59,7 +59,7 @@ export class FreightDialogComponent implements OnInit {
       advancePayment: new FormControl(freightData?.advancePayment ?? 0),
       amountAFN: new FormControl(freightData?.amountAFN ?? 0),
       exchangeRate: new FormControl(freightData?.exchangeRate ?? 0),
-      amountPKR: new FormControl(freightData?.amountPKR ?? 0),
+    totalAmount: new FormControl(freightData?.totalAmount ?? 0),
     });
 
     this.setupAmountPKRCalculation();

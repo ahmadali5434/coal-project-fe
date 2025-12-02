@@ -70,10 +70,10 @@ export class GumrakFormComponent implements OnInit {
     metricTon: new FormControl({ value: 0, disabled: true }),
     islamicDate: new FormControl('', Validators.required),
     englishDate: new FormControl('', Validators.required),
-    invoice: new FormControl('', Validators.required),
-    spendAfg: new FormControl('', Validators.required),
-    product: new FormControl('', Validators.required),
-    shTax: new FormControl('', Validators.required),
+    invoiceExpense: new FormControl('', Validators.required),
+     otherExpense: new FormControl('', Validators.required),
+    afghanTax : new FormControl('', Validators.required),
+     commission: new FormControl('', Validators.required),
     totalAmount: new FormControl('', Validators.required),
     gumrakImage: new FormControl<File | null>(null),
   });
@@ -106,10 +106,10 @@ export class GumrakFormComponent implements OnInit {
       metricTon: purchase?.metricTon ?? 0,
       islamicDate: gumrakData?.islamicDate ?? '',
       englishDate: gumrakData?.englishDate ?? '',
-      invoice: gumrakData?.invoice ?? '',
-      spendAfg: gumrakData?.spendAfg ?? '',
-      product: gumrakData?.product ?? '',
-      shTax: gumrakData?.shTax ?? '',
+      invoiceExpense: gumrakData?.invoiceExpense ?? '',
+      otherExpense: gumrakData?.otherExpense ?? '',
+      afghanTax: gumrakData?.afghanTax  ?? '',
+      commission: gumrakData?. commission ?? '',
       totalAmount: gumrakData?.totalAmount ?? '',
     });
 
@@ -138,10 +138,10 @@ export class GumrakFormComponent implements OnInit {
     const payload: Partial<GumrakEntry> = {
       islamicDate: formValue.islamicDate ? new Date(formValue.islamicDate).toISOString() : '',
       englishDate: formValue.englishDate ? new Date(formValue.englishDate).toISOString() : '',
-      invoice: formValue.invoice ?? '',
-      spendAfg: formValue.spendAfg ?? '',
-      product: formValue.product ?? '',
-      shTax: formValue.shTax ?? '',
+      invoiceExpense: formValue.invoiceExpense ?? '',
+      otherExpense: formValue.otherExpense ?? '',
+      afghanTax: formValue.afghanTax ?? '',
+       commission: formValue. commission ?? '',
       totalAmount: formValue.totalAmount ?? '',
     };
   
