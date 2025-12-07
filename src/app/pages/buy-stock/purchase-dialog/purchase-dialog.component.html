@@ -42,9 +42,7 @@
           <mat-label>Select place of Purchase</mat-label>
           <mat-select formControlName="placeOfPurchaseId">
             @for(warehouse of warehouses; track warehouse) {
-            <mat-option [value]="warehouse.id">{{
-              warehouse.name
-            }}</mat-option>
+            <mat-option [value]="warehouse.id">{{ warehouse.name }}</mat-option>
             }
           </mat-select>
         </mat-form-field>
@@ -52,9 +50,7 @@
           <mat-label>Select Stock Destination</mat-label>
           <mat-select formControlName="stockDestinationId">
             @for(warehouse of warehouses; track warehouse) {
-            <mat-option [value]="warehouse.id">{{
-              warehouse.name
-            }}</mat-option>
+            <mat-option [value]="warehouse.id">{{ warehouse.name }}</mat-option>
             }
           </mat-select>
         </mat-form-field>
@@ -83,19 +79,19 @@
           <mat-label>Enter Metric Ton</mat-label>
           <input matInput formControlName="metricTon" />
         </mat-form-field>
-          <mat-form-field class="w-[80%]">
-          <mat-label>Enter coalType</mat-label>
-          <input matInput formControlName="" />
+        <mat-form-field class="w-[80%]">
+          <mat-label>Enter Coal Type</mat-label>
+          <input matInput formControlName="coalType" />
         </mat-form-field>
-             <mat-form-field class="w-[80%]">
-          <mat-label>Enter ratePerTon</mat-label>
+        <mat-form-field class="w-[80%]">
+          <mat-label>Enter Rate Per Ton</mat-label>
           <input matInput formControlName="ratePerTon" />
         </mat-form-field>
-             <mat-form-field class="w-[80%]">
-          <mat-label>Enter totalAmount</mat-label>
-          <input matInput formControlName="" />
+        <mat-form-field class="w-[80%]">
+          <mat-label>Enter Total Purchase Amount</mat-label>
+          <input matInput formControlName="totalPurchaseAmount" />
         </mat-form-field>
-        
+
         <div class="w-[80%] h-48 relative">
           <!-- Hidden file input -->
           <input

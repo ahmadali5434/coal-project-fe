@@ -70,11 +70,11 @@ export class GumrakFormComponent implements OnInit {
     metricTon: new FormControl({ value: 0, disabled: true }),
     islamicDate: new FormControl('', Validators.required),
     englishDate: new FormControl('', Validators.required),
-    invoiceExpense: new FormControl('', Validators.required),
-     otherExpense: new FormControl('', Validators.required),
-    afghanTax : new FormControl('', Validators.required),
-     commission: new FormControl('', Validators.required),
-    totalAmount: new FormControl('', Validators.required),
+    invoiceExpense: new FormControl(0, Validators.required),
+    otherExpense: new FormControl(0, Validators.required),
+    afghanTax: new FormControl(0, Validators.required),
+    commission: new FormControl(0, Validators.required),
+    totalGumrakAmount: new FormControl(0, Validators.required),
     gumrakImage: new FormControl<File | null>(null),
   });
   // #endregion
@@ -97,20 +97,21 @@ export class GumrakFormComponent implements OnInit {
         metricTon: purchase?.metricTon ?? 0,
       });
     } else {
-      
     }
 
     this.gumrakForm.patchValue({
       truckNo: purchase?.truckNo ?? '',
-      driverName: gumrakData ? purchase?.driver?.name : purchase?.driverName ?? '',
+      driverName: gumrakData
+        ? purchase?.driver?.name
+        : purchase?.driverName ?? '',
       metricTon: purchase?.metricTon ?? 0,
       islamicDate: gumrakData?.islamicDate ?? '',
       englishDate: gumrakData?.englishDate ?? '',
-      invoiceExpense: gumrakData?.invoiceExpense ?? '',
-      otherExpense: gumrakData?.otherExpense ?? '',
-      afghanTax: gumrakData?.afghanTax  ?? '',
-      commission: gumrakData?. commission ?? '',
-      totalAmount: gumrakData?.totalAmount ?? '',
+      invoiceExpense: gumrakData?.invoiceExpense ?? 0,
+      otherExpense: gumrakData?.otherExpense ?? 0,
+      afghanTax: gumrakData?.afghanTax ?? 0,
+      commission: gumrakData?.commission ?? 0,
+      totalGumrakAmount: gumrakData?.totalGumrakAmount ?? 0,
     });
 
     if (gumrakData?.gumrakImage) {
@@ -131,39 +132,44 @@ export class GumrakFormComponent implements OnInit {
       });
       return;
     }
-  
+
     const formValue = this.gumrakForm.getRawValue();
-  
+
     // ✅ Build payload cleanly
     const payload: Partial<GumrakEntry> = {
-      islamicDate: formValue.islamicDate ? new Date(formValue.islamicDate).toISOString() : '',
-      englishDate: formValue.englishDate ? new Date(formValue.englishDate).toISOString() : '',
-      invoiceExpense: formValue.invoiceExpense ?? '',
-      otherExpense: formValue.otherExpense ?? '',
-      afghanTax: formValue.afghanTax ?? '',
-       commission: formValue. commission ?? '',
-      totalAmount: formValue.totalAmount ?? '',
+      islamicDate: formValue.islamicDate
+        ? new Date(formValue.islamicDate).toISOString()
+        : '',
+      englishDate: formValue.englishDate
+        ? new Date(formValue.englishDate).toISOString()
+        : '',
+      invoiceExpense: formValue.invoiceExpense ?? 0,
+      otherExpense: formValue.otherExpense ?? 0,
+      afghanTax: formValue.afghanTax ?? 0,
+      commission: formValue.commission ?? 0,
+      totalGumrakAmount: formValue.totalGumrakAmount ?? 0,
     };
-  
+
     // ✅ Only include gumrakImage if user actually selected a file
     if (this.selectedFile) {
       payload.gumrakImage = this.selectedFile;
     }
-  
+
     const formData = toFormData(payload);
     const gumrakId = this.data?.purchaseData?.gumrakEntry?.id;
-  
+
     gumrakId
       ? this.updateGumrakData(formData)
       : this.saveNewGumrakData(formData);
   }
-  
 
   private saveNewGumrakData(formData: FormData) {
     const purchaseId = this.data?.purchaseData?.id;
     this.buyStockService.createGumrakEntry(purchaseId, formData).subscribe({
       next: (res) => {
-        this._snackBar.open('Gumrak entry saved!', undefined, { duration: 3000 });
+        this._snackBar.open('Gumrak entry saved!', undefined, {
+          duration: 3000,
+        });
         this.resetForm();
         //this.dialogRef.close();
         this.dialogRef.close(res.data);
@@ -180,7 +186,9 @@ export class GumrakFormComponent implements OnInit {
     const purchaseId = this.data?.purchaseData?.id;
     this.buyStockService.updateGumrakEntry(purchaseId, formData).subscribe({
       next: (res) => {
-        this._snackBar.open('Gumrak entry updated!', undefined, { duration: 3000 });
+        this._snackBar.open('Gumrak entry updated!', undefined, {
+          duration: 3000,
+        });
         this.resetForm();
         //this.dialogRef.close(res);
         this.dialogRef.close(res.data);

@@ -35,7 +35,12 @@ import { MatCard } from '@angular/material/card';
 import { WarehouseService } from '../../warehouse/data-access/warehouse.service';
 import { AddNewCustomerDialogComponent } from '../add-new-customer-dialog/add-new-customer-dialog.component';
 import { BuyStockService } from '../data-access/buy-stock.service';
-import { Customer, Driver, Purchase, Warehouse } from '../data-access/buy-stock.dto';
+import {
+  Customer,
+  Driver,
+  Purchase,
+  Warehouse,
+} from '../data-access/buy-stock.dto';
 import { CustomerService } from '../data-access/customer.service';
 import { AddNewDriverDialogComponent } from '../add-new-driver-dialog/add-new-driver-dialog.component';
 import { DriverService } from '../data-access/driver.service';
@@ -98,7 +103,7 @@ export class PurchaseDialogComponent implements OnInit {
     builtyImage: new FormControl<File | null>(null),
     coalType: new FormControl<string | null>(null),
     ratePerTon: new FormControl<number | null>(null),
-    totalAmount: new FormControl<number | null>(null),
+    totalPurchaseAmount: new FormControl<number | null>(null),
   });
   // #endregion
 
@@ -130,7 +135,7 @@ export class PurchaseDialogComponent implements OnInit {
       ...rest,
       coalType: data.coalType ?? '',
       ratePerTon: data.ratePerTon ?? null,
-      totalAmount: data.totalAmount ?? null,
+      totalPurchaseAmount: data.totalPurchaseAmount ?? null,
     });
 
     if (builtyImage) {
@@ -176,15 +181,16 @@ export class PurchaseDialogComponent implements OnInit {
       purchaseDate: formValue.purchaseDate
         ? new Date(formValue.purchaseDate).toISOString()
         : null,
-        coalType: formValue.coalType ?? '',
+      coalType: formValue.coalType ?? '',
       ratePerTon: formValue.ratePerTon ?? 0,
-      totalAmount: formValue.totalAmount ?? 0,
+      totalPurchaseAmount: formValue.totalPurchaseAmount ?? 0,
       //status: 'initial_purchase',
     };
     const formData = toFormData(payload);
     const purchaseId = this.purchaseData?.id;
-    purchaseId ? this.updatePurchaseById(purchaseId, formData) 
-      : this.saveNewPurchase(formData);  
+    purchaseId
+      ? this.updatePurchaseById(purchaseId, formData)
+      : this.saveNewPurchase(formData);
   }
 
   private saveNewPurchase(formData: FormData) {

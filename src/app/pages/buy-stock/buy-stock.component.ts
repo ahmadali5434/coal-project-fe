@@ -243,11 +243,11 @@ export class BuyStockComponent implements OnInit {
       purchaseEntryId: data?.purchaseEntryId ?? null,
       islamicDate: data?.islamicDate ?? '',
       englishDate: data?.englishDate ?? '',
-      invoice: data?.invoice ?? '',
-      spendAfg: data?.spendAfg ?? 0,
-      product: data?.product ?? '',
-      shTax: data?.shTax ?? 0,
-      totalAmount: data?.totalAmount ?? 0,
+      invoiceExpense: data?.invoiceExpense ?? 0,
+      otherExpense: data?.otherExpense ?? 0,
+      afghanTax: data?.afghanTax ?? 0,
+      commission: data?.commission ?? 0,
+      totalGumrakAmount: data?.totalGumrakAmount ?? 0,
       gumrakImage: null,
     };
   }

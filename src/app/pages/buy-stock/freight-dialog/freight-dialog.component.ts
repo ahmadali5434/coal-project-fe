@@ -47,7 +47,9 @@ export class FreightDialogComponent implements OnInit {
         disabled: true,
       }),
       driverName: new FormControl({
-        value: freightData ? purchase?.driver?.name : purchase?.driverName ?? '',
+        value: freightData
+          ? purchase?.driver?.name
+          : purchase?.driverName ?? '',
         disabled: true,
       }),
       metricTon: new FormControl({
@@ -57,32 +59,8 @@ export class FreightDialogComponent implements OnInit {
       freightPerTon: new FormControl(freightData?.freightPerTon ?? 0),
       expense: new FormControl(freightData?.expense ?? 0),
       advancePayment: new FormControl(freightData?.advancePayment ?? 0),
-      amountAFN: new FormControl(freightData?.amountAFN ?? 0),
-      exchangeRate: new FormControl(freightData?.exchangeRate ?? 0),
-    totalAmount: new FormControl(freightData?.totalAmount ?? 0),
+      totalFreightAmount: new FormControl(freightData?.totalFreightAmount ?? 0),
     });
-
-    this.setupAmountPKRCalculation();
-  }
-
-  setupAmountPKRCalculation() {
-    this.freightForm.get('amountAFN')?.valueChanges.subscribe(() => {
-      this.updateAmountPKR();
-    });
-
-    this.freightForm.get('exchangeRate')?.valueChanges.subscribe(() => {
-      this.updateAmountPKR();
-    });
-  }
-
-  updateAmountPKR() {
-    const afn = Number(this.freightForm.get('amountAFN')?.value) || 0;
-    const rate = Number(this.freightForm.get('exchangeRate')?.value) || 0;
-    const pkr = afn * rate;
-
-    this.freightForm
-      .get('amountPKR')
-      ?.setValue(pkr.toString(), { emitEvent: false });
   }
 
   onNoClick(): void {
@@ -95,11 +73,9 @@ export class FreightDialogComponent implements OnInit {
 
       const data: PurchaseFreight = {
         freightPerTon: formData.freightPerTon ?? 0,
-        expense: formData.expense ?? '',
+        expense: formData.expense ?? 0,
         advancePayment: formData.advancePayment ?? 0,
-        amountAFN: Number(formData.amountAFN ?? 0),
-        exchangeRate: Number(formData.exchangeRate ?? 0),
-        amountPKR: Number(formData.amountPKR ?? 0),
+        totalFreightAmount: Number(formData.totalFreightAmount ?? 0),
       };
 
       const purchaseFreightId = this.data?.purchaseData?.purchaseFreight?.id;
@@ -133,22 +109,20 @@ export class FreightDialogComponent implements OnInit {
 
   private updatePurchaseFreight(formData: PurchaseFreight) {
     const purchaseId = this.data?.purchaseData?.id;
-    this.buyStockService
-      .updatePurchaseFreight(purchaseId, formData)
-      .subscribe({
-        next: (res) => {
-          this._snackBar.open('Purchase Freight updated!', undefined, {
-            duration: 3000,
-          });
-          this.dialogRef.close(formData);
-        },
-        error: (err) => {
-          this._snackBar.open(
-            'Error updating Purchase Freight. Please try again.',
-            undefined,
-            { duration: 3000 }
-          );
-        },
-      });
+    this.buyStockService.updatePurchaseFreight(purchaseId, formData).subscribe({
+      next: (res) => {
+        this._snackBar.open('Purchase Freight updated!', undefined, {
+          duration: 3000,
+        });
+        this.dialogRef.close(formData);
+      },
+      error: (err) => {
+        this._snackBar.open(
+          'Error updating Purchase Freight. Please try again.',
+          undefined,
+          { duration: 3000 }
+        );
+      },
+    });
   }
 }
