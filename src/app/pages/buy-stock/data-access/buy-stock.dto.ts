@@ -18,12 +18,15 @@ export interface CityRef {
 export interface Purchase {
   id?: string;
   purchaseDate: string;
+  coalType: string;
   customerName: string;
   placeOfPurchase: string;
-  stockDestination: string;
+  stockDestination: string; 
   truckNo: string;
   driverName: string;
   metricTon: number;
+  ratePerTon: number;
+  totalPurchaseAmount?: number;
   builtyImage: string;
 }
 
@@ -44,11 +47,9 @@ export interface CreateOrUpdatePurchasePayload {
 export interface PurchaseFreight {
   id?: string;
   freightPerTon: number;
-  expense: string;
+  expense: number;
   advancePayment: number;
-  amountAFN: number;
-  exchangeRate: number;
-  amountPKR: number;
+  totalFreightAmount?: number;
 }
 
 // ----------------- PURCHASE STATUS -----------------
@@ -84,11 +85,11 @@ export interface GumrakEntry {
   purchaseEntryId?: number;
   islamicDate: string;
   englishDate: string;
-  invoice: string;
-  spendAfg: string; // Stored as string/numeric in DB
-  product: string;
-  shTax: string;
-  totalAmount: string;
+  invoiceExpense: number;
+  otherExpense: number;
+  afghanTax: number;
+  commission: number;
+  totalGumrakAmount: number;
   gumrakImage?: File | null;
   createdAt?: string;
   updatedAt?: string;
