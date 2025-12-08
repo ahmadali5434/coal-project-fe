@@ -96,7 +96,6 @@ export class GumrakFormComponent implements OnInit {
         driverName: purchase?.driver?.name ?? '',
         metricTon: purchase?.metricTon ?? 0,
       });
-    } else {
     }
 
     this.gumrakForm.patchValue({
@@ -120,6 +119,8 @@ export class GumrakFormComponent implements OnInit {
         this.previewFile(file);
       });
     }
+
+    this.calculateTotalGumrak();
   }
   // #endregion
 
@@ -223,6 +224,20 @@ export class GumrakFormComponent implements OnInit {
     const reader = new FileReader();
     reader.onload = () => (this.selectedImage = reader.result as string);
     reader.readAsDataURL(file);
+  }
+
+  
+  private calculateTotalGumrak() {
+    this.gumrakForm.valueChanges.subscribe(val => {
+      const invoiceExpense = Number(val.invoiceExpense) || 0;
+      const otherExpense = Number(val.otherExpense) || 0;
+      const afghanTax = Number(val.afghanTax) || 0;
+      const commission = Number(val.commission) || 0;
+  
+      const total = invoiceExpense + otherExpense + afghanTax + commission;
+  
+      this.gumrakForm.get('totalGumrakAmount')?.setValue(total, { emitEvent: false });
+    });
   }
 
   private async convertToFile(url: string, fileName: string): Promise<File> {
