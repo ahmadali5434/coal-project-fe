@@ -215,32 +215,30 @@ export class BuyStockComponent implements OnInit {
     return {
       id: data?.id ?? null,
       purchaseDate: data?.purchaseDate ?? '',
+      coalType: data?.coalType ?? 'N/A',
       customerName: data?.customer?.name ?? 'N/A',
       placeOfPurchase: data?.placeOfPurchase?.name ?? 'N/A',
       stockDestination: data?.stockDestination?.name ?? 'N/A',
       truckNo: data?.truckNo ?? 'N/A',
       driverName: data?.driver?.name ?? 'N/A',
       metricTon: data?.metricTon ?? 0,
+      ratePerTon: data?.ratePerTon ?? 0,
+      totalPurchaseAmount: data?.totalPurchaseAmount ?? 0,
       builtyImage: data?.builtyImage ?? null,
     };
   }
 
   private mapToFreightSummary(data: any) {
     return {
-      id: data?.id ?? null,
       freightPerTon: data?.freightPerTon ?? 0,
       expense: data?.expense ?? '',
       advancePayment: data?.advancePayment ?? 0,
-      amountAFN: data?.amountAFN ?? 0,
-      exchangeRate: data?.exchangeRate ?? 0,
-      amountPKR: data?.amountPKR ?? 0,
+      totalFreightAmount: data?.totalFreightAmount ?? 0,
     };
   }
 
   private mapToGumrakSummary(data: any) {
     return {
-      id: data?.id ?? null,
-      purchaseEntryId: data?.purchaseEntryId ?? null,
       islamicDate: data?.islamicDate ?? '',
       englishDate: data?.englishDate ?? '',
       invoiceExpense: data?.invoiceExpense ?? 0,

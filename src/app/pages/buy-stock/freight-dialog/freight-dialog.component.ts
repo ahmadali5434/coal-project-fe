@@ -61,6 +61,8 @@ export class FreightDialogComponent implements OnInit {
       advancePayment: new FormControl(freightData?.advancePayment ?? 0),
       totalFreightAmount: new FormControl(freightData?.totalFreightAmount ?? 0),
     });
+
+    this.calculateTotalFreight();
   }
 
   onNoClick(): void {
@@ -72,11 +74,11 @@ export class FreightDialogComponent implements OnInit {
       const formData = this.freightForm.value;
 
       const data: PurchaseFreight = {
-        freightPerTon: formData.freightPerTon ?? 0,
-        expense: formData.expense ?? 0,
-        advancePayment: formData.advancePayment ?? 0,
-        totalFreightAmount: Number(formData.totalFreightAmount ?? 0),
-      };
+        freightPerTon: Number(formData.freightPerTon),
+        expense: Number(formData.expense),
+        advancePayment: Number(formData.advancePayment),
+        totalFreightAmount: Number(formData.totalFreightAmount)
+      };      
 
       const purchaseFreightId = this.data?.purchaseData?.purchaseFreight?.id;
       purchaseFreightId
@@ -125,4 +127,18 @@ export class FreightDialogComponent implements OnInit {
       },
     });
   }
+
+  private calculateTotalFreight() {
+    this.freightForm.valueChanges.subscribe(val => {
+      const metricTon = Number(this.freightForm.get('metricTon')?.value) || 0;
+      const freightPerTon = Number(val.freightPerTon) || 0;
+      const expense = Number(val.expense) || 0;
+      const advancePayment = Number(val.advancePayment) || 0;
+  
+      const total = (metricTon * freightPerTon) + expense - advancePayment;
+  
+      this.freightForm.get('totalFreightAmount')?.setValue(total, { emitEvent: false });
+    });
+  }
+
 }
