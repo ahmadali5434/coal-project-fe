@@ -1,0 +1,20 @@
+<div class="exchange-rate-page p-4">
+  <div class="flex items-center justify-between mb-4">
+    <h1 class="text-2xl font-semibold">Exchange Rate</h1>
+    <div>
+      <button
+        mat-flat-button
+        color="primary"
+        (click)="openExchangeDialog()"
+        class="transition-transform hover:scale-105"
+      >
+        <mat-icon class="mr-2">currency_exchange</mat-icon>
+        Add Exchange Rate
+      </button>
+    </div>
+  </div>
+
+  <section class="exchange-list">
+    <p class="text-gray-500">No exchange rates yet — click the button above to create one.</p>
+  </section>
+</div>
