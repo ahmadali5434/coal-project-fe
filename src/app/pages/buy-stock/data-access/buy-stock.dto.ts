@@ -175,3 +175,9 @@ export interface ApiResponse<T> {
   data: T;
   message?: string;
 }
+export interface ExchangeRate {
+  id?: number;
+  startDate: string; 
+  endDate: string;     
+  rate: number;
+}

@@ -11,6 +11,9 @@ import {
 
 } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
+import { MatDialog } from '@angular/material/dialog';
+import { MatDialogModule } from '@angular/material/dialog';
+import { ExchangeRateDialogComponent } from '../pages/exchange-rate-dialog/exchange-rate-dialog.component';
 import { AuthService } from '../auth/auth.service';
 import { filter } from 'rxjs';
 @Component({
@@ -23,6 +26,7 @@ import { filter } from 'rxjs';
     CommonModule,
     RouterModule,
     MatIconModule,
+    MatDialogModule,
     NgClass,
     NgIf,
   ],
@@ -32,6 +36,7 @@ export class LayoutComponent {
   private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
     private readonly activatedRoute = inject(ActivatedRoute);
+  private readonly dialog = inject(MatDialog);
 
   sidebarOpen = true;
   isSidebarOpen = false;
@@ -64,8 +69,15 @@ export class LayoutComponent {
     this.sidebarOpen = !this.sidebarOpen;
   }
 
+  openExchangeDialog(exchangeRate?: any): void {
+    this.dialog.open(ExchangeRateDialogComponent, {
+      width: '800px',
+      data: { exchangeRate },
+    });
+  }
+
   @HostListener('window:resize', ['$event'])
-  onResize() {
+  onResize(event: any) {
     this.isDesktop = window.innerWidth >= 786;
     if (this.isDesktop) this.sidebarOpen = true;
     else {

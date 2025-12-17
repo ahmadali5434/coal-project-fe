@@ -1,0 +1,73 @@
+<h2 class="flex justify-center items-center text-3xl pt-8">
+  Permanent Rate Exchange
+</h2>
+
+<mat-dialog-content class="mat-typography p-0">
+  <form [formGroup]="exchangeForm">
+    <div
+      class="grid grid-cols-1 lg:grid-cols-2 gap-y-3 w-full place-items-center my-6"
+    >
+      <mat-form-field class="w-[80%]">
+        <mat-label>Start Date</mat-label>
+        <input
+          matInput
+          [matDatepicker]="startPicker"
+          formControlName="startDate"
+        />
+        <mat-datepicker-toggle
+          matSuffix
+          [for]="startPicker"
+        ></mat-datepicker-toggle>
+        <mat-datepicker #startPicker></mat-datepicker>
+        <mat-error *ngIf="exchangeForm.get('startDate')?.hasError('required')">
+          Start date is required
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="w-[80%]">
+        <mat-label>End Date</mat-label>
+        <input
+          matInput
+          [matDatepicker]="endPicker"
+          formControlName="endDate"
+        />
+        <mat-datepicker-toggle
+          matSuffix
+          [for]="endPicker"
+        ></mat-datepicker-toggle>
+        <mat-datepicker #endPicker></mat-datepicker>
+
+        <mat-error *ngIf="exchangeForm.get('endDate')?.hasError('required')">
+          End date is required
+        </mat-error>
+
+        <mat-error *ngIf="exchangeForm.hasError('dateRange')">
+          End date must be same or after Start date
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="w-[80%]">
+        <mat-label>Exchange Rate</mat-label>
+        <input
+          matInput
+          type="text"
+          inputmode="decimal"
+          pattern="[0-9]*[.,]?[0-9]*"
+          formControlName="rate"
+          (input)="onRateInput($event)"
+        />
+        <mat-error *ngIf="exchangeForm.get('rate')?.hasError('required')">
+          Exchange rate is required
+        </mat-error>
+        <mat-error *ngIf="exchangeForm.get('rate')?.hasError('min')">
+          Exchange rate must be greater than 0
+        </mat-error>
+      </mat-form-field>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="px-6 pb-6">
+  <button mat-button mat-dialog-close>Cancel</button>
+  <button mat-button color="primary" (click)="onSave()">Save</button>
+</mat-dialog-actions>
