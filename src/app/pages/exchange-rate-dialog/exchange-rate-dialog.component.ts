@@ -67,7 +67,7 @@ export class ExchangeRateDialogComponent implements OnInit {
           existing ? new Date(existing.endDate) : null,
           Validators.required
         ),
-        rate: new FormControl(existing?.rate ?? null, [Validators.required, Validators.min(0.0000001)]),
+        rate: new FormControl(existing?.permanentRate ?? null, [Validators.required, Validators.min(0)]),
       },
       { validators: this.dateRangeValidator }
     );
@@ -99,7 +99,7 @@ export class ExchangeRateDialogComponent implements OnInit {
     const payload: ExchangeRate = {
       startDate: this.toIsoDate(raw.startDate),
       endDate: this.toIsoDate(raw.endDate),
-      rate: Number(raw.rate),
+      permanentRate: Number(raw.rate),
     };
 
     const id = this.data?.exchangeRate?.id;

@@ -179,5 +179,5 @@ export interface ExchangeRate {
   id?: number;
   startDate: string; 
   endDate: string;     
-  rate: number;
+  permanentRate: number;
 }

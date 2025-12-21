@@ -125,6 +125,7 @@ export class PurchaseDialogComponent implements OnInit {
     if (this.purchaseData) {
       this.patchFormData(this.purchaseData);
     }
+    this.calculateTotalPurchase();
   }
   // #endregion
 
@@ -224,6 +225,17 @@ export class PurchaseDialogComponent implements OnInit {
           { duration: 3000 }
         );
       },
+    });
+  }
+
+  private calculateTotalPurchase() {
+    this.purchaseForm.valueChanges.subscribe(val => {
+      const metricTon = Number(val.metricTon) || 0;
+      const ratePerTon = Number(val.ratePerTon) || 0;
+  
+      const total = metricTon * ratePerTon;
+  
+      this.purchaseForm.get('totalPurchaseAmount')?.setValue(total, { emitEvent: false });
     });
   }
   // #endregion
