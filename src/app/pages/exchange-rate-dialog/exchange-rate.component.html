@@ -1,0 +1,25 @@
+<div class="content flex flex-col" style="width: 100%; height: 100%">
+  <div class="flex py-4 px-6 justify-between">
+    <div class="text-lg font-medium">
+      Total Exchange Rates
+      <span class="text-xs bg-blue-50 text-blue-900 px-3 py-0.5 rounded-2xl ml-2">
+        {{ exchangeRates.length }}
+      </span>
+    </div>
+    <div>
+      <button mat-flat-button color="primary" (click)="openDialog()">
+        <mat-icon style="color:white">add</mat-icon> Add Exchange Rate
+      </button>
+    </div>
+  </div>
+
+  <ag-grid-angular
+    style="width: 100%; height: 90vh"
+    [rowData]="exchangeRates"
+    [gridOptions]="gridOptions"
+    [columnDefs]="ExchangeRateCols"
+    [theme]="'legacy'"
+    (gridReady)="onGridReady($event)"
+    class="ag-theme-alpine"
+  />
+</div>

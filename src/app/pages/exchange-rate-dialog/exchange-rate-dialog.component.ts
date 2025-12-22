@@ -24,6 +24,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ExchangeRate } from '../buy-stock/data-access/buy-stock.dto';
 import { ExchangeRateService } from './exchange-rate.service';
+import { toDateOnly } from '../../shared/utils/toDateOnly';
 
 @Component({
   selector: 'app-exchange-rate-dialog',
@@ -36,9 +37,9 @@ import { ExchangeRateService } from './exchange-rate.service';
     MatFormFieldModule,
     MatInputModule,
     MatDatepickerModule,
-    MatNativeDateModule,      
+    MatNativeDateModule,
     MatButtonModule,
-    MatSnackBarModule,        
+    MatSnackBarModule,
     MatDialogModule,
     MatDialogActions,
     MatDialogContent,
@@ -67,21 +68,16 @@ export class ExchangeRateDialogComponent implements OnInit {
           existing ? new Date(existing.endDate) : null,
           Validators.required
         ),
-        rate: new FormControl(existing?.permanentRate ?? null, [Validators.required, Validators.min(0)]),
+        rate: new FormControl(existing?.permanentRate ?? null, [
+          Validators.required,
+          Validators.min(0),
+        ]),
       },
       { validators: this.dateRangeValidator }
     );
   }
 
-  onRateInput(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const parsed = input.value === '' ? null : Number(input.value);
-    this.exchangeForm.get('rate')?.setValue(parsed, { emitEvent: true });
-  }
-
-  private dateRangeValidator(
-    group: AbstractControl
-  ): ValidationErrors | null {
+  private dateRangeValidator(group: AbstractControl): ValidationErrors | null {
     const start = group.get('startDate')?.value;
     const end = group.get('endDate')?.value;
     if (!start || !end) return null;
@@ -97,8 +93,8 @@ export class ExchangeRateDialogComponent implements OnInit {
     const raw = this.exchangeForm.value;
 
     const payload: ExchangeRate = {
-      startDate: this.toIsoDate(raw.startDate),
-      endDate: this.toIsoDate(raw.endDate),
+      startDate: toDateOnly(raw.startDate),
+      endDate: toDateOnly(raw.endDate),
       permanentRate: Number(raw.rate),
     };
 
@@ -117,17 +113,14 @@ export class ExchangeRateDialogComponent implements OnInit {
         );
         this.dialogRef.close(res);
       },
-      error: () => {
-        this.snackBar.open('Something went wrong', undefined, {
-          duration: 3000,
+      error: (err) => {
+        const message =
+          err?.error?.message || 'Something went wrong. Please try again.';
+
+        this.snackBar.open(message, undefined, {
+          duration: 4000,
         });
       },
     });
-  }
-
-  private toIsoDate(date: Date): string {
-    const d = new Date(date);
-    d.setHours(0, 0, 0, 0);
-    return d.toISOString().split('T')[0];
   }
 }

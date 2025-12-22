@@ -45,6 +45,7 @@ import { CustomerService } from '../data-access/customer.service';
 import { AddNewDriverDialogComponent } from '../add-new-driver-dialog/add-new-driver-dialog.component';
 import { DriverService } from '../data-access/driver.service';
 import { toFormData } from '../../../shared/utils/form-utils';
+import { toDateOnly } from '../../../shared/utils/toDateOnly';
 // #endregion
 
 @Component({
@@ -180,12 +181,11 @@ export class PurchaseDialogComponent implements OnInit {
     const payload = {
       ...formValue,
       purchaseDate: formValue.purchaseDate
-        ? new Date(formValue.purchaseDate).toISOString()
+        ? toDateOnly(formValue.purchaseDate)
         : null,
       coalType: formValue.coalType ?? '',
       ratePerTon: formValue.ratePerTon ?? 0,
       totalPurchaseAmount: formValue.totalPurchaseAmount ?? 0,
-      //status: 'initial_purchase',
     };
     const formData = toFormData(payload);
     const purchaseId = this.purchaseData?.id;

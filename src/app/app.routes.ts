@@ -36,6 +36,14 @@ export const routes: Routes = [
             data: { breadcrumb: 'Warehouses' }
       },
       {
+        path: 'exchangeRate',
+        loadComponent: () =>
+          import('./pages/exchange-rate-dialog/exchange-rate.component').then(
+            (m) => m.ExchangeRateComponent
+          ),
+            data: { breadcrumb: 'Exchange Rates' }
+      },
+      {
         path: 'transfer',
         loadComponent: () =>
           import('./pages/transfer/transfer.component').then(

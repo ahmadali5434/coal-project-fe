@@ -29,7 +29,7 @@ ModuleRegistry.registerModules([AllCommunityModule]);
 })
 export class HomeComponent implements OnInit {
   private readonly buyStockService = inject(BuyStockService);
-  private readonly purhcaseProgressService = inject(PurchaseProgressService);
+  private readonly purchaseProgressService = inject(PurchaseProgressService);
   private readonly router = inject(Router);
   private readonly snackBar = inject(MatSnackBar);
   private readonly dialog = inject(MatDialog);
@@ -45,7 +45,6 @@ export class HomeComponent implements OnInit {
   // --- Grid ---
   colDefs: ColDef[] = [
     { field: 'id', headerName: 'Stock No', minWidth: 100, flex: 1 },
-
     {
       field: 'purchaseDate',
       headerName: 'Purchase Date',
@@ -54,32 +53,15 @@ export class HomeComponent implements OnInit {
     },
     { field: 'truckNo', headerName: 'Truck No', minWidth: 100, flex: 1 },
     { field: 'metricTon', headerName: 'Metric Ton', minWidth: 120, flex: 1 },
+    { field: 'permanentRate', headerName: 'Ex. Rate', minWidth: 120, flex: 1 },
+    { field: 'totalPurchaseAmount', headerName: 'Purchase Amount (AFG)', minWidth: 200, flex: 1 },
+    { field: 'totalPurchaseAmountInPak', headerName: 'Purchase Amount (PKR)', minWidth: 200, flex: 1 },
     {
       field: 'freightPerTon',
       headerName: 'Freight Per Ton',
       minWidth: 140,
       flex: 1,
     },
-    { field: 'exchangeRate', headerName: 'Ex. Rate', minWidth: 120, flex: 1 },
-
-    //TODO: The following field with be included later when status feature is implemented
-    // {
-    //   field: 'status',
-    //   headerName: 'Status',
-    //   filter: true,
-    //   minWidth: 130,
-    //   flex: 1,
-    //   cellRenderer: (params: any) => {
-    //     const status = params.value;
-    //     const color =
-    //       status === 'Delivered'
-    //         ? '#90ee90'
-    //         : status === 'Loading'
-    //         ? '#ffcc99'
-    //         : '#e0e0e0';
-    //     return `<span style="background:${color}; margin-top:4px; padding:2px; border-radius:8px; display:flex; width:80px; max-height:25px; justify-content:center; align-items:center;">${status}</span>`;
-    //   },
-    // },
     {
       headerName: 'Actions',
       field: 'actions',
@@ -133,7 +115,7 @@ export class HomeComponent implements OnInit {
 
   // --- Load stats for all statuses ---
   loadStats() {
-    this.purhcaseProgressService.getAllPurchasesProgress().subscribe({
+    this.purchaseProgressService.getAllPurchasesProgress().subscribe({
       next: (data) => {
         this.purchaseStats.set(this.mapToCardData(data));
       },
@@ -176,12 +158,6 @@ export class HomeComponent implements OnInit {
   // --- Card data mapping ---
   private mapToCardData(data: Record<string, number>) {
     return [
-      // {
-      //   title: 'Initial Purchase',
-      //   status: 'initial_purchase',
-      //   count: data['initialPurchase'] || 0,
-      //   color: '#216B96',
-      // },
       {
         title: 'Add Freight',
         status: 'add_freight',
@@ -221,7 +197,9 @@ export class HomeComponent implements OnInit {
       driverName: data.driver.name,
       metricTon: data.metricTon,
       ratePerTon: data.ratePerTon,
+      permanentRate: data.permanentRate,
       totalPurchaseAmount: data.totalPurchaseAmount,
+      totalPurchaseAmountInPak: data.permanentRate ? (data.totalPurchaseAmount * data.permanentRate) : null,
       freightPerTon: data.purchaseFreight?.freightPerTon,
       expense: data.purchaseFreight?.expense,
       advancePayment: data.purchaseFreight?.advancePayment,

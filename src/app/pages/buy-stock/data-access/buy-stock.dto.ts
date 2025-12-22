@@ -26,7 +26,9 @@ export interface Purchase {
   driverName: string;
   metricTon: number;
   ratePerTon: number;
+  permanentRate?: number;
   totalPurchaseAmount?: number;
+  totalPurchaseAmountInPak?: number;
   builtyImage: string;
 }
 
