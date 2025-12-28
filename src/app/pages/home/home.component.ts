@@ -11,7 +11,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog.component';
 import { BuyStockService } from '../buy-stock/data-access/buy-stock.service';
 import { HasPermissionDirective } from '../../core/directives/has-permission.directive';
-import { PurchaseWithDetails } from '../buy-stock/data-access/buy-stock.dto';
+import {
+  ActionItem,
+  Purchase,
+  PurchaseWithDetails,
+} from '../buy-stock/data-access/buy-stock.dto';
 import { PurchaseProgressService } from '../buy-stock/data-access/purchase-progress.service';
 import { TempExchangeRateComponent } from '../exchange-rate/temp-exchange-rate/temp-exchange-rate.component';
 
@@ -45,62 +49,29 @@ export class HomeComponent implements OnInit {
 
   // --- Grid ---
   colDefs: ColDef[] = [
-    { field: 'id', headerName: 'Stock No', minWidth: 100, flex: 1 },
-    {
-      field: 'purchaseDate',
-      headerName: 'Purchase Date',
-      minWidth: 130,
-      flex: 1,
-    },
-    { field: 'truckNo', headerName: 'Truck No', minWidth: 100, flex: 1 },
-    { field: 'metricTon', headerName: 'Metric Ton', minWidth: 120, flex: 1 },
-    { field: 'temporaryExchangeRate', headerName: 'Temp. Exchange Rate', minWidth: 170, flex: 1 },
-    { field: 'permanentRate', headerName: 'Fixed Ex. Rate', minWidth: 150, flex: 1 },
-    { field: 'totalPurchaseAmount', headerName: 'Purchase Amount (AFG)', minWidth: 200, flex: 1 },
-    { field: 'totalPurchaseAmountInPak', headerName: 'Purchase Amount (PKR)', minWidth: 200, flex: 1 },
-    {
-      field: 'freightPerTon',
-      headerName: 'Freight Per Ton',
-      minWidth: 140,
-      flex: 1,
-    },
+    { field: 'purchase.purchaseDate', headerName: 'Purchase Date', minWidth: 130, flex: 1 },
+    { field: 'purchase.truckNo', headerName: 'Truck No', minWidth: 100, flex: 1 },
+    { field: 'purchase.metricTon', headerName: 'Metric Ton', minWidth: 120, flex: 1 },
+    { field: 'purchase.temporaryExchangeRate', headerName: 'Temp. Exchange Rate', minWidth: 170, flex: 1 },
+    { field: 'purchase.permanentRate', headerName: 'Fixed Ex. Rate', minWidth: 150, flex: 1 },
+    { field: 'purchase.totalPurchaseAmount', headerName: 'Purchase Amount (AFG)', minWidth: 200, flex: 1 },
+    { field: 'purchase.totalPurchaseAmountInPak', headerName: 'Purchase Amount (PKR)', minWidth: 200, flex: 1 },
     {
       headerName: 'Actions',
-      field: 'actions',
-      cellRenderer: ActionCellRendererComponent,
-      cellRendererParams: {
-        actions: [
-          {
-            type: 'view',
-            icon: 'visibility',
-            label: 'View Purchase',
-            permission: 'purchase:read',
-            callback: (row: any) => this.onView(row),
-          },
-          {
-            type: 'view',
-            icon: 'currency_exchange',
-            label: 'Add Exchange Rate',
-            permission: 'purchase:read',//TODO: change permission
-            callback: (row: any) => this.addTempExchangeRate(row),
-          },
-          {
-            type: 'delete',
-            icon: 'delete',
-            label: 'Delete Purchase',
-            permission: 'purchase:delete',
-            callback: (row: any) => this.onDelete(row),
-          },
-        ],
-      },
       pinned: 'right',
-      minWidth: 120,
-      maxWidth: 140,
+      minWidth: 140,
+      maxWidth: 160,
       sortable: false,
       filter: false,
       resizable: false,
-    },
+      cellRenderer: ActionCellRendererComponent,
+      cellRendererParams: (params: any) => ({
+        actions: params.data.actions, // Pass actions directly
+      }),
+    }    
   ];
+  
+  
 
   gridOptions: GridOptions = {
     rowHeight: 60,
@@ -194,30 +165,87 @@ export class HomeComponent implements OnInit {
     ];
   }
 
-  mapToPurchaseData(resp: any): PurchaseWithDetails[] {
-    return resp.map((data: any, index: any) => ({
-      id: data.id,
-      purchaseDate: data.purchaseDate,
-      coalType: data.coalType,
-      customerName: data.customer.name,
-      placeOfPurchaseName: data.placeOfPurchase.name,
-      stockDestinationName: data.stockDestination.name,
-      truckNo: data.truckNo,
-      driverName: data.driver.name,
-      metricTon: data.metricTon,
-      ratePerTon: data.ratePerTon,
-      temporaryExchangeRate: data.temporaryExchangeRate,
-      permanentRate: data.permanentRate,
-      totalPurchaseAmount: data.totalPurchaseAmount,
-      totalPurchaseAmountInPak: data.permanentRate ? (data.totalPurchaseAmount * data.permanentRate) : null,
-      freightPerTon: data.purchaseFreight?.freightPerTon,
-      expense: data.purchaseFreight?.expense,
-      advancePayment: data.purchaseFreight?.advancePayment,
-      totalFreightAmount: data.purchaseFreight?.totalFreightAmount,
-      builtyImage: data.builtyImage,
-      status: data.status,
-    }));
+  // --- Define your ActionItem type ---
+
+  // --- Map purchase data and include actions ---
+  mapToPurchaseData(resp: any[]): PurchaseWithDetails[] {
+    const calculateTotalInPak = (
+      amount: string | number,
+      permanentRate?: number | null,
+      temporaryRate?: string | number | null
+    ): number | undefined => {
+      const amt = Number(amount);
+      const tempRate = temporaryRate != null ? Number(temporaryRate) : undefined;
+      if (permanentRate != null) return amt * permanentRate;
+      if (tempRate != null) return amt * tempRate;
+      return undefined;
+    };
+  
+    return resp.map((data) => {
+      const purchase: Purchase = {
+        id: String(data.id),
+        purchaseDate: data.purchaseDate,
+        coalType: data.coalType,
+        customerName: data.customer.name,
+        placeOfPurchase: data.placeOfPurchase.name,
+        stockDestination: data.stockDestination.name,
+        truckNo: data.truckNo,
+        driverName: data.driver.name,
+        metricTon: Number(data.metricTon),
+        ratePerTon: Number(data.ratePerTon),
+        permanentRate: data.permanentRate,
+        temporaryExchangeRate: data.temporaryExchangeRate
+          ? Number(data.temporaryExchangeRate)
+          : undefined,
+        totalPurchaseAmount: Number(data.totalPurchaseAmount),
+        totalPurchaseAmountInPak: calculateTotalInPak(
+          data.totalPurchaseAmount,
+          data.permanentRate,
+          data.temporaryExchangeRate
+        ),
+        builtyImage: data.builtyImage,
+      };
+  
+      const row: PurchaseWithDetails = {
+        id: String(data.id),
+        purchase,
+        purchaseFreight: data.purchaseFreight ?? null,
+        gumrakEntry: data.gumrakEntry ?? null,
+        status: data.status,
+        actions: [
+          {
+            type: 'view',
+            icon: 'visibility',
+            label: 'View Purchase',
+            permission: 'purchase:read',
+            callback: () => this.onView(row),
+          },
+          ...(purchase.permanentRate == null
+            ? [
+                {
+                  type: 'addExchange',
+                  icon: 'currency_exchange',
+                  label: 'Add Exchange Rate',
+                  permission: 'purchase:read',
+                  callback: () => this.addTempExchangeRate(row),
+                } as ActionItem,
+              ]
+            : []),
+          {
+            type: 'delete',
+            icon: 'delete',
+            label: 'Delete Purchase',
+            permission: 'purchase:delete',
+            callback: () => this.onDelete(row),
+          },
+        ],
+      };
+  
+      return row;
+    });
   }
+  
+  
 
   onBuyStock() {
     this.router.navigateByUrl('/buy-stock-form');
@@ -227,11 +255,10 @@ export class HomeComponent implements OnInit {
     this.router.navigate(['/buy-stock-form', rowData]);
   }
 
-
   addTempExchangeRate(purchaseData: any) {
     this.dialog.open(TempExchangeRateComponent, {
       width: '800px',
-      data: purchaseData ,
+      data: purchaseData,
     });
   }
 

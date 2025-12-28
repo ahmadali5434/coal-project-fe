@@ -13,6 +13,14 @@ export interface CityRef {
   name: string;
 }
 
+export interface ActionItem {
+  type: 'view' | 'delete' | 'addExchange';
+  icon: string;
+  label: string;
+  permission: string;
+  callback: (row: PurchaseWithDetails) => void;
+}
+
 // ----------------- PURCHASE ENTRY -----------------
 
 export interface Purchase {
@@ -26,10 +34,10 @@ export interface Purchase {
   driverName: string;
   metricTon: number;
   ratePerTon: number;
-  permanentRate?: number;
+  permanentRate?: number | null;
   temporaryExchangeRate?: number;
   totalPurchaseAmount?: number;
-  totalPurchaseAmountInPak?: number;
+  totalPurchaseAmountInPak?: number | null;
   builtyImage: string;
 }
 
@@ -72,6 +80,8 @@ export interface PurchaseWithDetails {
   purchaseFreight?: PurchaseFreight | null;   // single object (1:1)
   gumrakEntry?: GumrakEntry | null;
   status: PurchaseStatus;
+
+  actions?: ActionItem[];
 }
 
 // ----------------- CUSTOM ENTRY -----------------
