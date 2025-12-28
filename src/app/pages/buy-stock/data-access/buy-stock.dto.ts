@@ -26,7 +26,10 @@ export interface Purchase {
   driverName: string;
   metricTon: number;
   ratePerTon: number;
+  permanentRate?: number;
+  temporaryExchangeRate?: number;
   totalPurchaseAmount?: number;
+  totalPurchaseAmountInPak?: number;
   builtyImage: string;
 }
 
@@ -179,5 +182,5 @@ export interface ExchangeRate {
   id?: number;
   startDate: string; 
   endDate: string;     
-  rate: number;
+  permanentRate: number;
 }
