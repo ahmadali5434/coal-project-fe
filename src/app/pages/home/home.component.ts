@@ -255,10 +255,10 @@ export class HomeComponent implements OnInit {
     this.router.navigate(['/buy-stock-form', rowData]);
   }
 
-  addTempExchangeRate(purchaseData: any) {
+  addTempExchangeRate(rowData: any) {
     this.dialog.open(TempExchangeRateComponent, {
       width: '800px',
-      data: purchaseData,
+      data: rowData.purchase,
     });
   }
 
