@@ -14,9 +14,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ExchangeRateDialogComponent } from './exchange-rate-dialog.component';
 import { ExchangeRateService } from './exchange-rate.service';
-import { ExchangeRate } from '../buy-stock/data-access/buy-stock.dto';
-import { ActionCellRendererComponent } from '../../shared/components/action-cell-renderer/action-cell-renderer.component';
-import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog.component';
+import { ExchangeRate } from '../../buy-stock/data-access/buy-stock.dto';
+import { ActionCellRendererComponent } from '../../../shared/components/action-cell-renderer/action-cell-renderer.component';
+import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 

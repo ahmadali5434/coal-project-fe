@@ -13,6 +13,7 @@ import { BuyStockService } from '../buy-stock/data-access/buy-stock.service';
 import { HasPermissionDirective } from '../../core/directives/has-permission.directive';
 import { PurchaseWithDetails } from '../buy-stock/data-access/buy-stock.dto';
 import { PurchaseProgressService } from '../buy-stock/data-access/purchase-progress.service';
+import { TempExchangeRateComponent } from '../exchange-rate/temp-exchange-rate/temp-exchange-rate.component';
 
 // Register all Community features
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -53,7 +54,8 @@ export class HomeComponent implements OnInit {
     },
     { field: 'truckNo', headerName: 'Truck No', minWidth: 100, flex: 1 },
     { field: 'metricTon', headerName: 'Metric Ton', minWidth: 120, flex: 1 },
-    { field: 'permanentRate', headerName: 'Ex. Rate', minWidth: 120, flex: 1 },
+    { field: 'temporaryExchangeRate', headerName: 'Temp. Exchange Rate', minWidth: 170, flex: 1 },
+    { field: 'permanentRate', headerName: 'Fixed Ex. Rate', minWidth: 150, flex: 1 },
     { field: 'totalPurchaseAmount', headerName: 'Purchase Amount (AFG)', minWidth: 200, flex: 1 },
     { field: 'totalPurchaseAmountInPak', headerName: 'Purchase Amount (PKR)', minWidth: 200, flex: 1 },
     {
@@ -74,6 +76,13 @@ export class HomeComponent implements OnInit {
             label: 'View Purchase',
             permission: 'purchase:read',
             callback: (row: any) => this.onView(row),
+          },
+          {
+            type: 'view',
+            icon: 'currency_exchange',
+            label: 'Add Exchange Rate',
+            permission: 'purchase:read',//TODO: change permission
+            callback: (row: any) => this.addTempExchangeRate(row),
           },
           {
             type: 'delete',
@@ -197,6 +206,7 @@ export class HomeComponent implements OnInit {
       driverName: data.driver.name,
       metricTon: data.metricTon,
       ratePerTon: data.ratePerTon,
+      temporaryExchangeRate: data.temporaryExchangeRate,
       permanentRate: data.permanentRate,
       totalPurchaseAmount: data.totalPurchaseAmount,
       totalPurchaseAmountInPak: data.permanentRate ? (data.totalPurchaseAmount * data.permanentRate) : null,
@@ -215,6 +225,14 @@ export class HomeComponent implements OnInit {
 
   onView(rowData: any) {
     this.router.navigate(['/buy-stock-form', rowData]);
+  }
+
+
+  addTempExchangeRate(purchaseData: any) {
+    this.dialog.open(TempExchangeRateComponent, {
+      width: '800px',
+      data: purchaseData ,
+    });
   }
 
   onDelete(rowData: any) {

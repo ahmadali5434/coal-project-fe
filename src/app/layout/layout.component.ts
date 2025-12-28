@@ -8,12 +8,11 @@ import {
   RouterLink,
   RouterOutlet,
   ActivatedRoute,
-
 } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogModule } from '@angular/material/dialog';
-import { ExchangeRateDialogComponent } from '../pages/exchange-rate-dialog/exchange-rate-dialog.component';
+import { ExchangeRateDialogComponent } from '../pages/exchange-rate/exchange-rate-dialog/exchange-rate-dialog.component';
 import { AuthService } from '../auth/auth.service';
 import { filter } from 'rxjs';
 @Component({
@@ -35,7 +34,7 @@ import { filter } from 'rxjs';
 export class LayoutComponent {
   private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
-    private readonly activatedRoute = inject(ActivatedRoute);
+  private readonly activatedRoute = inject(ActivatedRoute);
   private readonly dialog = inject(MatDialog);
 
   sidebarOpen = true;
@@ -53,7 +52,7 @@ export class LayoutComponent {
   ngOnInit() {
     this.isDesktop = window.innerWidth >= 768;
     this.sidebarOpen = this.isDesktop;
-        this.router.events
+    this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe(() => {
         this.setBreadcrumbs();
@@ -61,9 +60,7 @@ export class LayoutComponent {
     this.setBreadcrumbs();
   }
 
-  constructor() {
-   
-  }
+  constructor() {}
 
   toggleSidebar() {
     this.sidebarOpen = !this.sidebarOpen;
@@ -86,7 +83,6 @@ export class LayoutComponent {
     this.updateViwe();
   }
 
-
   private updateViwe() {
     this.isMobile = window.innerWidth < 768;
   }
@@ -96,32 +92,34 @@ export class LayoutComponent {
       this.headerTitle = this.breadcrumbs[this.breadcrumbs.length - 1].label;
     }
   }
-private buildBreadcrumbs(
-  route: ActivatedRoute,
-  url: string = '',
-  breadcrumbs: { label: string; url: string }[] = []
-): { label: string; url: string }[] {
-  const children = route.children;
 
-  for (const child of children) {
-    const routeURL: string =
-      child.snapshot.url.map((segment) => segment.path).join('/') ||
-      child.routeConfig?.path || '';
+  private buildBreadcrumbs(
+    route: ActivatedRoute,
+    url: string = '',
+    breadcrumbs: { label: string; url: string }[] = []
+  ): { label: string; url: string }[] {
+    const children = route.children;
 
-    if (routeURL !== '') {
-      url += `/${routeURL}`;
-    }
+    for (const child of children) {
+      const routeURL: string =
+        child.snapshot.url.map((segment) => segment.path).join('/') ||
+        child.routeConfig?.path ||
+        '';
 
-    if (child.snapshot.data['breadcrumb']) {
-      const label = child.snapshot.data['breadcrumb'];
-      if (!breadcrumbs.some((bc) => bc.label === label)) {
-        breadcrumbs.push({ label, url });
+      if (routeURL !== '') {
+        url += `/${routeURL}`;
       }
+
+      if (child.snapshot.data['breadcrumb']) {
+        const label = child.snapshot.data['breadcrumb'];
+        if (!breadcrumbs.some((bc) => bc.label === label)) {
+          breadcrumbs.push({ label, url });
+        }
+      }
+
+      this.buildBreadcrumbs(child, url, breadcrumbs);
     }
 
-    this.buildBreadcrumbs(child, url, breadcrumbs);
+    return breadcrumbs;
   }
-
-  return breadcrumbs;
-}
 }

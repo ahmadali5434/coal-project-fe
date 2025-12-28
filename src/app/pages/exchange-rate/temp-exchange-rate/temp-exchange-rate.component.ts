@@ -4,8 +4,6 @@ import {
   FormControl,
   Validators,
   ReactiveFormsModule,
-  AbstractControl,
-  ValidationErrors,
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import {
@@ -22,15 +20,15 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { ExchangeRate } from '../buy-stock/data-access/buy-stock.dto';
-import { ExchangeRateService } from './exchange-rate.service';
-import { toDateOnly } from '../../shared/utils/toDateOnly';
+import { Purchase } from '../../buy-stock/data-access/buy-stock.dto';
+import { toDateOnly } from '../../../shared/utils/toDateOnly';
+import { BuyStockService } from '../../buy-stock/data-access/buy-stock.service';
 
 @Component({
-  selector: 'app-exchange-rate-dialog',
+  selector: 'app-temp-exchange-rate',
   standalone: true,
   providers: [provideNativeDateAdapter()],
-  templateUrl: './exchange-rate-dialog.component.html',
+  templateUrl: './temp-exchange-rate.component.html',
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -45,43 +43,33 @@ import { toDateOnly } from '../../shared/utils/toDateOnly';
     MatDialogContent,
   ],
 })
-export class ExchangeRateDialogComponent implements OnInit {
+export class TempExchangeRateComponent implements OnInit {
   private readonly dialogRef = inject(
-    MatDialogRef<ExchangeRateDialogComponent>
+    MatDialogRef<TempExchangeRateComponent>
   );
   private readonly data = inject(MAT_DIALOG_DATA);
-  private readonly exchangeRateService = inject(ExchangeRateService);
+  private readonly buyStockService = inject(BuyStockService);
   private readonly snackBar = inject(MatSnackBar);
 
   exchangeForm!: FormGroup;
 
   ngOnInit(): void {
-    const existing: ExchangeRate | undefined = this.data?.exchangeRate;
-
+    
+    const purchaseData: Purchase | undefined = this.data;
     this.exchangeForm = new FormGroup(
       {
-        startDate: new FormControl(
-          existing ? new Date(existing.startDate) : null,
-          Validators.required
+        purchaseDate: new FormControl(
+          purchaseData ? toDateOnly(purchaseData.purchaseDate) : null,
         ),
-        endDate: new FormControl(
-          existing ? new Date(existing.endDate) : null,
-          Validators.required
+        totalPurchaseAmount: new FormControl(
+          purchaseData ? purchaseData.totalPurchaseAmount : null,
         ),
-        rate: new FormControl(existing?.permanentRate ?? null, [
+        temporaryExchangeRate: new FormControl(purchaseData?.temporaryExchangeRate ?? null, [
           Validators.required,
           Validators.min(0),
         ]),
       },
-      { validators: this.dateRangeValidator }
     );
-  }
-
-  private dateRangeValidator(group: AbstractControl): ValidationErrors | null {
-    const start = group.get('startDate')?.value;
-    const end = group.get('endDate')?.value;
-    if (!start || !end) return null;
-    return end >= start ? null : { dateRange: true };
   }
 
   onSave(): void {
@@ -90,19 +78,11 @@ export class ExchangeRateDialogComponent implements OnInit {
       return;
     }
 
-    const raw = this.exchangeForm.value;
+    const temporaryExchangeRate = this.exchangeForm.value.temporaryExchangeRate;
 
-    const payload: ExchangeRate = {
-      startDate: toDateOnly(raw.startDate),
-      endDate: toDateOnly(raw.endDate),
-      permanentRate: Number(raw.rate),
-    };
+    const id = this.data?.id;
 
-    const id = this.data?.exchangeRate?.id;
-
-    const request$ = id
-      ? this.exchangeRateService.updateExchangeRate(id, payload)
-      : this.exchangeRateService.createExchangeRate(payload);
+    const request$ = this.buyStockService.updateExchangeRate(id, temporaryExchangeRate);
 
     request$.subscribe({
       next: (res) => {
@@ -124,3 +104,4 @@ export class ExchangeRateDialogComponent implements OnInit {
     });
   }
 }
+

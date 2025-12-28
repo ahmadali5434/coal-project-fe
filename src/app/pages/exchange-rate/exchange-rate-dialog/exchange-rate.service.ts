@@ -1,8 +1,8 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { ExchangeRate } from '../buy-stock/data-access/buy-stock.dto';
-import { environment } from '../../../environments/environment';
+import { ExchangeRate } from '../../buy-stock/data-access/buy-stock.dto';
+import { environment } from '../../../../environments/environment';
 
 interface ExchangeRateResponse {
   success: boolean;

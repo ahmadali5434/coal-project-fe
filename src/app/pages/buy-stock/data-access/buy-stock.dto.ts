@@ -27,6 +27,7 @@ export interface Purchase {
   metricTon: number;
   ratePerTon: number;
   permanentRate?: number;
+  temporaryExchangeRate?: number;
   totalPurchaseAmount?: number;
   totalPurchaseAmountInPak?: number;
   builtyImage: string;

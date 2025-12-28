@@ -28,6 +28,13 @@ export class BuyStockService {
     );
   }
 
+  updateExchangeRate(purchaseId: number, temporaryExchangeRate: number) {
+    return this.http.patch(
+      `${this.apiBaseUrl}/purchase-entries/${purchaseId}/exchange-rate`,
+      { exchangeRate:  temporaryExchangeRate}
+    );
+  }  
+  
   updatePurchase(purchaseId: string, formData: FormData) {
     return this.http.put<ApiResponse<PurchaseWithDetails>>(
       `${this.apiBaseUrl}/purchase-entries/${purchaseId}`,
