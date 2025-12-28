@@ -66,7 +66,7 @@ export class HomeComponent implements OnInit {
       resizable: false,
       cellRenderer: ActionCellRendererComponent,
       cellRendererParams: (params: any) => ({
-        actions: params.data.actions, // Pass actions directly
+        actions: params.data.actions,
       }),
     }    
   ];
