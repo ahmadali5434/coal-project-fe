@@ -256,9 +256,15 @@ export class HomeComponent implements OnInit {
   }
 
   addTempExchangeRate(rowData: any) {
-    this.dialog.open(TempExchangeRateComponent, {
+    const dialogRef = this.dialog.open(TempExchangeRateComponent, {
       width: '800px',
       data: rowData.purchase,
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {  
+        this.loadPurchases();
+      }
     });
   }
 
