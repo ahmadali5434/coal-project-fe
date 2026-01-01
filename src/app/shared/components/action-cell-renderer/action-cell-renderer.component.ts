@@ -4,6 +4,7 @@ import { ICellRendererAngularComp } from 'ag-grid-angular';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { RbacService } from '../../../core/rbac.service';
+import { MatMenuModule } from '@angular/material/menu';
 
 export interface ActionConfig {
   type: 'view' | 'edit' | 'delete' | string; // can extend
@@ -11,12 +12,13 @@ export interface ActionConfig {
   label?: string;
   permission?: string;
   callback?: (data: any) => void;
+  visible?: (row: any) => boolean;
 }
 
 @Component({
   selector: 'app-action-cell-renderer',
   standalone: true,
-  imports: [CommonModule, MatIconModule, MatButtonModule],
+  imports: [CommonModule, MatIconModule, MatButtonModule , MatMenuModule],
   templateUrl: './action-cell-renderer.component.html',
 })
 export class ActionCellRendererComponent implements ICellRendererAngularComp {
@@ -26,12 +28,21 @@ export class ActionCellRendererComponent implements ICellRendererAngularComp {
 
   agInit(params: any): void {
     this.params = params;
-    // Expecting `actions` array from columnDef.cellRendererParams
-    this.actions = (params.actions || []).map((action: ActionConfig) => ({
-      ...action,
-      permission: this.rbacService.has(action.permission || ''), // default to true
-    }));
-    
+  const actionConfigs: ActionConfig[] =
+    params.colDef?.cellRendererParams?.actions || [];
+
+  this.actions = actionConfigs.filter(action => {
+
+    const hasPermission = action.permission
+      ? this.rbacService.has(action.permission)
+      : true;
+
+    const isVisible = action.visible
+      ? action.visible(params.data)
+      : true;
+
+    return hasPermission && isVisible;
+  });
   }
 
   refresh(): boolean {

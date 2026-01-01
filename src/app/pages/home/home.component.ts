@@ -13,6 +13,8 @@ import { BuyStockService } from '../buy-stock/data-access/buy-stock.service';
 import { HasPermissionDirective } from '../../core/directives/has-permission.directive';
 import { PurchaseWithDetails } from '../buy-stock/data-access/buy-stock.dto';
 import { PurchaseProgressService } from '../buy-stock/data-access/purchase-progress.service';
+import { GumrakFormComponent } from '../buy-stock/gumrak-form/gumrak-form.component';
+import { FreightDialogComponent } from '../buy-stock/freight-dialog/freight-dialog.component';
 
 // Register all Community features
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -93,6 +95,22 @@ export class HomeComponent implements OnInit {
             permission: 'purchase:read',
             callback: (row: any) => this.onView(row),
           },
+      {
+           type: 'freight',
+           icon: 'local_shipping',
+           label: 'Add Freight Detail',
+           permission: 'purchase:freight:create',
+           callback: (row: any) => this.onAddFreight(row),
+  },
+      {
+           type: 'gumrak',
+           icon: 'assignment',
+           label: 'Afghan Gumrak Form',
+           permission: 'purchase:gumrak:create',
+          callback: (row: any) => this.openGumrakDialog(row),
+          visible: (row: any) => !row?.gumrakEntry,
+
+  },
           {
             type: 'delete',
             icon: 'delete',
@@ -228,6 +246,7 @@ export class HomeComponent implements OnInit {
       totalFreightAmount: data.purchaseFreight?.totalFreightAmount,
       builtyImage: data.builtyImage,
       status: data.status,
+         gumrakEntry: data.gumrakEntry ?? null,
     }));
   }
 
@@ -238,7 +257,22 @@ export class HomeComponent implements OnInit {
   onView(rowData: any) {
     this.router.navigate(['/buy-stock-form', rowData]);
   }
-
+  onAddFreight(rowData: any) {
+  this.dialog.open(FreightDialogComponent, {
+    panelClass: 'dialog-container-lg',
+    data: {
+      purchaseData: rowData,
+    },
+  });
+}
+openGumrakDialog(rowData: any) {
+  this.dialog.open(GumrakFormComponent, {
+    panelClass: 'dialog-container-lg',
+    data: {
+      purchaseData: rowData,
+    },
+  });
+}
   onDelete(rowData: any) {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: { message: 'Are you wants to delete the selected Stock?' },
