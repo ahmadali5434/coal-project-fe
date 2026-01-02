@@ -44,22 +44,6 @@ export const routes: Routes = [
             data: { breadcrumb: 'Exchange Rates' }
       },
       {
-        path: 'transfer',
-        loadComponent: () =>
-          import('./pages/transfer/transfer.component').then(
-            (m) => m.TransferComponent
-          ),
-            data: { breadcrumb: 'Transfer' },
-      },
-      {
-        path: 'expenses',
-        loadComponent: () =>
-          import('./pages/expenses/expenses.component').then(
-            (m) => m.ExpensesComponent
-          ),
-          data: { breadcrumb: 'Expenses' }
-      },
-      {
         path: 'setting',
         loadChildren: () =>
           import('./pages/setting/setting.routes').then(
