@@ -267,7 +267,6 @@ export class HomeComponent implements OnInit {
             label: 'Afghan Gumrak Form',
             permission: 'gumrak:create',
             callback: (row: any) => this.openGumrakDialog(row),
-            visible: (row: any) => !row?.gumrakEntry,
           },
           ...(purchase.permanentRate == null
             ? [
