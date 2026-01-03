@@ -1,15 +1,23 @@
 <div class="p-1 space-y-1">
   <!-- === Status Cards === -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+  <div class="grid grid-cols-5 sm:grid-cols-2 lg:grid-cols-5 gap-0">
     <div
       *ngFor="let stat of purchaseStats()"
-      class="rounded-2xl text-center py-2 px-1 text-white shadow cursor-pointer transition-transform hover:scale-105"
+      class="relative rounded-2xl  h-[40px] w-[170px] text-center py-1 px-2 text-white shadow cursor-pointer transition-transform hover:scale-105"
       [style.background-color]="stat.color"
       [class.opacity-50]="selectedStatus() === stat.status"
       (click)="filterByStatus(stat.status)"
     >
+      <div
+        *ngIf="stat.count > 0"
+        class="absolute -top-2 -right-2
+               min-w-[26px] h-[26px] px-1
+               bg-red-600 text-white text-sm font-bold
+               rounded-full flex items-center justify-center shadow-md">
+        {{ stat.count }}
+      </div>
       <div class="text-lg font-semibold">
-        {{ stat.title }} = {{ stat.count }}
+        {{ stat.title }}
       </div>
     </div>
 
@@ -19,7 +27,7 @@
         <button
           *ngIf="selectedStatus()"
           mat-stroked-button
-          color="primary"
+          class="border-blue-600 text-blue-700 hover:bg-blue-50"
           (click)="resetFilter()"
         >
           Show All
