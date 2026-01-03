@@ -1,3 +1,4 @@
+import { ActionConfig } from "../../../shared/components/action-cell-renderer/action-cell-renderer.component";
 import { City, Country } from "../../../shared/model";
 
 // ----------------- BASE REFERENCES -----------------
@@ -11,14 +12,6 @@ export interface CountryRef {
 export interface CityRef {
   id: string;
   name: string;
-}
-
-export interface ActionItem {
-  type: 'view' | 'delete' | 'addExchange';
-  icon: string;
-  label: string;
-  permission: string;
-  callback: (row: PurchaseWithDetails) => void;
 }
 
 // ----------------- PURCHASE ENTRY -----------------
@@ -81,7 +74,7 @@ export interface PurchaseWithDetails {
   gumrakEntry?: GumrakEntry | null;
   status: PurchaseStatus;
 
-  actions?: ActionItem[];
+  actions?: ActionConfig[];
 }
 
 // ----------------- CUSTOM ENTRY -----------------

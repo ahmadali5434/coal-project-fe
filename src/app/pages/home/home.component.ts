@@ -2,7 +2,7 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { AgGridAngular } from 'ag-grid-angular'; // Angular Data Grid Component
 import type { ColDef, GridOptions } from 'ag-grid-community';
 import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
-import { ActionCellRendererComponent } from '../../shared/components/action-cell-renderer/action-cell-renderer.component';
+import { ActionCellRendererComponent, ActionConfig } from '../../shared/components/action-cell-renderer/action-cell-renderer.component';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { Router } from '@angular/router';
@@ -12,12 +12,13 @@ import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/c
 import { BuyStockService } from '../buy-stock/data-access/buy-stock.service';
 import { HasPermissionDirective } from '../../core/directives/has-permission.directive';
 import {
-  ActionItem,
   Purchase,
   PurchaseWithDetails,
 } from '../buy-stock/data-access/buy-stock.dto';
 import { PurchaseProgressService } from '../buy-stock/data-access/purchase-progress.service';
 import { TempExchangeRateComponent } from '../exchange-rate/temp-exchange-rate/temp-exchange-rate.component';
+import { FreightDialogComponent } from '../buy-stock/freight-dialog/freight-dialog.component';
+import { GumrakFormComponent } from '../buy-stock/gumrak-form/gumrak-form.component';
 
 // Register all Community features
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -49,18 +50,52 @@ export class HomeComponent implements OnInit {
 
   // --- Grid ---
   colDefs: ColDef[] = [
-    { field: 'purchase.purchaseDate', headerName: 'Purchase Date', minWidth: 130, flex: 1 },
-    { field: 'purchase.truckNo', headerName: 'Truck No', minWidth: 100, flex: 1 },
-    { field: 'purchase.metricTon', headerName: 'Metric Ton', minWidth: 120, flex: 1 },
-    { field: 'purchase.temporaryExchangeRate', headerName: 'Temp. Exchange Rate', minWidth: 170, flex: 1 },
-    { field: 'purchase.permanentRate', headerName: 'Fixed Ex. Rate', minWidth: 150, flex: 1 },
-    { field: 'purchase.totalPurchaseAmount', headerName: 'Purchase Amount (AFG)', minWidth: 200, flex: 1 },
-    { field: 'purchase.totalPurchaseAmountInPak', headerName: 'Purchase Amount (PKR)', minWidth: 200, flex: 1 },
+    {
+      field: 'purchase.purchaseDate',
+      headerName: 'Purchase Date',
+      minWidth: 130,
+      flex: 1,
+    },
+    {
+      field: 'purchase.truckNo',
+      headerName: 'Truck No',
+      minWidth: 100,
+      flex: 1,
+    },
+    {
+      field: 'purchase.metricTon',
+      headerName: 'Metric Ton',
+      minWidth: 120,
+      flex: 1,
+    },
+    {
+      field: 'purchase.temporaryExchangeRate',
+      headerName: 'Temp. Exchange Rate',
+      minWidth: 170,
+      flex: 1,
+    },
+    {
+      field: 'purchase.permanentRate',
+      headerName: 'Fixed Ex. Rate',
+      minWidth: 150,
+      flex: 1,
+    },
+    {
+      field: 'purchase.totalPurchaseAmount',
+      headerName: 'Purchase Amount (AFG)',
+      minWidth: 200,
+      flex: 1,
+    },
+    {
+      field: 'purchase.totalPurchaseAmountInPak',
+      headerName: 'Purchase Amount (PKR)',
+      minWidth: 200,
+      flex: 1,
+    },
     {
       headerName: 'Actions',
       pinned: 'right',
-      minWidth: 140,
-      maxWidth: 160,
+      width: 90,
       sortable: false,
       filter: false,
       resizable: false,
@@ -68,10 +103,8 @@ export class HomeComponent implements OnInit {
       cellRendererParams: (params: any) => ({
         actions: params.data.actions,
       }),
-    }    
+    },
   ];
-  
-  
 
   gridOptions: GridOptions = {
     rowHeight: 60,
@@ -175,12 +208,13 @@ export class HomeComponent implements OnInit {
       temporaryRate?: string | number | null
     ): number | undefined => {
       const amt = Number(amount);
-      const tempRate = temporaryRate != null ? Number(temporaryRate) : undefined;
+      const tempRate =
+        temporaryRate != null ? Number(temporaryRate) : undefined;
       if (permanentRate != null) return amt * permanentRate;
       if (tempRate != null) return amt * tempRate;
       return undefined;
     };
-  
+
     return resp.map((data) => {
       const purchase: Purchase = {
         id: String(data.id),
@@ -205,7 +239,7 @@ export class HomeComponent implements OnInit {
         ),
         builtyImage: data.builtyImage,
       };
-  
+
       const row: PurchaseWithDetails = {
         id: String(data.id),
         purchase,
@@ -220,15 +254,30 @@ export class HomeComponent implements OnInit {
             permission: 'purchase:read',
             callback: () => this.onView(row),
           },
+          {
+            type: 'addFreight',
+            icon: 'local_shipping',
+            label: 'Add Freight Detail',
+            permission: 'purchaseFreight:create',
+            callback: (row: any) => this.onAddFreight(row),
+          },
+          {
+            type: 'addGumrak',
+            icon: 'assignment',
+            label: 'Afghan Gumrak Form',
+            permission: 'gumrak:create',
+            callback: (row: any) => this.openGumrakDialog(row),
+            visible: (row: any) => !row?.gumrakEntry,
+          },
           ...(purchase.permanentRate == null
             ? [
                 {
                   type: 'addExchange',
                   icon: 'currency_exchange',
                   label: 'Add Exchange Rate',
-                  permission: 'purchase:read',
+                  permission: 'purchase:read',//TODO: write correct permission
                   callback: () => this.addTempExchangeRate(row),
-                } as ActionItem,
+                } as ActionConfig,
               ]
             : []),
           {
@@ -240,12 +289,10 @@ export class HomeComponent implements OnInit {
           },
         ],
       };
-  
+
       return row;
     });
   }
-  
-  
 
   onBuyStock() {
     this.router.navigateByUrl('/buy-stock-form');
@@ -255,6 +302,24 @@ export class HomeComponent implements OnInit {
     this.router.navigate(['/buy-stock-form', rowData]);
   }
 
+  onAddFreight(rowData: any) {
+    this.dialog.open(FreightDialogComponent, {
+      panelClass: 'dialog-container-lg',
+      data: {
+        purchaseData: rowData,
+      },
+    });
+  }
+
+  openGumrakDialog(rowData: any) {
+    this.dialog.open(GumrakFormComponent, {
+      panelClass: 'dialog-container-lg',
+      data: {
+        purchaseData: rowData,
+      },
+    });
+  }
+
   addTempExchangeRate(rowData: any) {
     const dialogRef = this.dialog.open(TempExchangeRateComponent, {
       width: '800px',
@@ -262,7 +327,7 @@ export class HomeComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      if (result) {  
+      if (result) {
         this.loadPurchases();
       }
     });
