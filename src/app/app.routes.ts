@@ -36,20 +36,12 @@ export const routes: Routes = [
             data: { breadcrumb: 'Warehouses' }
       },
       {
-        path: 'transfer',
+        path: 'exchangeRate',
         loadComponent: () =>
-          import('./pages/transfer/transfer.component').then(
-            (m) => m.TransferComponent
+          import('./pages/exchange-rate/exchange-rate-dialog/exchange-rate.component').then(
+            (m) => m.ExchangeRateComponent
           ),
-            data: { breadcrumb: 'Transfer' },
-      },
-      {
-        path: 'expenses',
-        loadComponent: () =>
-          import('./pages/expenses/expenses.component').then(
-            (m) => m.ExpensesComponent
-          ),
-          data: { breadcrumb: 'Expenses' }
+            data: { breadcrumb: 'Exchange Rates' }
       },
       {
         path: 'setting',

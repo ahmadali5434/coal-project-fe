@@ -33,6 +33,7 @@ import { MatCard } from '@angular/material/card';
 import { BuyStockService } from '../data-access/buy-stock.service';
 import { GumrakEntry } from '../data-access/buy-stock.dto';
 import { toFormData } from '../../../shared/utils/form-utils';
+import { toDateOnly } from '../../../shared/utils/toDateOnly';
 // #endregion
 
 @Component({
@@ -139,10 +140,10 @@ export class GumrakFormComponent implements OnInit {
     // ✅ Build payload cleanly
     const payload: Partial<GumrakEntry> = {
       islamicDate: formValue.islamicDate
-        ? new Date(formValue.islamicDate).toISOString()
+        ? toDateOnly(formValue.islamicDate)
         : '',
       englishDate: formValue.englishDate
-        ? new Date(formValue.englishDate).toISOString()
+        ? toDateOnly(formValue.englishDate)
         : '',
       invoiceExpense: formValue.invoiceExpense ?? 0,
       otherExpense: formValue.otherExpense ?? 0,

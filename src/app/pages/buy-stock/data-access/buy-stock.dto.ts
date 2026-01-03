@@ -1,3 +1,4 @@
+import { ActionConfig } from "../../../shared/components/action-cell-renderer/action-cell-renderer.component";
 import { City, Country } from "../../../shared/model";
 
 // ----------------- BASE REFERENCES -----------------
@@ -26,7 +27,10 @@ export interface Purchase {
   driverName: string;
   metricTon: number;
   ratePerTon: number;
+  permanentRate?: number | null;
+  temporaryExchangeRate?: number;
   totalPurchaseAmount?: number;
+  totalPurchaseAmountInPak?: number | null;
   builtyImage: string;
 }
 
@@ -69,6 +73,8 @@ export interface PurchaseWithDetails {
   purchaseFreight?: PurchaseFreight | null;   // single object (1:1)
   gumrakEntry?: GumrakEntry | null;
   status: PurchaseStatus;
+
+  actions?: ActionConfig[];
 }
 
 // ----------------- CUSTOM ENTRY -----------------
@@ -179,5 +185,5 @@ export interface ExchangeRate {
   id?: number;
   startDate: string; 
   endDate: string;     
-  rate: number;
+  permanentRate: number;
 }

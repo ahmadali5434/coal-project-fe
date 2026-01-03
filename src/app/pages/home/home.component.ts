@@ -2,7 +2,7 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { AgGridAngular } from 'ag-grid-angular'; // Angular Data Grid Component
 import type { ColDef, GridOptions } from 'ag-grid-community';
 import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
-import { ActionCellRendererComponent } from '../../shared/components/action-cell-renderer/action-cell-renderer.component';
+import { ActionCellRendererComponent, ActionConfig } from '../../shared/components/action-cell-renderer/action-cell-renderer.component';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { Router } from '@angular/router';
@@ -11,8 +11,14 @@ import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog.component';
 import { BuyStockService } from '../buy-stock/data-access/buy-stock.service';
 import { HasPermissionDirective } from '../../core/directives/has-permission.directive';
-import { PurchaseWithDetails } from '../buy-stock/data-access/buy-stock.dto';
+import {
+  Purchase,
+  PurchaseWithDetails,
+} from '../buy-stock/data-access/buy-stock.dto';
 import { PurchaseProgressService } from '../buy-stock/data-access/purchase-progress.service';
+import { TempExchangeRateComponent } from '../exchange-rate/temp-exchange-rate/temp-exchange-rate.component';
+import { FreightDialogComponent } from '../buy-stock/freight-dialog/freight-dialog.component';
+import { GumrakFormComponent } from '../buy-stock/gumrak-form/gumrak-form.component';
 
 // Register all Community features
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -29,7 +35,7 @@ ModuleRegistry.registerModules([AllCommunityModule]);
 })
 export class HomeComponent implements OnInit {
   private readonly buyStockService = inject(BuyStockService);
-  private readonly purhcaseProgressService = inject(PurchaseProgressService);
+  private readonly purchaseProgressService = inject(PurchaseProgressService);
   private readonly router = inject(Router);
   private readonly snackBar = inject(MatSnackBar);
   private readonly dialog = inject(MatDialog);
@@ -44,70 +50,59 @@ export class HomeComponent implements OnInit {
 
   // --- Grid ---
   colDefs: ColDef[] = [
-    { field: 'id', headerName: 'Stock No', minWidth: 100, flex: 1 },
-
     {
-      field: 'purchaseDate',
+      field: 'purchase.purchaseDate',
       headerName: 'Purchase Date',
       minWidth: 130,
       flex: 1,
     },
-    { field: 'truckNo', headerName: 'Truck No', minWidth: 100, flex: 1 },
-    { field: 'metricTon', headerName: 'Metric Ton', minWidth: 120, flex: 1 },
     {
-      field: 'freightPerTon',
-      headerName: 'Freight Per Ton',
-      minWidth: 140,
+      field: 'purchase.truckNo',
+      headerName: 'Truck No',
+      minWidth: 100,
       flex: 1,
     },
-    { field: 'exchangeRate', headerName: 'Ex. Rate', minWidth: 120, flex: 1 },
-
-    //TODO: The following field with be included later when status feature is implemented
-    // {
-    //   field: 'status',
-    //   headerName: 'Status',
-    //   filter: true,
-    //   minWidth: 130,
-    //   flex: 1,
-    //   cellRenderer: (params: any) => {
-    //     const status = params.value;
-    //     const color =
-    //       status === 'Delivered'
-    //         ? '#90ee90'
-    //         : status === 'Loading'
-    //         ? '#ffcc99'
-    //         : '#e0e0e0';
-    //     return `<span style="background:${color}; margin-top:4px; padding:2px; border-radius:8px; display:flex; width:80px; max-height:25px; justify-content:center; align-items:center;">${status}</span>`;
-    //   },
-    // },
+    {
+      field: 'purchase.metricTon',
+      headerName: 'Metric Ton',
+      minWidth: 120,
+      flex: 1,
+    },
+    {
+      field: 'purchase.temporaryExchangeRate',
+      headerName: 'Temp. Exchange Rate',
+      minWidth: 170,
+      flex: 1,
+    },
+    {
+      field: 'purchase.permanentRate',
+      headerName: 'Fixed Ex. Rate',
+      minWidth: 150,
+      flex: 1,
+    },
+    {
+      field: 'purchase.totalPurchaseAmount',
+      headerName: 'Purchase Amount (AFG)',
+      minWidth: 200,
+      flex: 1,
+    },
+    {
+      field: 'purchase.totalPurchaseAmountInPak',
+      headerName: 'Purchase Amount (PKR)',
+      minWidth: 200,
+      flex: 1,
+    },
     {
       headerName: 'Actions',
-      field: 'actions',
-      cellRenderer: ActionCellRendererComponent,
-      cellRendererParams: {
-        actions: [
-          {
-            type: 'view',
-            icon: 'visibility',
-            label: 'View Purchase',
-            permission: 'purchase:read',
-            callback: (row: any) => this.onView(row),
-          },
-          {
-            type: 'delete',
-            icon: 'delete',
-            label: 'Delete Purchase',
-            permission: 'purchase:delete',
-            callback: (row: any) => this.onDelete(row),
-          },
-        ],
-      },
       pinned: 'right',
-      minWidth: 120,
-      maxWidth: 140,
+      width: 90,
       sortable: false,
       filter: false,
       resizable: false,
+      cellRenderer: ActionCellRendererComponent,
+      cellRendererParams: (params: any) => ({
+        actions: params.data.actions,
+      }),
     },
   ];
 
@@ -133,7 +128,7 @@ export class HomeComponent implements OnInit {
 
   // --- Load stats for all statuses ---
   loadStats() {
-    this.purhcaseProgressService.getAllPurchasesProgress().subscribe({
+    this.purchaseProgressService.getAllPurchasesProgress().subscribe({
       next: (data) => {
         this.purchaseStats.set(this.mapToCardData(data));
       },
@@ -176,12 +171,6 @@ export class HomeComponent implements OnInit {
   // --- Card data mapping ---
   private mapToCardData(data: Record<string, number>) {
     return [
-      // {
-      //   title: 'Initial Purchase',
-      //   status: 'initial_purchase',
-      //   count: data['initialPurchase'] || 0,
-      //   color: '#216B96',
-      // },
       {
         title: 'Add Freight',
         status: 'add_freight',
@@ -209,26 +198,100 @@ export class HomeComponent implements OnInit {
     ];
   }
 
-  mapToPurchaseData(resp: any): PurchaseWithDetails[] {
-    return resp.map((data: any, index: any) => ({
-      id: data.id,
-      purchaseDate: data.purchaseDate,
-      coalType: data.coalType,
-      customerName: data.customer.name,
-      placeOfPurchaseName: data.placeOfPurchase.name,
-      stockDestinationName: data.stockDestination.name,
-      truckNo: data.truckNo,
-      driverName: data.driver.name,
-      metricTon: data.metricTon,
-      ratePerTon: data.ratePerTon,
-      totalPurchaseAmount: data.totalPurchaseAmount,
-      freightPerTon: data.purchaseFreight?.freightPerTon,
-      expense: data.purchaseFreight?.expense,
-      advancePayment: data.purchaseFreight?.advancePayment,
-      totalFreightAmount: data.purchaseFreight?.totalFreightAmount,
-      builtyImage: data.builtyImage,
-      status: data.status,
-    }));
+  // --- Define your ActionItem type ---
+
+  // --- Map purchase data and include actions ---
+  mapToPurchaseData(resp: any[]): PurchaseWithDetails[] {
+    const calculateTotalInPak = (
+      amount: string | number,
+      permanentRate?: number | null,
+      temporaryRate?: string | number | null
+    ): number | undefined => {
+      const amt = Number(amount);
+      const tempRate =
+        temporaryRate != null ? Number(temporaryRate) : undefined;
+      if (permanentRate != null) return amt * permanentRate;
+      if (tempRate != null) return amt * tempRate;
+      return undefined;
+    };
+
+    return resp.map((data) => {
+      const purchase: Purchase = {
+        id: String(data.id),
+        purchaseDate: data.purchaseDate,
+        coalType: data.coalType,
+        customerName: data.customer.name,
+        placeOfPurchase: data.placeOfPurchase.name,
+        stockDestination: data.stockDestination.name,
+        truckNo: data.truckNo,
+        driverName: data.driver.name,
+        metricTon: Number(data.metricTon),
+        ratePerTon: Number(data.ratePerTon),
+        permanentRate: data.permanentRate,
+        temporaryExchangeRate: data.temporaryExchangeRate
+          ? Number(data.temporaryExchangeRate)
+          : undefined,
+        totalPurchaseAmount: Number(data.totalPurchaseAmount),
+        totalPurchaseAmountInPak: calculateTotalInPak(
+          data.totalPurchaseAmount,
+          data.permanentRate,
+          data.temporaryExchangeRate
+        ),
+        builtyImage: data.builtyImage,
+      };
+
+      const row: PurchaseWithDetails = {
+        id: String(data.id),
+        purchase,
+        purchaseFreight: data.purchaseFreight ?? null,
+        gumrakEntry: data.gumrakEntry ?? null,
+        status: data.status,
+        actions: [
+          {
+            type: 'view',
+            icon: 'visibility',
+            label: 'View Purchase',
+            permission: 'purchase:read',
+            callback: () => this.onView(row),
+          },
+          {
+            type: 'addFreight',
+            icon: 'local_shipping',
+            label: 'Add Freight Detail',
+            permission: 'purchaseFreight:create',
+            callback: (row: any) => this.onAddFreight(row),
+          },
+          {
+            type: 'addGumrak',
+            icon: 'assignment',
+            label: 'Afghan Gumrak Form',
+            permission: 'gumrak:create',
+            callback: (row: any) => this.openGumrakDialog(row),
+            visible: (row: any) => !row?.gumrakEntry,
+          },
+          ...(purchase.permanentRate == null
+            ? [
+                {
+                  type: 'addExchange',
+                  icon: 'currency_exchange',
+                  label: 'Add Exchange Rate',
+                  permission: 'purchase:read',//TODO: write correct permission
+                  callback: () => this.addTempExchangeRate(row),
+                } as ActionConfig,
+              ]
+            : []),
+          {
+            type: 'delete',
+            icon: 'delete',
+            label: 'Delete Purchase',
+            permission: 'purchase:delete',
+            callback: () => this.onDelete(row),
+          },
+        ],
+      };
+
+      return row;
+    });
   }
 
   onBuyStock() {
@@ -237,6 +300,37 @@ export class HomeComponent implements OnInit {
 
   onView(rowData: any) {
     this.router.navigate(['/buy-stock-form', rowData]);
+  }
+
+  onAddFreight(rowData: any) {
+    this.dialog.open(FreightDialogComponent, {
+      panelClass: 'dialog-container-lg',
+      data: {
+        purchaseData: rowData,
+      },
+    });
+  }
+
+  openGumrakDialog(rowData: any) {
+    this.dialog.open(GumrakFormComponent, {
+      panelClass: 'dialog-container-lg',
+      data: {
+        purchaseData: rowData,
+      },
+    });
+  }
+
+  addTempExchangeRate(rowData: any) {
+    const dialogRef = this.dialog.open(TempExchangeRateComponent, {
+      width: '800px',
+      data: rowData.purchase,
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.loadPurchases();
+      }
+    });
   }
 
   onDelete(rowData: any) {

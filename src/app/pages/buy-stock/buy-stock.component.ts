@@ -246,7 +246,7 @@ export class BuyStockComponent implements OnInit {
       afghanTax: data?.afghanTax ?? 0,
       commission: data?.commission ?? 0,
       totalGumrakAmount: data?.totalGumrakAmount ?? 0,
-      gumrakImage: null,
+      gumrakImage: data?.gumrakImage ?? null,
     };
   }
 }
