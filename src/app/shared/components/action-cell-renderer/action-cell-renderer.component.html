@@ -1,13 +1,17 @@
 <div class="flex gap-2 items-center justify-end">
-  @for (action of actions; track action.type) {
-    @if (action.permission) {
-      <button
-        mat-icon-button
-        [attr.aria-label]="(action.label || action.type) + ' action'"
-        (click)="onAction(action)"
-      >
-        <mat-icon>{{ action.icon }}</mat-icon>
-      </button>
+  <button
+    mat-icon-button
+    [matMenuTriggerFor]="actionMenu"
+    aria-label="More actions"
+  >
+    <mat-icon>more_vert</mat-icon>
+  </button>
+  <mat-menu #actionMenu="matMenu">
+    @for (action of actions; track action.type) {
+    <button mat-menu-item (click)="onAction(action)">
+      <mat-icon>{{ action.icon }}</mat-icon>
+      <span>{{ action.label || action.type }}</span>
+    </button>
     }
-  }
+  </mat-menu>
 </div>
