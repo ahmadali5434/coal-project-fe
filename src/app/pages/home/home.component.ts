@@ -271,14 +271,14 @@ export class HomeComponent implements OnInit {
           },
           ...(purchase.permanentRate == null
             ? [
-                {
-                  type: 'addExchange',
-                  icon: 'currency_exchange',
-                  label: 'Add Exchange Rate',
-                  permission: 'purchase:read',//TODO: write correct permission
-                  callback: () => this.addTempExchangeRate(row),
-                } as ActionConfig,
-              ]
+              {
+                type: 'addExchange',
+                icon: 'currency_exchange',
+                label: 'Add Exchange Rate',
+                permission: 'purchase:read',//TODO: write correct permission
+                callback: () => this.addTempExchangeRate(row),
+              } as ActionConfig,
+            ]
             : []),
           {
             type: 'delete',
