@@ -26,7 +26,7 @@
   COPY --from=builder /app/dist/coal/browser /usr/share/nginx/html
   
   # Replace nginx default site config with our Angular SPA config
-  COPY nginx.conf /etc/nginx/conf.d/default.conf
+  COPY default.conf.template /etc/nginx/templates/default.conf.template
   
   # Expose port 80 to Railway/Docker
   EXPOSE 80
