@@ -198,8 +198,6 @@ export class HomeComponent implements OnInit {
     ];
   }
 
-  // --- Define your ActionItem type ---
-
   // --- Map purchase data and include actions ---
   mapToPurchaseData(resp: any[]): PurchaseWithDetails[] {
     const calculateTotalInPak = (
