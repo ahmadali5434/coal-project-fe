@@ -175,25 +175,25 @@ export class HomeComponent implements OnInit {
         title: 'Add Freight',
         status: 'add_freight',
         count: data['addFreight'] || 0,
-        color: '#1E293B',
+        color: '#0B1F33',
       },
       {
         title: 'Add Gumrak',
         status: 'add_gumrak',
         count: data['addGumrak'] || 0,
-        color: '#F59E0B',
+        color: '#1F3A5F',
       },
       {
         title: 'Add Custom',
         status: 'add_custom',
         count: data['addCustom'] || 0,
-        color: '#8B5CF6',
+        color: '#0E5A5A',
       },
       {
         title: 'Completed',
         status: 'complete',
         count: data['complete'] || 0,
-        color: '#0B874B',
+        color: '#3A3F45',
       },
     ];
   }
@@ -271,14 +271,14 @@ export class HomeComponent implements OnInit {
           },
           ...(purchase.permanentRate == null
             ? [
-                {
-                  type: 'addExchange',
-                  icon: 'currency_exchange',
-                  label: 'Add Exchange Rate',
-                  permission: 'purchase:read',//TODO: write correct permission
-                  callback: () => this.addTempExchangeRate(row),
-                } as ActionConfig,
-              ]
+              {
+                type: 'addExchange',
+                icon: 'currency_exchange',
+                label: 'Add Exchange Rate',
+                permission: 'purchase:read',//TODO: write correct permission
+                callback: () => this.addTempExchangeRate(row),
+              } as ActionConfig,
+            ]
             : []),
           {
             type: 'delete',
