@@ -39,17 +39,20 @@ export class FreightDialogComponent implements OnInit {
 
   ngOnInit(): void {
     console.log('Dialog Data:', this.data);
-    const purchase = this.data?.purchaseData;
-    const freightData = purchase?.purchaseFreight;
+    const row = this.data?.purchaseData;
+    const purchase = row?.purchase ?? row;
+    const freightData = row?.purchaseFreight;
+    const driverName =
+      purchase?.driver?.name ||
+      purchase?.driverName ||
+      '';
     this.freightForm = new FormGroup({
       truckNo: new FormControl({
         value: purchase?.truckNo ?? '',
         disabled: true,
       }),
       driverName: new FormControl({
-        value: freightData
-          ? purchase?.driver?.name
-          : purchase?.driverName ?? '',
+        value: driverName,
         disabled: true,
       }),
       metricTon: new FormControl({
@@ -78,7 +81,7 @@ export class FreightDialogComponent implements OnInit {
         expense: Number(formData.expense),
         advancePayment: Number(formData.advancePayment),
         totalFreightAmount: Number(formData.totalFreightAmount)
-      };      
+      };
 
       const purchaseFreightId = this.data?.purchaseData?.purchaseFreight?.id;
       purchaseFreightId
@@ -134,9 +137,9 @@ export class FreightDialogComponent implements OnInit {
       const freightPerTon = Number(val.freightPerTon) || 0;
       const expense = Number(val.expense) || 0;
       const advancePayment = Number(val.advancePayment) || 0;
-  
+
       const total = (metricTon * freightPerTon) + expense - advancePayment;
-  
+
       this.freightForm.get('totalFreightAmount')?.setValue(total, { emitEvent: false });
     });
   }

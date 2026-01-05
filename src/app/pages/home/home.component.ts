@@ -223,9 +223,12 @@ export class HomeComponent implements OnInit {
         customerName: data.customer.name,
         placeOfPurchase: data.placeOfPurchase.name,
         stockDestination: data.stockDestination.name,
-        truckNo: data.truckNo,
-        driverName: data.driver.name,
-        metricTon: Number(data.metricTon),
+        truckNo: data.truckNo ?? '',
+        driverName:
+          data.driver?.name ||
+          data.driverName ||
+          '',
+        metricTon: Number(data.metricTon ?? 0),
         ratePerTon: Number(data.ratePerTon),
         permanentRate: data.permanentRate,
         temporaryExchangeRate: data.temporaryExchangeRate
@@ -271,14 +274,14 @@ export class HomeComponent implements OnInit {
           },
           ...(purchase.permanentRate == null
             ? [
-                {
-                  type: 'addExchange',
-                  icon: 'currency_exchange',
-                  label: 'Add Exchange Rate',
-                  permission: 'purchase:read',//TODO: write correct permission
-                  callback: () => this.addTempExchangeRate(row),
-                } as ActionConfig,
-              ]
+              {
+                type: 'addExchange',
+                icon: 'currency_exchange',
+                label: 'Add Exchange Rate',
+                permission: 'purchase:read',//TODO: write correct permission
+                callback: () => this.addTempExchangeRate(row),
+              } as ActionConfig,
+            ]
             : []),
           {
             type: 'delete',
