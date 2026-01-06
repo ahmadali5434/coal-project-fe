@@ -55,42 +55,84 @@ export class HomeComponent implements OnInit {
       headerName: 'Purchase Date',
       minWidth: 130,
       flex: 1,
+      wrapText: true,
+      autoHeight: true,
+      cellStyle: {
+        whiteSpace: 'normal',
+        lineHeight: '1.4',
+      }
     },
     {
       field: 'purchase.truckNo',
       headerName: 'Truck No',
       minWidth: 100,
       flex: 1,
+      wrapText: true,
+      autoHeight: true,
+      cellStyle: {
+        whiteSpace: 'normal',
+        lineHeight: '1.4',
+      }
     },
     {
       field: 'purchase.metricTon',
       headerName: 'Metric Ton',
       minWidth: 120,
       flex: 1,
+      wrapText: true,
+      autoHeight: true,
+      cellStyle: {
+        whiteSpace: 'normal',
+        lineHeight: '1.4',
+      }
     },
     {
       field: 'purchase.temporaryExchangeRate',
       headerName: 'Temp. Exchange Rate',
       minWidth: 170,
       flex: 1,
+      wrapText: true,
+      autoHeight: true,
+      cellStyle: {
+        whiteSpace: 'normal',
+        lineHeight: '1.4',
+      }
     },
     {
       field: 'purchase.permanentRate',
       headerName: 'Fixed Ex. Rate',
       minWidth: 150,
       flex: 1,
+      wrapText: true,
+      autoHeight: true,
+      cellStyle: {
+        whiteSpace: 'normal',
+        lineHeight: '1.4',
+      }
     },
     {
       field: 'purchase.totalPurchaseAmount',
       headerName: 'Purchase Amount (AFG)',
       minWidth: 200,
       flex: 1,
+      wrapText: true,
+      autoHeight: true,
+      cellStyle: {
+        whiteSpace: 'normal',
+        lineHeight: '1.4',
+      }
     },
     {
       field: 'purchase.totalPurchaseAmountInPak',
       headerName: 'Purchase Amount (PKR)',
       minWidth: 200,
       flex: 1,
+      wrapText: true,
+      autoHeight: true,
+      cellStyle: {
+        whiteSpace: 'normal',
+        lineHeight: '1.4',
+      }
     },
     {
       headerName: 'Actions',
@@ -271,14 +313,14 @@ export class HomeComponent implements OnInit {
           },
           ...(purchase.permanentRate == null
             ? [
-                {
-                  type: 'addExchange',
-                  icon: 'currency_exchange',
-                  label: 'Add Exchange Rate',
-                  permission: 'purchase:read',//TODO: write correct permission
-                  callback: () => this.addTempExchangeRate(row),
-                } as ActionConfig,
-              ]
+              {
+                type: 'addExchange',
+                icon: 'currency_exchange',
+                label: 'Add Exchange Rate',
+                permission: 'purchase:read',//TODO: write correct permission
+                callback: () => this.addTempExchangeRate(row),
+              } as ActionConfig,
+            ]
             : []),
           {
             type: 'delete',
