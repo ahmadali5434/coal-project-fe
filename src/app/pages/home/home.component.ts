@@ -63,37 +63,37 @@ export class HomeComponent implements OnInit {
     {
       field: 'purchase.purchaseDate',
       headerName: 'Purchase Date',
-      minWidth: 10,
+      minWidth: 100,
     },
     {
       field: 'purchase.truckNo',
       headerName: 'Truck No',
-      minWidth: 100,
+      minWidth: 90,
     },
     {
       field: 'purchase.metricTon',
       headerName: 'Metric Ton',
-      minWidth: 120,
+      minWidth: 100,
     },
     {
       field: 'purchase.temporaryExchangeRate',
       headerName: 'Temp. Exchange Rate',
-      minWidth: 170,
+      minWidth: 100,
     },
     {
       field: 'purchase.permanentRate',
       headerName: 'Fixed Ex. Rate',
-      minWidth: 150,
+      minWidth: 100,
     },
     {
       field: 'purchase.totalPurchaseAmount',
       headerName: 'Purchase Amount (AFG)',
-      minWidth: 200,
+      minWidth: 100,
     },
     {
       field: 'purchase.totalPurchaseAmountInPak',
       headerName: 'Purchase Amount (PKR)',
-      minWidth: 200,
+      minWidth: 100,
 
     },
     {
