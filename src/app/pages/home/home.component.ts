@@ -47,92 +47,54 @@ export class HomeComponent implements OnInit {
   purchaseList = signal<PurchaseWithDetails[]>([]);
   selectedStatus = signal<string | null>(null);
   loading = signal<boolean>(false);
-
+  defaultColDef: ColDef = {
+    flex: 1,
+    wrapText: true,
+    autoHeight: true,
+    wrapHeaderText: true,
+    autoHeaderHeight: true,
+    cellStyle: {
+      whiteSpace: 'normal',
+      lineHeight: '1.5',
+    },
+  };
   // --- Grid ---
   colDefs: ColDef[] = [
     {
       field: 'purchase.purchaseDate',
       headerName: 'Purchase Date',
-      minWidth: 130,
-      flex: 1,
-      wrapText: true,
-      autoHeight: true,
-      cellStyle: {
-        whiteSpace: 'normal',
-        lineHeight: '1.4',
-      }
+      minWidth: 10,
     },
     {
       field: 'purchase.truckNo',
       headerName: 'Truck No',
       minWidth: 100,
-      flex: 1,
-      wrapText: true,
-      autoHeight: true,
-      cellStyle: {
-        whiteSpace: 'normal',
-        lineHeight: '1.4',
-      }
     },
     {
       field: 'purchase.metricTon',
       headerName: 'Metric Ton',
       minWidth: 120,
-      flex: 1,
-      wrapText: true,
-      autoHeight: true,
-      cellStyle: {
-        whiteSpace: 'normal',
-        lineHeight: '1.4',
-      }
     },
     {
       field: 'purchase.temporaryExchangeRate',
       headerName: 'Temp. Exchange Rate',
       minWidth: 170,
-      flex: 1,
-      wrapText: true,
-      autoHeight: true,
-      cellStyle: {
-        whiteSpace: 'normal',
-        lineHeight: '1.4',
-      }
     },
     {
       field: 'purchase.permanentRate',
       headerName: 'Fixed Ex. Rate',
       minWidth: 150,
-      flex: 1,
-      wrapText: true,
-      autoHeight: true,
-      cellStyle: {
-        whiteSpace: 'normal',
-        lineHeight: '1.4',
-      }
     },
     {
       field: 'purchase.totalPurchaseAmount',
       headerName: 'Purchase Amount (AFG)',
       minWidth: 200,
-      flex: 1,
-      wrapText: true,
-      autoHeight: true,
-      cellStyle: {
-        whiteSpace: 'normal',
-        lineHeight: '1.4',
-      }
     },
     {
       field: 'purchase.totalPurchaseAmountInPak',
       headerName: 'Purchase Amount (PKR)',
       minWidth: 200,
-      flex: 1,
-      wrapText: true,
-      autoHeight: true,
-      cellStyle: {
-        whiteSpace: 'normal',
-        lineHeight: '1.4',
-      }
+
     },
     {
       headerName: 'Actions',
