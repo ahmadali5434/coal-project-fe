@@ -79,7 +79,7 @@ export class GumrakFormComponent implements OnInit {
     gumrakImage: new FormControl<File | null>(null),
   });
   // #endregion
-
+isEdit = false;
   // #region State
   selectedImage: string | null = null;
   selectedFile: File | null = null;
@@ -87,9 +87,13 @@ export class GumrakFormComponent implements OnInit {
 
   // #region Lifecycle
   ngOnInit(): void {
-    const purchase = this.data?.purchaseData;
+    const wrapper = this.data?.purchaseData;
+    const purchase = wrapper?.purchase ?? wrapper;
+    const gumrakData = wrapper?.gumrakEntry ?? null;
+
+    this.isEdit = !!gumrakData;
     console.log('Purchase Data:', purchase);
-    const gumrakData = purchase?.gumrakEntry;
+
 
     if (!gumrakData) {
       this.gumrakForm.patchValue({
@@ -101,9 +105,10 @@ export class GumrakFormComponent implements OnInit {
 
     this.gumrakForm.patchValue({
       truckNo: purchase?.truckNo ?? '',
-      driverName: gumrakData
-        ? purchase?.driver?.name
-        : purchase?.driverName ?? '',
+      driverName:
+        purchase?.driver?.name ||
+        purchase?.driverName ||
+        '',
       metricTon: purchase?.metricTon ?? 0,
       islamicDate: gumrakData?.islamicDate ?? '',
       englishDate: gumrakData?.englishDate ?? '',
@@ -167,6 +172,7 @@ export class GumrakFormComponent implements OnInit {
 
   private saveNewGumrakData(formData: FormData) {
     const purchaseId = this.data?.purchaseData?.id;
+
     this.buyStockService.createGumrakEntry(purchaseId, formData).subscribe({
       next: (res) => {
         this._snackBar.open('Gumrak entry saved!', undefined, {
@@ -186,6 +192,7 @@ export class GumrakFormComponent implements OnInit {
 
   private updateGumrakData(formData: FormData) {
     const purchaseId = this.data?.purchaseData?.id;
+
     this.buyStockService.updateGumrakEntry(purchaseId, formData).subscribe({
       next: (res) => {
         this._snackBar.open('Gumrak entry updated!', undefined, {

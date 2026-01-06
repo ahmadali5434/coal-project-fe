@@ -255,19 +255,18 @@ export class HomeComponent implements OnInit {
             callback: () => this.onView(row),
           },
           {
-            type: 'addFreight',
-            icon: 'local_shipping',
-            label: 'Add Freight Detail',
+            type: data.purchaseFreight ? 'editFreight' : 'addFreight',
+            icon: data.purchaseFreight ? 'edit' : 'local_shipping',
+            label: data.purchaseFreight ? 'Edit Freight Detail' : 'Add Freight Detail',
             permission: 'purchaseFreight:create',
             callback: (row: any) => this.onAddFreight(row),
           },
           {
-            type: 'addGumrak',
-            icon: 'assignment',
-            label: 'Afghan Gumrak Form',
+            type: data.gumrakEntry ? 'editGumrak' : 'addGumrak',
+            icon: data.gumrakEntry ? 'edit' : 'description',
+            label: data.gumrakEntry ? 'Edit Gumrak Detail' : 'Add Gumrak Detail',
             permission: 'gumrak:create',
-            callback: (row: any) => this.openGumrakDialog(row),
-            visible: (row: any) => !row?.gumrakEntry,
+            callback: (row: any) => this.openGumrakDialog(row), 
           },
           ...(purchase.permanentRate == null
             ? [
@@ -303,20 +302,32 @@ export class HomeComponent implements OnInit {
   }
 
   onAddFreight(rowData: any) {
-    this.dialog.open(FreightDialogComponent, {
+    const dialogRef = this.dialog.open(FreightDialogComponent, {
       panelClass: 'dialog-container-lg',
       data: {
         purchaseData: rowData,
       },
     });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.loadPurchases(this.selectedStatus() || undefined);
+      }
+    });
   }
 
   openGumrakDialog(rowData: any) {
-    this.dialog.open(GumrakFormComponent, {
+    const dialogRef = this.dialog.open(GumrakFormComponent, {
       panelClass: 'dialog-container-lg',
       data: {
-        purchaseData: rowData,
+         purchaseData: rowData.purchase,
+      gumrakEntry: rowData.gumrakEntry
       },
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.loadPurchases(this.selectedStatus() || undefined);
+      }
     });
   }
 

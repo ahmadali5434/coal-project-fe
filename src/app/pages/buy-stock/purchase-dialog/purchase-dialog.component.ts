@@ -76,7 +76,7 @@ export class PurchaseDialogComponent implements OnInit {
   // #region Inputs
   @Input() purchaseData: Purchase | null = null;
   // #endregion
-
+isEdit = false;
   // #region Services
   private readonly buyStockService = inject(BuyStockService);
   private readonly warehouseService = inject(WarehouseService);
@@ -126,6 +126,7 @@ export class PurchaseDialogComponent implements OnInit {
     if (this.purchaseData) {
       this.patchFormData(this.purchaseData);
     }
+    this.isEdit = !!this.purchaseData;
     this.calculateTotalPurchase();
   }
   // #endregion

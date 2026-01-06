@@ -36,20 +36,24 @@ export class FreightDialogComponent implements OnInit {
   private readonly _snackBar = inject(MatSnackBar);
 
   freightForm!: FormGroup;
-
+  isEdit = false;
   ngOnInit(): void {
     console.log('Dialog Data:', this.data);
-    const purchase = this.data?.purchaseData;
-    const freightData = purchase?.purchaseFreight;
+    const row = this.data?.purchaseData;
+    const purchase = row?.purchase ?? row;
+    const freightData = row?.purchaseFreight;
+    this.isEdit = !!freightData;
+    const driverName =
+      purchase?.driver?.name ||
+      purchase?.driverName ||
+      '';
     this.freightForm = new FormGroup({
       truckNo: new FormControl({
         value: purchase?.truckNo ?? '',
         disabled: true,
       }),
       driverName: new FormControl({
-        value: freightData
-          ? purchase?.driver?.name
-          : purchase?.driverName ?? '',
+        value: driverName,
         disabled: true,
       }),
       metricTon: new FormControl({
