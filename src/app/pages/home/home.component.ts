@@ -12,7 +12,9 @@ import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/c
 import { BuyStockService } from '../buy-stock/data-access/buy-stock.service';
 import { HasPermissionDirective } from '../../core/directives/has-permission.directive';
 import {
+  GumrakEntry,
   Purchase,
+  PurchaseFreight,
   PurchaseWithDetails,
 } from '../buy-stock/data-access/buy-stock.dto';
 import { PurchaseProgressService } from '../buy-stock/data-access/purchase-progress.service';
@@ -51,6 +53,30 @@ export class HomeComponent implements OnInit {
   // --- Grid ---
   colDefs: ColDef[] = [
     {
+      field: 'purchase.coalType',
+      headerName: 'Maal',
+      minWidth: 180,
+      flex: 1,
+    },
+    {
+      field: 'purchase.customerName',
+      headerName: 'Broker',
+      minWidth: 180,
+      flex: 1,
+    },
+    {
+      field: 'purchase.placeOfPurchase',
+      headerName: 'loading',
+      minWidth: 180,
+      flex: 1,
+    },
+    {
+      field: 'purchase.stockDestination',
+      headerName: 'Unloading',
+      minWidth: 180,
+      flex: 1,
+    },
+    {
       field: 'purchase.purchaseDate',
       headerName: 'Purchase Date',
       minWidth: 130,
@@ -58,14 +84,14 @@ export class HomeComponent implements OnInit {
     },
     {
       field: 'purchase.truckNo',
-      headerName: 'Truck No',
-      minWidth: 100,
+      headerName: 'Vehicle No',
+      minWidth: 120,
       flex: 1,
     },
     {
       field: 'purchase.metricTon',
-      headerName: 'Metric Ton',
-      minWidth: 120,
+      headerName: 'MT',
+      minWidth: 80,
       flex: 1,
     },
     {
@@ -90,6 +116,22 @@ export class HomeComponent implements OnInit {
       field: 'purchase.totalPurchaseAmountInPak',
       headerName: 'Purchase Amount (PKR)',
       minWidth: 200,
+      flex: 1,
+      valueFormatter: (params) => {
+        const value = params.value;
+        return value != null ? Number(value).toFixed(2) : '';
+      },
+    },
+    {
+      field: 'purchaseFreight.totalFreightAmount',
+      headerName: 'Freight',
+      minWidth: 100,
+      flex: 1,
+    },
+    {
+      field: 'gumrakEntry.totalGumrakAmount',
+      headerName: 'Gumrak',
+      minWidth: 100,
       flex: 1,
     },
     {
@@ -210,8 +252,8 @@ export class HomeComponent implements OnInit {
       const amt = Number(amount);
       const tempRate =
         temporaryRate != null ? Number(temporaryRate) : undefined;
-      if (permanentRate != null) return amt * permanentRate;
-      if (tempRate != null) return amt * tempRate;
+      if (permanentRate != null) return amt / permanentRate;
+      if (tempRate != null) return amt / tempRate;
       return undefined;
     };
 
@@ -240,11 +282,31 @@ export class HomeComponent implements OnInit {
         builtyImage: data.builtyImage,
       };
 
+      const purchaseFreight: PurchaseFreight = {
+        id: data.purchaseFreight?.id,
+        freightPerTon: data.purchaseFreight?.freightPerTon,
+        expense: data.purchaseFreight?.expense,
+        advancePayment: data.purchaseFreight?.advancePayment,
+        totalFreightAmount: data.purchaseFreight?.totalFreightAmount,
+      }
+
+      const gumrakEntry: GumrakEntry = {
+        id: data.gumrakEntry?.id,
+        islamicDate: data.gumrakEntry?.islamicDate,
+        englishDate: data.gumrakEntry?.englishDate,
+        invoiceExpense: data.gumrakEntry?.invoiceExpense,
+        otherExpense: data.gumrakEntry?.otherExpense,
+        afghanTax: data.gumrakEntry?.afghanTax,
+        commission: data.gumrakEntry?.commission,
+        totalGumrakAmount: data.gumrakEntry?.totalGumrakAmount,
+        //gumrakImage?: File | null;
+      }
+
       const row: PurchaseWithDetails = {
         id: String(data.id),
         purchase,
-        purchaseFreight: data.purchaseFreight ?? null,
-        gumrakEntry: data.gumrakEntry ?? null,
+        purchaseFreight,
+        gumrakEntry,
         status: data.status,
         actions: [
           {
@@ -267,7 +329,6 @@ export class HomeComponent implements OnInit {
             label: 'Afghan Gumrak Form',
             permission: 'gumrak:create',
             callback: (row: any) => this.openGumrakDialog(row),
-            visible: (row: any) => !row?.gumrakEntry,
           },
           ...(purchase.permanentRate == null
             ? [
@@ -305,18 +366,14 @@ export class HomeComponent implements OnInit {
   onAddFreight(rowData: any) {
     this.dialog.open(FreightDialogComponent, {
       panelClass: 'dialog-container-lg',
-      data: {
-        purchaseData: rowData,
-      },
+      data: rowData,
     });
   }
 
   openGumrakDialog(rowData: any) {
     this.dialog.open(GumrakFormComponent, {
       panelClass: 'dialog-container-lg',
-      data: {
-        purchaseData: rowData,
-      },
+      data: rowData,
     });
   }
 
