@@ -9,6 +9,7 @@ import {
 import { environment } from '../../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
+import { PurchaseApiResponse } from './buy-stock.api.dto';
 
 @Injectable({
   providedIn: 'root',
@@ -42,21 +43,21 @@ export class BuyStockService {
     );
   }
 
-  getPurchases(filters?: { status?: string }): Observable<PurchaseWithDetails[]> {
+  getPurchases(filters?: { status?: string }): Observable<PurchaseApiResponse[]> {
     const params = new URLSearchParams();
     if (filters?.status) params.append('status', filters.status);
   
     const url = `${this.apiBaseUrl}/purchase-entries?${params.toString()}`;
   
     return this.http
-      .get<ApiResponse<PurchaseWithDetails[]>>(url)
+      .get<ApiResponse<PurchaseApiResponse[]>>(url)
       .pipe(map((res) => res.data ?? []));
   }
   
 
-  getPurchase(purchaseId: string): Observable<PurchaseWithDetails | null> {
+  getPurchase(purchaseId: string): Observable<PurchaseApiResponse | null> {
     return this.http
-      .get<ApiResponse<PurchaseWithDetails>>(
+      .get<ApiResponse<PurchaseApiResponse>>(
         `${this.apiBaseUrl}/purchase-entries/${purchaseId}`
       )
       .pipe(map((res) => res.data ?? null));
