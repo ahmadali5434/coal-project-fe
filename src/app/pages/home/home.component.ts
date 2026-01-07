@@ -366,16 +366,26 @@ export class HomeComponent implements OnInit {
   }
 
   onAddFreight(rowData: any) {
-    this.dialog.open(FreightDialogComponent, {
+    const dialogRef = this.dialog.open(FreightDialogComponent, {
       panelClass: 'dialog-container-lg',
       data: rowData,
+    });
+
+    dialogRef.afterClosed().subscribe((resp: PurchaseFreight) => {
+      if (resp)
+        this.loadPurchases();
     });
   }
 
   openGumrakDialog(rowData: any) {
-    this.dialog.open(GumrakFormComponent, {
+    const dialogRef = this.dialog.open(GumrakFormComponent, {
       panelClass: 'dialog-container-lg',
       data: rowData,
+    });
+
+    dialogRef.afterClosed().subscribe((resp: GumrakEntry) => {
+      if (resp) 
+        this.loadPurchases();
     });
   }
 
@@ -385,8 +395,8 @@ export class HomeComponent implements OnInit {
       data: rowData.purchase,
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
+    dialogRef.afterClosed().subscribe((resp) => {
+      if (resp) {
         this.loadPurchases();
       }
     });
@@ -401,10 +411,7 @@ export class HomeComponent implements OnInit {
       if (result) {
         this.buyStockService.deletePurchase(rowData.id).subscribe({
           next: () => {
-            const updatedData = this.purchaseList().filter(
-              (item) => item.id !== rowData.id
-            );
-            this.purchaseList.set(updatedData);
+            this.loadDashboard();
             this.snackBar.open('Stock deleted successfully', 'Close', {
               duration: 3000,
             });
