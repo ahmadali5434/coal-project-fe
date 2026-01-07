@@ -58,12 +58,14 @@ export class TempExchangeRateComponent implements OnInit {
     const purchaseData: Purchase | undefined = this.data;
     this.exchangeForm = new FormGroup(
       {
-        purchaseDate: new FormControl(
-          purchaseData ? toDateOnly(purchaseData.purchaseDate) : null,
-        ),
-        totalPurchaseAmount: new FormControl(
-          purchaseData ? purchaseData.totalPurchaseAmount : null,
-        ),
+        purchaseDate: new FormControl({
+            value: purchaseData ? toDateOnly(purchaseData.purchaseDate) : null,
+            disabled: true,
+        }),
+        totalPurchaseAmount: new FormControl({
+          value: purchaseData ? purchaseData.totalPurchaseAmount : null,
+          disabled: true,
+        }),
         temporaryExchangeRate: new FormControl(purchaseData?.temporaryExchangeRate ?? null, [
           Validators.required,
           Validators.min(0),

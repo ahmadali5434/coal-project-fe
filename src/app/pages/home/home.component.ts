@@ -2,7 +2,10 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { AgGridAngular } from 'ag-grid-angular'; // Angular Data Grid Component
 import type { ColDef, GridOptions } from 'ag-grid-community';
 import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
-import { ActionCellRendererComponent, ActionConfig } from '../../shared/components/action-cell-renderer/action-cell-renderer.component';
+import {
+  ActionCellRendererComponent,
+  ActionConfig,
+} from '../../shared/components/action-cell-renderer/action-cell-renderer.component';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { Router } from '@angular/router';
@@ -50,73 +53,74 @@ export class HomeComponent implements OnInit {
   selectedStatus = signal<string | null>(null);
   loading = signal<boolean>(false);
 
+  defaultColDef: ColDef = {
+    flex: 1,
+    wrapText: true,
+    autoHeight: true,
+    wrapHeaderText: true,
+    autoHeaderHeight: true,
+    cellStyle: {
+      whiteSpace: 'normal',
+      lineHeight: '1.5',
+    },
+  };
+
   // --- Grid ---
   colDefs: ColDef[] = [
     {
       field: 'purchase.coalType',
       headerName: 'Maal',
-      minWidth: 180,
-      flex: 1,
+      minWidth: 140,
     },
     {
       field: 'purchase.customerName',
       headerName: 'Broker',
-      minWidth: 180,
-      flex: 1,
+      minWidth: 140,
     },
     {
       field: 'purchase.placeOfPurchase',
       headerName: 'loading',
-      minWidth: 180,
-      flex: 1,
+      minWidth: 140,
     },
     {
       field: 'purchase.stockDestination',
       headerName: 'Unloading',
-      minWidth: 180,
-      flex: 1,
+      minWidth: 140,
     },
     {
       field: 'purchase.purchaseDate',
       headerName: 'Purchase Date',
       minWidth: 130,
-      flex: 1,
     },
     {
       field: 'purchase.truckNo',
       headerName: 'Vehicle No',
-      minWidth: 120,
-      flex: 1,
+      minWidth: 80,
     },
     {
       field: 'purchase.metricTon',
       headerName: 'MT',
       minWidth: 80,
-      flex: 1,
     },
     {
       field: 'purchase.temporaryExchangeRate',
       headerName: 'Temp. Exchange Rate',
-      minWidth: 170,
-      flex: 1,
+      minWidth: 120,
     },
     {
       field: 'purchase.permanentRate',
       headerName: 'Fixed Ex. Rate',
-      minWidth: 150,
-      flex: 1,
+      minWidth: 100,
     },
     {
       field: 'purchase.totalPurchaseAmount',
       headerName: 'Purchase Amount (AFG)',
-      minWidth: 200,
-      flex: 1,
+      minWidth: 100,
     },
     {
       field: 'purchase.totalPurchaseAmountInPak',
       headerName: 'Purchase Amount (PKR)',
-      minWidth: 200,
-      flex: 1,
+      minWidth: 100,
       valueFormatter: (params) => {
         const value = params.value;
         return value != null ? Number(value).toFixed(2) : '';
@@ -125,19 +129,17 @@ export class HomeComponent implements OnInit {
     {
       field: 'purchaseFreight.totalFreightAmount',
       headerName: 'Freight',
-      minWidth: 100,
-      flex: 1,
+      minWidth: 90,
     },
     {
       field: 'gumrakEntry.totalGumrakAmount',
       headerName: 'Gumrak',
-      minWidth: 100,
-      flex: 1,
+      minWidth: 90,
     },
     {
       headerName: 'Actions',
       pinned: 'right',
-      width: 90,
+      width: 82,
       sortable: false,
       filter: false,
       resizable: false,
@@ -288,7 +290,7 @@ export class HomeComponent implements OnInit {
         expense: data.purchaseFreight?.expense,
         advancePayment: data.purchaseFreight?.advancePayment,
         totalFreightAmount: data.purchaseFreight?.totalFreightAmount,
-      }
+      };
 
       const gumrakEntry: GumrakEntry = {
         id: data.gumrakEntry?.id,
@@ -300,7 +302,7 @@ export class HomeComponent implements OnInit {
         commission: data.gumrakEntry?.commission,
         totalGumrakAmount: data.gumrakEntry?.totalGumrakAmount,
         //gumrakImage?: File | null;
-      }
+      };
 
       const row: PurchaseWithDetails = {
         id: String(data.id),
@@ -336,7 +338,7 @@ export class HomeComponent implements OnInit {
                   type: 'addExchange',
                   icon: 'currency_exchange',
                   label: 'Add Exchange Rate',
-                  permission: 'purchase:read',//TODO: write correct permission
+                  permission: 'purchase:read', //TODO: write correct permission
                   callback: () => this.addTempExchangeRate(row),
                 } as ActionConfig,
               ]
@@ -364,16 +366,26 @@ export class HomeComponent implements OnInit {
   }
 
   onAddFreight(rowData: any) {
-    this.dialog.open(FreightDialogComponent, {
+    const dialogRef = this.dialog.open(FreightDialogComponent, {
       panelClass: 'dialog-container-lg',
       data: rowData,
+    });
+
+    dialogRef.afterClosed().subscribe((resp: PurchaseFreight) => {
+      if (resp)
+        this.loadPurchases();
     });
   }
 
   openGumrakDialog(rowData: any) {
-    this.dialog.open(GumrakFormComponent, {
+    const dialogRef = this.dialog.open(GumrakFormComponent, {
       panelClass: 'dialog-container-lg',
       data: rowData,
+    });
+
+    dialogRef.afterClosed().subscribe((resp: GumrakEntry) => {
+      if (resp) 
+        this.loadPurchases();
     });
   }
 
@@ -383,8 +395,8 @@ export class HomeComponent implements OnInit {
       data: rowData.purchase,
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
+    dialogRef.afterClosed().subscribe((resp) => {
+      if (resp) {
         this.loadPurchases();
       }
     });
@@ -399,10 +411,7 @@ export class HomeComponent implements OnInit {
       if (result) {
         this.buyStockService.deletePurchase(rowData.id).subscribe({
           next: () => {
-            const updatedData = this.purchaseList().filter(
-              (item) => item.id !== rowData.id
-            );
-            this.purchaseList.set(updatedData);
+            this.loadDashboard();
             this.snackBar.open('Stock deleted successfully', 'Close', {
               duration: 3000,
             });
