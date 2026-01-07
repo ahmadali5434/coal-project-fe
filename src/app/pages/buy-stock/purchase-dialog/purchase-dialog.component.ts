@@ -90,7 +90,7 @@ export class PurchaseDialogComponent implements OnInit {
   warehouses: Warehouse[] = [];
   customerList = signal<Customer[]>([]);
   drivers = signal<Driver[]>([]);
-  isEdit = false;
+  isEdit = false; // remove it later on
   // #endregion
 
   // #region Form
