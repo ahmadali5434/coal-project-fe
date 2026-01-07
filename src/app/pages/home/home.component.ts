@@ -95,7 +95,7 @@ export class HomeComponent implements OnInit {
     {
       field: 'purchase.truckNo',
       headerName: 'Vehicle No',
-      minWidth: 80,
+      minWidth: 120,
     },
     {
       field: 'purchase.metricTon',
@@ -115,12 +115,12 @@ export class HomeComponent implements OnInit {
     {
       field: 'purchase.totalPurchaseAmount',
       headerName: 'Purchase Amount (AFG)',
-      minWidth: 100,
+      minWidth: 110,
     },
     {
       field: 'purchase.totalPurchaseAmountInPak',
       headerName: 'Purchase Amount (PKR)',
-      minWidth: 100,
+      minWidth: 110,
       valueFormatter: (params) => {
         const value = params.value;
         return value != null ? Number(value).toFixed(2) : '';
@@ -129,12 +129,12 @@ export class HomeComponent implements OnInit {
     {
       field: 'purchaseFreight.totalFreightAmount',
       headerName: 'Freight',
-      minWidth: 90,
+      minWidth: 110,
     },
     {
       field: 'gumrakEntry.totalGumrakAmount',
       headerName: 'Gumrak',
-      minWidth: 90,
+      minWidth: 110,
     },
     {
       headerName: 'Actions',
@@ -321,14 +321,14 @@ export class HomeComponent implements OnInit {
           {
             type: 'addFreight',
             icon: 'local_shipping',
-            label: 'Add Freight Detail',
+            label: purchaseFreight.id ? 'Update Freight Detail' : 'Add Freight Detail',
             permission: 'purchaseFreight:create',
             callback: (row: any) => this.onAddFreight(row),
           },
           {
             type: 'addGumrak',
             icon: 'assignment',
-            label: 'Afghan Gumrak Form',
+            label: gumrakEntry.id ? 'Update Gumrak Detail' : 'Add Gumrak Detail',
             permission: 'gumrak:create',
             callback: (row: any) => this.openGumrakDialog(row),
           },

@@ -90,6 +90,7 @@ export class PurchaseDialogComponent implements OnInit {
   warehouses: Warehouse[] = [];
   customerList = signal<Customer[]>([]);
   drivers = signal<Driver[]>([]);
+  isEdit = false; // remove it later on
   // #endregion
 
   // #region Form
@@ -125,6 +126,7 @@ export class PurchaseDialogComponent implements OnInit {
     this.purchaseData = this.data?.purchaseData ?? null;
     if (this.purchaseData) {
       this.patchFormData(this.purchaseData);
+      this.isEdit = true;
     }
     this.calculateTotalPurchase();
   }

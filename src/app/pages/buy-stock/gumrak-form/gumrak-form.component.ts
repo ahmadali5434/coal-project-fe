@@ -64,6 +64,7 @@ export class GumrakFormComponent implements OnInit {
   private readonly _snackBar = inject(MatSnackBar);
   // #endregion
 
+  isEdit = false;
   // #region Form
   gumrakForm = new FormGroup({
     truckNo: new FormControl({ value: '', disabled: true }),
@@ -90,6 +91,7 @@ export class GumrakFormComponent implements OnInit {
     const purchase = this.data?.purchase;
     console.log('Purchase Data:', purchase);
     const gumrakData = this.data?.gumrakEntry;
+    this.isEdit = gumrakData.id ? true : false;
 
     if (!gumrakData) {
       this.gumrakForm.patchValue({
