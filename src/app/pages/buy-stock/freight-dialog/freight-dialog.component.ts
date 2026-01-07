@@ -35,12 +35,14 @@ export class FreightDialogComponent implements OnInit {
   private readonly buyStockService = inject(BuyStockService);
   private readonly _snackBar = inject(MatSnackBar);
 
+  isEdit = false;
+
   freightForm!: FormGroup;
 
   ngOnInit(): void {
-    console.log('Dialog Data:', this.data);
     const purchase = this.data?.purchase;
     const freightData = this.data?.purchaseFreight;
+    this.isEdit = freightData.id ? true : false;
     this.freightForm = new FormGroup({
       truckNo: new FormControl({
         value: purchase?.truckNo ?? '',

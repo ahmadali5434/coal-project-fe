@@ -321,14 +321,14 @@ export class HomeComponent implements OnInit {
           {
             type: 'addFreight',
             icon: 'local_shipping',
-            label: 'Add Freight Detail',
+            label: purchaseFreight.id ? 'Update Freight Detail' : 'Add Freight Detail',
             permission: 'purchaseFreight:create',
             callback: (row: any) => this.onAddFreight(row),
           },
           {
             type: 'addGumrak',
             icon: 'assignment',
-            label: 'Afghan Gumrak Form',
+            label: gumrakEntry.id ? 'Update Gumrak Detail' : 'Add Gumrak Detail',
             permission: 'gumrak:create',
             callback: (row: any) => this.openGumrakDialog(row),
           },

@@ -1,5 +1,5 @@
 <h2 class="flex justify-center items-center text-3xl pt-8">
-  {{ "Afghan Gumrak Form" }}
+  {{ isEdit ? 'Update Gumrak Detail' : 'Add Gumrak Detail' }}
 </h2>
 <mat-dialog-content class="mat-typography">
   <form [formGroup]="gumrakForm">
@@ -116,5 +116,7 @@
 </mat-dialog-content>
 <mat-dialog-actions align="end">
   <button matButton="outlined" mat-dialog-close>Cancel</button>
-  <button matButton="filled" cdkFocusInitial (click)="onSave()">Save</button>
+  <button matButton="filled" cdkFocusInitial (click)="onSave()">
+    {{ isEdit ? 'Update' : 'Save' }}
+  </button>
 </mat-dialog-actions>
