@@ -12,18 +12,22 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDividerModule } from '@angular/material/divider';
 import { CustomDialogComponent } from './custom-dialog/custom-dialog.component';
 import { BuyStockService } from './data-access/buy-stock.service';
+import { ModuleRegistry, AllCommunityModule } from 'ag-grid-community';
 import {
-  ModuleRegistry,
-  AllCommunityModule,
-} from 'ag-grid-community';
-import { CustomEntry, GumrakEntry, PurchaseFreight } from './data-access/buy-stock.dto';
+  CustomEntry,
+  GumrakEntry,
+  Purchase,
+  PurchaseFreight,
+  PurchaseWithDetails,
+} from './data-access/buy-stock.dto';
 import { SummaryCardComponent } from '../../shared/components/summary-card/summary-card.component';
 import { PurchaseDialogComponent } from './purchase-dialog/purchase-dialog.component';
 import { ActivatedRoute, Router } from '@angular/router';
-import { HasPermissionDirective } from "../../core/directives/has-permission.directive";
+import { HasPermissionDirective } from '../../core/directives/has-permission.directive';
 import { GumrakFormComponent } from './gumrak-form/gumrak-form.component';
 import { FreightDialogComponent } from './freight-dialog/freight-dialog.component';
 import { PurchaseProgressService } from './data-access/purchase-progress.service';
+import { map, Observable } from 'rxjs';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 @Component({
@@ -42,8 +46,8 @@ ModuleRegistry.registerModules([AllCommunityModule]);
     MatSnackBarModule,
     MatDividerModule,
     SummaryCardComponent,
-    HasPermissionDirective
-],
+    HasPermissionDirective,
+  ],
   templateUrl: './buy-stock.component.html',
 })
 export class BuyStockComponent implements OnInit {
@@ -70,7 +74,7 @@ export class BuyStockComponent implements OnInit {
       panelClass: 'dialog-container-lg',
       data: { purchaseData: null },
     });
-  
+
     dialogRef.afterClosed().subscribe((purchaseId: string) => {
       if (purchaseId) {
         this.refreshSummary(purchaseId);
@@ -79,7 +83,7 @@ export class BuyStockComponent implements OnInit {
       }
     });
   }
-  
+
   openEditPurchaseDialog(purchaseId: string) {
     this.buyStockService.getPurchase(purchaseId).subscribe({
       next: (res) => {
@@ -87,9 +91,9 @@ export class BuyStockComponent implements OnInit {
   
         const dialogRef = this.dialog.open(PurchaseDialogComponent, {
           panelClass: 'dialog-container-lg',
-          data: { purchaseData: purchaseData },
+          data: { purchaseData },
         });
-  
+
         dialogRef.afterClosed().subscribe((updatedId: string) => {
           if (updatedId) {
             this.refreshSummary(updatedId);
@@ -98,9 +102,9 @@ export class BuyStockComponent implements OnInit {
           }
         });
       },
-      error: (err) => {}
+      error: (err) => {},
     });
-  } 
+  }
 
   private refreshSummary(purchaseId: string) {
     this.buyStockService.getPurchase(purchaseId).subscribe({
@@ -125,73 +129,92 @@ export class BuyStockComponent implements OnInit {
   }
 
   openFreightDialog() {
-    const dialogRef = this.dialog.open(FreightDialogComponent, {
-      panelClass: 'dialog-container-lg',
-      data: { purchaseData: this.purchaseData() },
-    });
-
-    dialogRef.afterClosed().subscribe((resp: PurchaseFreight) => {
-      this.purchaseFreightData.set(resp);
-    });
-  }
-  
-  openEditFreightDialog(purchaseId: string) {
-    this.buyStockService.getPurchase(purchaseId).subscribe({
-      next: (res) => {
-        const purchaseData = res;
-  
+    this.mapPurchaseData().subscribe({
+      next: (data) => {
         const dialogRef = this.dialog.open(FreightDialogComponent, {
           panelClass: 'dialog-container-lg',
-          data: { purchaseData },
+          data,
         });
-  
+    
+        dialogRef.afterClosed().subscribe((resp: PurchaseFreight) => {
+          this.purchaseFreightData.set(resp);
+        });
+        return data;
+      },
+      error: (err) => {
+        console.error('Error mapping purchase data for freight dialog:', err);
+      },
+    });
+  }
+
+  openEditFreightDialog(purchaseId: string) {
+    this.mapPurchaseData().subscribe({
+      next: (data) => {
+        const dialogRef = this.dialog.open(FreightDialogComponent, {
+          panelClass: 'dialog-container-lg',
+          data,
+        });
+    
         dialogRef.afterClosed().subscribe((updatedFreightId: string) => {
           if (updatedFreightId) {
             this.refreshFreightSummary(purchaseId);
           }
         });
+        return data;
       },
-      error: (err) => {}
+      error: (err) => {
+        console.error('Error mapping purchase data for freight dialog:', err);
+      },
     });
   }
-  
+
   private refreshFreightSummary(purchaseId: string) {
     this.buyStockService.getPurchaseFreight(purchaseId).subscribe((res) => {
       const mappedData = this.mapToFreightSummary(res);
-      this.purchaseFreightData.set(mappedData);   // keep separate signal/store for freight
+      this.purchaseFreightData.set(mappedData);
     });
   }
 
   openGumrakDialog() {
-    const dialogRef = this.dialog.open(GumrakFormComponent, {
-      panelClass: 'dialog-container-lg',
-      data: { purchaseData: this.purchaseData() },
-    });
-    dialogRef.afterClosed().subscribe((resp: GumrakEntry) => {
-      this.gumrakData.set(resp);
+    this.mapPurchaseData().subscribe({
+      next: (data) => {
+        const dialogRef = this.dialog.open(GumrakFormComponent, {
+          panelClass: 'dialog-container-lg',
+          data,
+        });
+    
+        dialogRef.afterClosed().subscribe((resp: GumrakEntry) => {
+          this.gumrakData.set(resp);
+        });
+        return data;
+      },
+      error: (err) => {
+        console.error('Error mapping purchase data for freight dialog:', err);
+      },
     });
   }
 
   openEditGumrakDialog(purchaseId: string) {
-    this.buyStockService.getPurchase(purchaseId).subscribe({
-      next: (res) => {
-        const purchaseData = res;
-  
+    this.mapPurchaseData().subscribe({
+      next: (data) => {
         const dialogRef = this.dialog.open(GumrakFormComponent, {
           panelClass: 'dialog-container-lg',
-          data: { purchaseData },
+          data,
         });
-  
+    
         dialogRef.afterClosed().subscribe((updatedGumrakId: string) => {
           if (updatedGumrakId) {
             this.refreshGumrakSummary(purchaseId);
           }
         });
+        return data;
       },
-      error: (err) => {}
+      error: (err) => {
+        console.error('Error mapping purchase data for freight dialog:', err);
+      },
     });
   }
-  
+
   private refreshGumrakSummary(purchaseId: string) {
     this.buyStockService.getGumrakEntry(purchaseId).subscribe((res) => {
       const mappedData = this.mapToGumrakSummary(res);
@@ -249,4 +272,74 @@ export class BuyStockComponent implements OnInit {
       gumrakImage: data?.gumrakImage ?? null,
     };
   }
+
+  mapPurchaseData(): Observable<PurchaseWithDetails> {
+    return this.buyStockService
+      .getPurchase(this.purchaseData().id)
+      .pipe(
+        map((data) => {
+          const calculateTotalInPak = (
+            amount: string | number,
+            permanentRate?: number | null,
+            temporaryRate?: string | number | null
+          ): number | undefined => {
+            const amt = Number(amount);
+            const tempRate =
+              temporaryRate != null ? Number(temporaryRate) : undefined;
+  
+            if (permanentRate != null) return amt / permanentRate;
+            if (tempRate != null) return amt / tempRate;
+            return undefined;
+          };
+          
+          console.log('Mapping Purchase Data:', data);
+          return {
+            id: String(data?.id),
+            purchase: {
+              id: String(data?.id),
+              purchaseDate: data?.purchaseDate,
+              coalType: data?.coalType,
+              customerName: data?.customer?.name,
+              placeOfPurchase: data?.placeOfPurchase?.name,
+              stockDestination: data?.stockDestination?.name,
+              truckNo: data?.truckNo,
+              driverName: data?.driver?.name,
+              metricTon: Number(data?.metricTon),
+              ratePerTon: Number(data?.ratePerTon),
+              permanentRate: data?.permanentRate,
+              temporaryExchangeRate: data?.temporaryExchangeRate
+                ? Number(data?.temporaryExchangeRate)
+                : undefined,
+              totalPurchaseAmount: Number(data?.totalPurchaseAmount),
+              totalPurchaseAmountInPak: calculateTotalInPak(
+                data?.totalPurchaseAmount?? 0,
+                data?.permanentRate,
+                data?.temporaryExchangeRate
+              ),
+              builtyImage: data?.builtyImage,
+            },
+            purchaseFreight: {
+              id: data?.purchaseFreight?.id,
+              freightPerTon: data?.purchaseFreight?.freightPerTon,
+              expense: data?.purchaseFreight?.expense,
+              advancePayment: data?.purchaseFreight?.advancePayment,
+              totalFreightAmount: data?.purchaseFreight?.totalFreightAmount,
+            },
+            gumrakEntry: {
+              id: data?.gumrakEntry?.id,
+              islamicDate: data?.gumrakEntry?.islamicDate,
+              englishDate: data?.gumrakEntry?.englishDate,
+              invoiceExpense: data?.gumrakEntry?.invoiceExpense,
+              otherExpense: data?.gumrakEntry?.otherExpense,
+              afghanTax: data?.gumrakEntry?.afghanTax,
+              commission: data?.gumrakEntry?.commission,
+              totalGumrakAmount: data?.gumrakEntry?.totalGumrakAmount,
+            },
+            status: data?.status,
+          } as PurchaseWithDetails;
+        })
+      );
+  }
+  
+  
 }

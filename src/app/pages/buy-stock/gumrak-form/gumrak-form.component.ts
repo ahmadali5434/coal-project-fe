@@ -87,23 +87,21 @@ export class GumrakFormComponent implements OnInit {
 
   // #region Lifecycle
   ngOnInit(): void {
-    const purchase = this.data?.purchaseData;
+    const purchase = this.data?.purchase;
     console.log('Purchase Data:', purchase);
-    const gumrakData = purchase?.gumrakEntry;
+    const gumrakData = this.data?.gumrakEntry;
 
     if (!gumrakData) {
       this.gumrakForm.patchValue({
         truckNo: purchase?.truckNo ?? '',
-        driverName: purchase?.driver?.name ?? '',
+        driverName: purchase?.driverName ?? '',
         metricTon: purchase?.metricTon ?? 0,
       });
     }
 
     this.gumrakForm.patchValue({
       truckNo: purchase?.truckNo ?? '',
-      driverName: gumrakData
-        ? purchase?.driver?.name
-        : purchase?.driverName ?? '',
+      driverName: purchase?.driverName ?? '',
       metricTon: purchase?.metricTon ?? 0,
       islamicDate: gumrakData?.islamicDate ?? '',
       englishDate: gumrakData?.englishDate ?? '',
@@ -158,7 +156,7 @@ export class GumrakFormComponent implements OnInit {
     }
 
     const formData = toFormData(payload);
-    const gumrakId = this.data?.purchaseData?.gumrakEntry?.id;
+    const gumrakId = this.data?.gumrakEntry?.id;
 
     gumrakId
       ? this.updateGumrakData(formData)
@@ -166,7 +164,7 @@ export class GumrakFormComponent implements OnInit {
   }
 
   private saveNewGumrakData(formData: FormData) {
-    const purchaseId = this.data?.purchaseData?.id;
+    const purchaseId = this.data?.purchase?.id;
     this.buyStockService.createGumrakEntry(purchaseId, formData).subscribe({
       next: (res) => {
         this._snackBar.open('Gumrak entry saved!', undefined, {
@@ -185,7 +183,7 @@ export class GumrakFormComponent implements OnInit {
   }
 
   private updateGumrakData(formData: FormData) {
-    const purchaseId = this.data?.purchaseData?.id;
+    const purchaseId = this.data?.purchase?.id;
     this.buyStockService.updateGumrakEntry(purchaseId, formData).subscribe({
       next: (res) => {
         this._snackBar.open('Gumrak entry updated!', undefined, {

@@ -39,17 +39,15 @@ export class FreightDialogComponent implements OnInit {
 
   ngOnInit(): void {
     console.log('Dialog Data:', this.data);
-    const purchase = this.data?.purchaseData;
-    const freightData = purchase?.purchaseFreight;
+    const purchase = this.data?.purchase;
+    const freightData = this.data?.purchaseFreight;
     this.freightForm = new FormGroup({
       truckNo: new FormControl({
         value: purchase?.truckNo ?? '',
         disabled: true,
       }),
       driverName: new FormControl({
-        value: freightData
-          ? purchase?.driver?.name
-          : purchase?.driverName ?? '',
+        value: purchase?.driverName ?? '',
         disabled: true,
       }),
       metricTon: new FormControl({
@@ -80,7 +78,7 @@ export class FreightDialogComponent implements OnInit {
         totalFreightAmount: Number(formData.totalFreightAmount)
       };      
 
-      const purchaseFreightId = this.data?.purchaseData?.purchaseFreight?.id;
+      const purchaseFreightId = this.data?.purchaseFreight?.id;
       purchaseFreightId
         ? this.updatePurchaseFreight(data)
         : this.saveNewPurchaseFreight(data);
@@ -91,7 +89,7 @@ export class FreightDialogComponent implements OnInit {
 
   private saveNewPurchaseFreight(formData: PurchaseFreight) {
     this.buyStockService
-      .createPurchaseFreight(this.data?.purchaseData?.id, formData)
+      .createPurchaseFreight(this.data?.purchase?.id, formData)
       .subscribe({
         next: (res) => {
           this._snackBar.open('Purchase Freight saved!', undefined, {
@@ -110,7 +108,7 @@ export class FreightDialogComponent implements OnInit {
   }
 
   private updatePurchaseFreight(formData: PurchaseFreight) {
-    const purchaseId = this.data?.purchaseData?.id;
+    const purchaseId = this.data?.purchase?.id;
     this.buyStockService.updatePurchaseFreight(purchaseId, formData).subscribe({
       next: (res) => {
         this._snackBar.open('Purchase Freight updated!', undefined, {
