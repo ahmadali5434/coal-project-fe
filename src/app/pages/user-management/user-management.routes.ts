@@ -29,8 +29,8 @@ export const USERMANAGEMENTROUTES: Routes = [
    {
     path: 'add-user',
     loadComponent: () =>
-      import('../add-user/add-user.component').then(
-        (m) => m.AddUserComponent  
+      import('../add-user/user-details.component').then(
+        (m) => m.UserDetailsComponent 
       ),
         data: { breadcrumb: 'Create User' },
   },

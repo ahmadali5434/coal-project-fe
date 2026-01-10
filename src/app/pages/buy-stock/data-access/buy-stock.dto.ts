@@ -22,7 +22,7 @@ export interface Purchase {
   coalType: string;
   customerName: string;
   placeOfPurchase: string;
-  stockDestination: string; 
+  stockDestination: string;
   truckNo: string;
   driverName: string;
   metricTon: number;
@@ -39,9 +39,9 @@ export interface CreateOrUpdatePurchasePayload {
   customerId: number;          // FK
   placeOfPurchaseId: number;   // FK
   stockDestinationId: number;  // FK
-  truckNo: string;             
+  truckNo: string;
   driverId: number;            // FK
-  metricTon: number;           
+  metricTon: number;
   builtyImage?: File;
   status: PurchaseStatus;      // enum
 }
@@ -137,7 +137,7 @@ export interface Driver {
   areaAddress?: string;
   afghanContactNo?: string;
   pakistanContactNo?: string;
-  country?: Country | null; 
+  country?: Country | null;
   city?: City | null;
   createdAt?: string;
   updatedAt?: string;
@@ -151,22 +151,33 @@ export interface CreateOrUpdateDriverPayload {
   areaAddress?: string;
   afghanContactNo?: string;
   pakistanContactNo?: string;
-  countryId: string; 
-  cityId: string; 
+  countryId: string;
+  cityId: string;
 }
 
 // ----------------- WAREHOUSE -----------------
 
 export interface Warehouse {
-  id: number;                  
+  id: number;
   name: string;
-  countryId: number;           
-  cityId: number;               
+  countryId: number;
+  cityId: number;
   warehouseLocation: string;
   country?: Country;
   city?: City;
 }
-
+export interface User {
+  id: string;
+  username: string;
+  role: string;
+  createdAt?: string;
+}
+export interface CreateOrUpdateUserPayload {
+  name: string;
+  id: string;
+  role: string;
+  passward: string;
+}
 export interface CreateOrUpdateWarehousePayload {
   name: string;
   countryId: string;
@@ -183,7 +194,7 @@ export interface ApiResponse<T> {
 }
 export interface ExchangeRate {
   id?: number;
-  startDate: string; 
-  endDate: string;     
+  startDate: string;
+  endDate: string;
   permanentRate: number;
 }

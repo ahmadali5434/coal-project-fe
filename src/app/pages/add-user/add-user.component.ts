@@ -16,7 +16,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { RoleService } from '../setting/role-permission/role.servicet';
 import { Role } from '../setting/role-permission/role.model';
-
+import { MatDialogActions } from "@angular/material/dialog";
+import { MatDialogModule } from '@angular/material/dialog';
 @Component({
   selector: 'app-add-user',
   standalone: true,
@@ -28,6 +29,8 @@ import { Role } from '../setting/role-permission/role.model';
     MatIconModule,
     MatButtonModule,
     MatSelectModule,
+    MatDialogActions,
+    MatDialogModule
   ],
   templateUrl: './add-user.component.html',
 })
