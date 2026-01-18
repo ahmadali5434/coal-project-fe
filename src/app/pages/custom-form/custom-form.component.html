@@ -4,9 +4,7 @@
 
 <mat-dialog-content class="mat-typography">
   <form [formGroup]="form">
-    <div
-      class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 gap-y-3 w-full place-items-center my-12"
-    >
+    <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 gap-y-3 w-full place-items-center my-12">
       <mat-form-field class="w-80">
         <mat-label>GD Number</mat-label>
         <input matInput formControlName="gdNumber" />
@@ -14,22 +12,35 @@
 
       <mat-form-field class="w-80">
         <mat-label>Month</mat-label>
-        <input matInput  formControlName="month" />
+        <input matInput formControlName="month" />
       </mat-form-field>
 
       <mat-form-field class="w-80">
         <mat-label>Head</mat-label>
         <input matInput formControlName="head" />
       </mat-form-field>
+      <mat-form-field class="w-80">
+        <mat-label>Select Drivers</mat-label>
+        <mat-select formControlName="driverIds" multiple>
 
+
+          <mat-divider></mat-divider>
+
+          @for (driver of drivers(); track driver.id) {
+          <mat-option [value]="driver.id">
+            {{ driver.name }}
+          </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
       <mat-form-field class="w-80">
         <mat-label>Gross Weight</mat-label>
-        <input matInput  formControlName="grossWeight" />
+        <input matInput formControlName="grossWeight" />
       </mat-form-field>
 
       <mat-form-field class="w-80">
         <mat-label>Net Weight</mat-label>
-        <input matInput  formControlName="netWeight" />
+        <input matInput formControlName="netWeight" />
       </mat-form-field>
 
       <mat-form-field class="w-80">
@@ -44,47 +55,47 @@
 
       <mat-form-field class="w-80">
         <mat-label>Exchange Rate (Rs)</mat-label>
-        <input matInput  formControlName="exchangeRate" />
+        <input matInput formControlName="exchangeRate" />
       </mat-form-field>
 
       <mat-form-field class="w-80">
         <mat-label>Import Value (Rs)</mat-label>
-        <input matInput  formControlName="importValue" />
+        <input matInput formControlName="importValue" />
       </mat-form-field>
 
       <mat-form-field class="w-80">
         <mat-label>PSID Amount</mat-label>
-        <input matInput  formControlName="psidAmount" />
+        <input matInput formControlName="psidAmount" />
       </mat-form-field>
 
       <mat-form-field class="w-80">
         <mat-label>Packages</mat-label>
-        <input matInput  formControlName="packages" />
+        <input matInput formControlName="packages" />
       </mat-form-field>
 
       <mat-form-field class="w-80">
         <mat-label>Stock Out</mat-label>
-        <input matInput  formControlName="stockOut" />
+        <input matInput formControlName="stockOut" />
       </mat-form-field>
 
       <mat-form-field class="w-80">
         <mat-label>Stock Balance</mat-label>
-        <input matInput  formControlName="stockBalance" />
+        <input matInput formControlName="stockBalance" />
       </mat-form-field>
 
       <mat-form-field class="w-80">
         <mat-label>Sales</mat-label>
-        <input matInput  formControlName="sales" />
+        <input matInput formControlName="sales" />
       </mat-form-field>
 
       <mat-form-field class="w-80">
         <mat-label>Balance</mat-label>
-        <input matInput  formControlName="balance" />
+        <input matInput formControlName="balance" />
       </mat-form-field>
 
       <mat-form-field class="w-80">
         <mat-label>Tax Per Vehicle</mat-label>
-        <input matInput  formControlName="taxPerVehicle" />
+        <input matInput formControlName="taxPerVehicle" />
       </mat-form-field>
     </div>
   </form>

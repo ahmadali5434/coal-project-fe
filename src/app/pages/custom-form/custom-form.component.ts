@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, inject } from '@angular/core';
+import { Component, Inject, OnInit, inject, signal } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -6,16 +6,19 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
-
+import { MatSelectModule } from '@angular/material/select';
+import { MatDividerModule } from '@angular/material/divider';
 import { BuyStockService } from '../buy-stock/data-access/buy-stock.service';
-import { ApiResponse, PakCustomEntry } from '../buy-stock/data-access/buy-stock.dto';
+import { ApiResponse, Driver, PakCustomEntry } from '../buy-stock/data-access/buy-stock.dto';
+import { AddNewDriverDialogComponent } from '../buy-stock/add-new-driver-dialog/add-new-driver-dialog.component';
+import { DriverService } from '../buy-stock/data-access/driver.service';
 
 @Component({
   selector: 'app-custom-form',
@@ -28,15 +31,20 @@ import { ApiResponse, PakCustomEntry } from '../buy-stock/data-access/buy-stock.
     MatButtonModule,
     MatDialogModule,
     MatSnackBarModule,
+    MatSelectModule,
+    MatDividerModule
   ],
   templateUrl: './custom-form.component.html',
 })
 export class CustomFormComponent implements OnInit {
   private readonly _snackBar = inject(MatSnackBar);
   private readonly buyStockService = inject(BuyStockService);
+  private readonly driverService = inject(DriverService);
+  private readonly dialog = inject(MatDialog);
 
   form!: FormGroup;
   isEdit = false;
+  drivers = signal<Driver[]>([]);
 
   constructor(
     private fb: FormBuilder,
@@ -64,15 +72,30 @@ export class CustomFormComponent implements OnInit {
       sales: [0],
       balance: [{ value: 0, disabled: true }],
       taxPerVehicle: [{ value: 0, disabled: true }],
+      driverIds: [[], Validators.required],
     });
-
+    this.loadDrivers();
     if (this.isEdit) {
       this.form.patchValue(this.data.customEntry);
     }
 
     this.calculateFields();
   }
-
+  private loadDrivers() {
+    this.driverService.fetchAllDrivers().subscribe({
+      next: (drivers) => this.drivers.set(drivers),
+    });
+  }
+  openNewDriverDialog() {
+    this.dialog
+      .open(AddNewDriverDialogComponent, {
+        panelClass: 'dialog-container-lg',
+      })
+      .afterClosed()
+      .subscribe((driver) => {
+        if (driver) this.loadDrivers();
+      });
+  }
   private calculateFields() {
     this.form.valueChanges.subscribe((val) => {
       const netWeight = Number(val.netWeight) || 0;
@@ -91,6 +114,7 @@ export class CustomFormComponent implements OnInit {
       );
     });
   }
+
   onSave(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
