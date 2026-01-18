@@ -24,6 +24,11 @@ import { Purchase } from '../../buy-stock/data-access/buy-stock.dto';
 import { toDateOnly } from '../../../shared/utils/toDateOnly';
 import { BuyStockService } from '../../buy-stock/data-access/buy-stock.service';
 
+interface TempExchangeRateData {
+  isGumrak: boolean;
+  rowData: any; //change to proper type
+}
+
 @Component({
   selector: 'app-temp-exchange-rate',
   standalone: true,
@@ -44,9 +49,7 @@ import { BuyStockService } from '../../buy-stock/data-access/buy-stock.service';
   ],
 })
 export class TempExchangeRateComponent implements OnInit {
-  private readonly dialogRef = inject(
-    MatDialogRef<TempExchangeRateComponent>
-  );
+  private readonly dialogRef = inject(MatDialogRef<TempExchangeRateComponent>);
   private readonly data = inject(MAT_DIALOG_DATA);
   private readonly buyStockService = inject(BuyStockService);
   private readonly snackBar = inject(MatSnackBar);
@@ -54,24 +57,30 @@ export class TempExchangeRateComponent implements OnInit {
   exchangeForm!: FormGroup;
 
   ngOnInit(): void {
-    
-    const purchaseData: Purchase | undefined = this.data;
-    this.exchangeForm = new FormGroup(
-      {
-        purchaseDate: new FormControl({
-            value: purchaseData ? toDateOnly(purchaseData.purchaseDate) : null,
-            disabled: true,
-        }),
-        totalPurchaseAmount: new FormControl({
-          value: purchaseData ? purchaseData.totalPurchaseAmount : null,
-          disabled: true,
-        }),
-        temporaryExchangeRate: new FormControl(purchaseData?.temporaryExchangeRate ?? null, [
-          Validators.required,
-          Validators.min(0),
-        ]),
-      },
-    );
+    const isGumrak: boolean = this.data.isGumrak;
+    const purchase: any = this.data.rowData.purchase; //Add proper type
+    const gumrakEntry: any = this.data.rowData.gumrakEntry; //Add proper type
+
+    this.exchangeForm = new FormGroup({
+      entryDate: new FormControl({
+        value: isGumrak
+          ? toDateOnly(gumrakEntry.englishDate)
+          : toDateOnly(purchase.purchaseDate),
+        disabled: true,
+      }),
+      totalAmount: new FormControl({
+        value: isGumrak
+          ? gumrakEntry.totalGumrakAmount
+          : purchase.totalPurchaseAmount,
+        disabled: true,
+      }),
+      temporaryExchangeRate: new FormControl(
+        isGumrak
+          ? gumrakEntry?.temporaryExchangeRate
+          : purchase?.temporaryExchangeRate ?? null,
+        [Validators.required, Validators.min(0)]
+      ),
+    });
   }
 
   onSave(): void {
@@ -82,14 +91,26 @@ export class TempExchangeRateComponent implements OnInit {
 
     const temporaryExchangeRate = this.exchangeForm.value.temporaryExchangeRate;
 
-    const id = this.data?.id;
+    const rowData = this.data.rowData;
+    const isGumrak = this.data.isGumrak === true;
+    const purchaseId = rowData.id;
+    const gumrakId = rowData.gumrakEntry?.id;
 
-    const request$ = this.buyStockService.updateExchangeRate(id, temporaryExchangeRate);
+    if (isGumrak && !gumrakId) {
+      this.snackBar.open('Gumrak entry not found for this record.', undefined, {
+        duration: 3000,
+      });
+      return;
+    }
+
+    const type = isGumrak ? 'gumrak' : 'purchase';
+
+    const request$ = this.buyStockService.updateExchangeRate(purchaseId, type, temporaryExchangeRate);
 
     request$.subscribe({
       next: (res) => {
         this.snackBar.open(
-          id ? 'Exchange rate updated!' : 'Exchange rate saved!',
+          purchaseId ? 'Exchange rate updated!' : 'Exchange rate saved!',
           undefined,
           { duration: 3000 }
         );
@@ -106,4 +127,3 @@ export class TempExchangeRateComponent implements OnInit {
     });
   }
 }
-
