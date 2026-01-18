@@ -29,10 +29,14 @@ export class BuyStockService {
     );
   }
 
-  updateExchangeRate(purchaseId: number, temporaryExchangeRate: number) {
+  updateExchangeRate(
+    purchaseId: number,
+    type: 'purchase' | 'gumrak',
+    rate: number
+  ) {
     return this.http.patch(
       `${this.apiBaseUrl}/purchase-entries/${purchaseId}/exchange-rate`,
-      { exchangeRate:  temporaryExchangeRate}
+      { type, exchangeRate:  rate }
     );
   }  
   

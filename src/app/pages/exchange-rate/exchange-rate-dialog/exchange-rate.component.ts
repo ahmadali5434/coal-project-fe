@@ -36,7 +36,7 @@ export class ExchangeRateComponent implements OnInit {
   private dialog = inject(MatDialog);
   private snackBar = inject(MatSnackBar);
 
-  exchangeRates: ExchangeRate[] = [];
+  permanentExchangeRates: ExchangeRate[] = [];
   gridApi: any;
 
   ngOnInit(): void {
@@ -46,11 +46,11 @@ export class ExchangeRateComponent implements OnInit {
   loadExchangeRates() {
     this.exchangeRateService.getAllExchangeRates().subscribe({
       next: (res) => {
-        this.exchangeRates = res.data.map(rate => ({
+        this.permanentExchangeRates = res.data.map(rate => ({
           ...rate,
-          permanentRate: Number(rate.permanentRate),
+          permanentExchangeRate: Number(rate.permanentExchangeRate),
         }));
-        if (this.gridApi) this.gridApi.setRowData(this.exchangeRates);
+        if (this.gridApi) this.gridApi.setRowData(this.permanentExchangeRates);
       },
       error: (err) => console.error('Failed to load exchange rates', err),
     });
@@ -60,7 +60,7 @@ export class ExchangeRateComponent implements OnInit {
     { field: 'id', headerName: 'ID', minWidth: 100, flex: 1 },
     { field: 'startDate', headerName: 'Start Date', minWidth: 150, flex: 1 },
     { field: 'endDate', headerName: 'End Date', minWidth: 150, flex: 1 },
-    { field: 'permanentRate', headerName: 'Rate', minWidth: 100, flex: 1 },
+    { field: 'permanentExchangeRate', headerName: 'Rate', minWidth: 100, flex: 1 },
     {
       headerName: 'Actions',
       cellRenderer: ActionCellRendererComponent,
@@ -93,13 +93,13 @@ export class ExchangeRateComponent implements OnInit {
 
   onGridReady(event: GridReadyEvent) {
     this.gridApi = event.api;
-    this.gridApi.setRowData(this.exchangeRates);
+    this.gridApi.setRowData(this.permanentExchangeRates);
   }
 
   openDialog(rate?: ExchangeRate) {
     const dialogRef = this.dialog.open(ExchangeRateDialogComponent, {
       width: '800px',
-      data: { exchangeRate: rate },
+      data: { permanentExchangeRate: rate },
     });
 
     dialogRef.afterClosed().subscribe((saved) => {

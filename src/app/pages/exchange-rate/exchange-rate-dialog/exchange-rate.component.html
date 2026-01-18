@@ -3,7 +3,7 @@
     <div class="text-lg font-medium">
       Total Exchange Rates
       <span class="text-xs bg-blue-50 text-blue-900 px-3 py-0.5 rounded-2xl ml-2">
-        {{ exchangeRates.length }}
+        {{ permanentExchangeRates.length }}
       </span>
     </div>
     <div>
@@ -15,7 +15,7 @@
 
   <ag-grid-angular
     style="width: 100%; height: 90vh"
-    [rowData]="exchangeRates"
+    [rowData]="permanentExchangeRates"
     [gridOptions]="gridOptions"
     [columnDefs]="ExchangeRateCols"
     [theme]="'legacy'"
