@@ -27,7 +27,7 @@ export interface Purchase {
   driverName: string;
   metricTon: number;
   ratePerTon: number;
-  permanentRate?: number | null;
+  permanentExchangeRate?: number | null;
   temporaryExchangeRate?: number;
   totalPurchaseAmount?: number;
   totalPurchaseAmountInPak?: number | null;
@@ -115,7 +115,10 @@ export interface GumrakEntry {
   otherExpense: number;
   afghanTax: number;
   commission: number;
-  totalGumrakAmount: number;
+  permanentExchangeRate?: number | null;
+  temporaryExchangeRate?: number;
+  totalGumrakAmount?: number;
+  totalGumrakAmountInPak?: number | null;
   gumrakImage?: File | null;
   createdAt?: string;
   updatedAt?: string;
@@ -203,7 +206,7 @@ export interface ApiResponse<T> {
 }
 export interface ExchangeRate {
   id?: number;
-  startDate: string;
-  endDate: string;
-  permanentRate: number;
+  startDate: string; 
+  endDate: string;     
+  permanentExchangeRate: number;
 }

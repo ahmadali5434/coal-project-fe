@@ -107,12 +107,12 @@ export class HomeComponent implements OnInit {
     },
     {
       field: 'purchase.temporaryExchangeRate',
-      headerName: 'Temp. Exchange Rate',
+      headerName: 'Temp. Exchange Rate (P)',
       minWidth: 120,
     },
     {
-      field: 'purchase.permanentRate',
-      headerName: 'Fixed Ex. Rate',
+      field: 'purchase.permanentExchangeRate',
+      headerName: 'Fixed Ex. Rate (P)',
       minWidth: 100,
     },
     {
@@ -135,9 +135,32 @@ export class HomeComponent implements OnInit {
       minWidth: 110,
     },
     {
+      field: 'gumrakEntry.temporaryExchangeRate',
+      headerName: 'Temp. Exchange Rate (G)',
+      minWidth: 120,
+    },
+    {
+      field: 'gumrakEntry.permanentExchangeRate',
+      headerName: 'Fixed Ex. Rate (G)',
+      minWidth: 100,
+    },
+    {
       field: 'gumrakEntry.totalGumrakAmount',
-      headerName: 'Gumrak',
+      headerName: 'Gumrak (AFG)',
       minWidth: 110,
+      valueFormatter: (params) => {
+        const value = params.value;
+        return value != null ? Number(value).toFixed(2) : '';
+      },
+    },
+    {
+      field: 'gumrakEntry.totalGumrakAmountInPak',
+      headerName: 'Gumrak (PKR)',
+      minWidth: 110,
+      valueFormatter: (params) => {
+        const value = params.value;
+        return value != null ? Number(value).toFixed(2) : '';
+      },
     },
   {
     field: 'customEntry.importValue',
@@ -256,13 +279,13 @@ export class HomeComponent implements OnInit {
   mapToPurchaseData(resp: any[]): PurchaseWithDetails[] {
     const calculateTotalInPak = (
       amount: string | number,
-      permanentRate?: number | null,
+      permanentExchangeRate?: number | null,
       temporaryRate?: string | number | null
     ): number | undefined => {
       const amt = Number(amount);
       const tempRate =
         temporaryRate != null ? Number(temporaryRate) : undefined;
-      if (permanentRate != null) return amt / permanentRate;
+      if (permanentExchangeRate != null) return amt / permanentExchangeRate;
       if (tempRate != null) return amt / tempRate;
       return undefined;
     };
@@ -279,14 +302,14 @@ export class HomeComponent implements OnInit {
         driverName: data.driver.name,
         metricTon: Number(data.metricTon),
         ratePerTon: Number(data.ratePerTon),
-        permanentRate: data.permanentRate,
+        permanentExchangeRate: data.permanentExchangeRate,
         temporaryExchangeRate: data.temporaryExchangeRate
           ? Number(data.temporaryExchangeRate)
           : undefined,
         totalPurchaseAmount: Number(data.totalPurchaseAmount),
         totalPurchaseAmountInPak: calculateTotalInPak(
           data.totalPurchaseAmount,
-          data.permanentRate,
+          data.permanentExchangeRate,
           data.temporaryExchangeRate
         ),
         builtyImage: data.builtyImage,
@@ -308,8 +331,16 @@ export class HomeComponent implements OnInit {
         otherExpense: data.gumrakEntry?.otherExpense,
         afghanTax: data.gumrakEntry?.afghanTax,
         commission: data.gumrakEntry?.commission,
+        permanentExchangeRate: data.gumrakEntry?.permanentExchangeRate,
+        temporaryExchangeRate: data.gumrakEntry?.temporaryExchangeRate
+          ? Number(data.gumrakEntry?.temporaryExchangeRate)
+          : undefined,
         totalGumrakAmount: data.gumrakEntry?.totalGumrakAmount,
-        //gumrakImage?: File | null;
+        totalGumrakAmountInPak: calculateTotalInPak(
+          data.gumrakEntry?.totalGumrakAmount,
+          data.gumrakEntry?.permanentExchangeRate,
+          data.gumrakEntry?.temporaryExchangeRate
+        ),
       };
       const customEntry  : PakCustomEntry = {
   
@@ -358,24 +389,28 @@ export class HomeComponent implements OnInit {
             permission: 'gumrak:create',
             callback: (row: any) => this.openGumrakDialog(row),
           },
-           {
-            type: 'addCustom',
-            icon: 'fact_check',
-            label: customEntry.id ? 'Update Custom Detail' : 'Add Custom Detail',
-         
-            callback: (row: any) => this.openCustomDialog(row),
-          },
-          ...(purchase.permanentRate == null
+          ...(purchase.permanentExchangeRate == null
             ? [
                 {
                   type: 'addExchange',
                   icon: 'currency_exchange',
-                  label: 'Add Exchange Rate',
+                  label: 'Add Purchase Exchange Rate',
                   permission: 'purchase:read', //TODO: write correct permission
                   callback: () => this.addTempExchangeRate(row),
                 } as ActionConfig,
               ]
             : []),
+            ...(gumrakEntry.permanentExchangeRate == null && gumrakEntry.id !== undefined
+              ? [
+                  {
+                    type: 'addExchange',
+                    icon: 'currency_exchange',
+                    label: 'Add Gumrak Exchange Rate',
+                    permission: 'purchase:read', //TODO: write correct permission
+                    callback: () => this.addTempGumrakExchangeRate(row),
+                  } as ActionConfig,
+                ]
+              : []),
           {
             type: 'delete',
             icon: 'delete',
@@ -406,7 +441,7 @@ export class HomeComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((resp: PurchaseFreight) => {
       if (resp)
-        this.loadPurchases();
+        this.loadDashboard();
     });
   }
 
@@ -418,7 +453,7 @@ export class HomeComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((resp: GumrakEntry) => {
       if (resp) 
-        this.loadPurchases();
+        this.loadDashboard();
     });
   }
 openCustomDialog(rowData: any) {
@@ -435,7 +470,27 @@ openCustomDialog(rowData: any) {
   addTempExchangeRate(rowData: any) {
     const dialogRef = this.dialog.open(TempExchangeRateComponent, {
       width: '800px',
-      data: rowData.purchase,
+      data: {
+        isGumrak: false,
+        rowData,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((resp) => {
+      if (resp) {
+        this.loadPurchases();
+      }
+    });
+  }
+
+  addTempGumrakExchangeRate(rowData: any) {
+    console.log('Adding temp exchange rate for row:', rowData);
+    const dialogRef = this.dialog.open(TempExchangeRateComponent, {
+      width: '800px',
+      data: {
+        isGumrak: true,
+        rowData,
+      },
     });
 
     dialogRef.afterClosed().subscribe((resp) => {
