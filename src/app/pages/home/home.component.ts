@@ -15,7 +15,9 @@ import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/c
 import { BuyStockService } from '../buy-stock/data-access/buy-stock.service';
 import { HasPermissionDirective } from '../../core/directives/has-permission.directive';
 import {
+  CustomEntry,
   GumrakEntry,
+  PakCustomEntry,
   Purchase,
   PurchaseFreight,
   PurchaseWithDetails,
@@ -24,6 +26,7 @@ import { PurchaseProgressService } from '../buy-stock/data-access/purchase-progr
 import { TempExchangeRateComponent } from '../exchange-rate/temp-exchange-rate/temp-exchange-rate.component';
 import { FreightDialogComponent } from '../buy-stock/freight-dialog/freight-dialog.component';
 import { GumrakFormComponent } from '../buy-stock/gumrak-form/gumrak-form.component';
+import { CustomFormComponent } from '../custom-form/custom-form.component';
 
 // Register all Community features
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -159,6 +162,11 @@ export class HomeComponent implements OnInit {
         return value != null ? Number(value).toFixed(2) : '';
       },
     },
+  {
+    field: 'customEntry.importValue',
+      headerName: 'Custom',
+      minWidth: 110,
+  },
     {
       headerName: 'Actions',
       pinned: 'right',
@@ -334,7 +342,25 @@ export class HomeComponent implements OnInit {
           data.gumrakEntry?.temporaryExchangeRate
         ),
       };
-
+      const customEntry  : PakCustomEntry = {
+  
+        gdNumber: data.customEntry?.gdNumber,
+        month: data.customEntry?.month,
+        head: data.customEntry?.head,
+        grossWeight: data.customEntry?.grossWeight,
+        netWeight: data.customEntry?.netWeight,
+        currency: data.customEntry?.currency,
+        hsCode: data.customEntry?.hsCode,
+        exchangeRate: data.customEntry?.exchangeRate,
+        importValue: data.customEntry?.importValue,
+        psidAmount: data.customEntry?.psidAmount,
+        packages: data.customEntry?.packages,
+        stockOut: data.customEntry?.stockOut,
+        stockBalance: data.customEntry?.stockBalance,
+        sales: data.customEntry?.sales,
+        balance: data.customEntry?.balance,
+        taxPerVehicle: data.customEntry?.taxPerVehicle
+      };
       const row: PurchaseWithDetails = {
         id: String(data.id),
         purchase,
@@ -430,7 +456,17 @@ export class HomeComponent implements OnInit {
         this.loadDashboard();
     });
   }
-
+openCustomDialog(rowData: any) {
+    const dialogRef = this.dialog.open(CustomFormComponent, {
+      panelClass: 'dialog-container-lg',
+      data: rowData,
+    });
+  dialogRef.afterClosed().subscribe((resp) => {
+      if (resp) {
+        this.loadPurchases();
+      }
+    });
+  }
   addTempExchangeRate(rowData: any) {
     const dialogRef = this.dialog.open(TempExchangeRateComponent, {
       width: '800px',
