@@ -43,7 +43,7 @@ export class LayoutComponent {
   isDesktop = window.innerWidth >= 768;
   headerTitle = 'Coal Project';
   breadcrumbs: { label: string; url: string }[] = [];
-
+userName: string | null = null;
   logout() {
     this.authService.logout();
     this.router.navigate(['/login']);
@@ -52,6 +52,7 @@ export class LayoutComponent {
   ngOnInit() {
     this.isDesktop = window.innerWidth >= 768;
     this.sidebarOpen = this.isDesktop;
+    this.userName = this.authService.getUserName();
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe(() => {
@@ -122,4 +123,27 @@ export class LayoutComponent {
 
     return breadcrumbs;
   }
+  getInitials(name: string | null | undefined): string {
+  if (!name) return '';
+
+  const words = name.trim().split(/\s+/);
+
+  if (words.length >= 2) {
+    return (
+      words[0].charAt(0).toUpperCase() +
+      words[1].charAt(0).toUpperCase()
+    );
+  }
+
+  const single = words[0];
+  if (single.length === 1) {
+    return single.charAt(0).toUpperCase();
+  }
+
+  return (
+    single.charAt(0).toUpperCase() +
+    single.charAt(single.length - 1).toUpperCase()
+  );
+}
+
 }

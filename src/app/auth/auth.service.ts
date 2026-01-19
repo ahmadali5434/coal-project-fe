@@ -27,7 +27,9 @@ export class AuthService {
       }
     }
   }
-
+getUserName(): string | null {
+  return this.currentUser?.username ?? null;
+}
   // ------------------- AUTH APIS -------------------
 
   login(username: string, password: string): Observable<AuthResponse> {
