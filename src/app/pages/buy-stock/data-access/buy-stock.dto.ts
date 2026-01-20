@@ -187,3 +187,9 @@ export interface ExchangeRate {
   endDate: string;     
   permanentRate: number;
 }
+export interface Tax {
+  id?: number;
+  taxName: string; 
+  taxCode: string;     
+  description: string;
+}

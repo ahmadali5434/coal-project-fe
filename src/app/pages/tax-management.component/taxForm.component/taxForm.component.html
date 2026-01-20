@@ -1,0 +1,31 @@
+<h2 class="flex justify-center items-center text-3xl pt-8">
+  {{ isEdit ? 'Update Tax' : 'Add New Tax' }}
+</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="taxForm">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 my-10 place-items-center">
+      <mat-form-field class="w-80">
+        <mat-label>Tax Name</mat-label>
+        <input matInput formControlName="taxName" />
+      </mat-form-field>
+
+      <mat-form-field class="w-80">
+        <mat-label>Tax Code</mat-label>
+        <input matInput formControlName="taxCode" />
+      </mat-form-field>
+
+      <mat-form-field class="lg:col-span-2 w-full max-w-[640px]">
+        <mat-label>Description</mat-label>
+        <textarea matInput formControlName="description"></textarea>
+      </mat-form-field>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button matButton="outlined" mat-dialog-close>Cancel</button>
+  <button matButton="filled" (click)="onSave()">
+    {{ isEdit ? 'Update' : 'Save' }}
+  </button>
+</mat-dialog-actions>
