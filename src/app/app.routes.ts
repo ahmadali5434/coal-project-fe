@@ -59,6 +59,14 @@ export const routes: Routes = [
           ),
           data: { breadcrumb: 'User Management' },
       },
+       {
+        path: 'tax-mangenmet',
+        loadChildren: () =>
+          import('./pages/tax-management.component/tax-management.routes').then(
+            (m) => m.TAXRMANAGEMENTROUTES
+          ),
+          data: { breadcrumb: 'Tax Management' },
+      },
       {
         path: '',
         redirectTo: 'home',
