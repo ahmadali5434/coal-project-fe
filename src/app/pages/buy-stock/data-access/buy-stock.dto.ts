@@ -22,12 +22,12 @@ export interface Purchase {
   coalType: string;
   customerName: string;
   placeOfPurchase: string;
-  stockDestination: string; 
+  stockDestination: string;
   truckNo: string;
   driverName: string;
   metricTon: number;
   ratePerTon: number;
-  permanentRate?: number | null;
+  permanentExchangeRate?: number | null;
   temporaryExchangeRate?: number;
   totalPurchaseAmount?: number;
   totalPurchaseAmountInPak?: number | null;
@@ -39,9 +39,9 @@ export interface CreateOrUpdatePurchasePayload {
   customerId: number;          // FK
   placeOfPurchaseId: number;   // FK
   stockDestinationId: number;  // FK
-  truckNo: string;             
+  truckNo: string;
   driverId: number;            // FK
-  metricTon: number;           
+  metricTon: number;
   builtyImage?: File;
   status: PurchaseStatus;      // enum
 }
@@ -84,7 +84,27 @@ export interface CustomEntry {
   customAmount: number;
   customImage: string;
 }
-
+export interface PakCustomEntry {
+   id?: number;
+  gdNumber: string;
+  month: string;
+  head: string;
+  grossWeight: number;
+  netWeight: number;
+  currency: string;
+  hsCode: string;
+  exchangeRate: number;
+  importValue: number;
+  psidAmount?: number;
+  packages?: number;
+  stockOut?: number;
+  stockBalance?: number;
+  sales?: number;
+  balance?: number;
+  taxPerVehicle?: number;
+  createdAt?: string;
+  updatedAt?: string;
+}
 // ----------------- GUMRAK ENTRY -----------------
 export interface GumrakEntry {
   id?: number;
@@ -95,7 +115,10 @@ export interface GumrakEntry {
   otherExpense: number;
   afghanTax: number;
   commission: number;
-  totalGumrakAmount: number;
+  permanentExchangeRate?: number | null;
+  temporaryExchangeRate?: number;
+  totalGumrakAmount?: number;
+  totalGumrakAmountInPak?: number | null;
   gumrakImage?: File | null;
   createdAt?: string;
   updatedAt?: string;
@@ -137,7 +160,7 @@ export interface Driver {
   areaAddress?: string;
   afghanContactNo?: string;
   pakistanContactNo?: string;
-  country?: Country | null; 
+  country?: Country | null;
   city?: City | null;
   createdAt?: string;
   updatedAt?: string;
@@ -151,17 +174,17 @@ export interface CreateOrUpdateDriverPayload {
   areaAddress?: string;
   afghanContactNo?: string;
   pakistanContactNo?: string;
-  countryId: string; 
-  cityId: string; 
+  countryId: string;
+  cityId: string;
 }
 
 // ----------------- WAREHOUSE -----------------
 
 export interface Warehouse {
-  id: number;                  
+  id: number;
   name: string;
-  countryId: number;           
-  cityId: number;               
+  countryId: number;
+  cityId: number;
   warehouseLocation: string;
   country?: Country;
   city?: City;
@@ -185,11 +208,5 @@ export interface ExchangeRate {
   id?: number;
   startDate: string; 
   endDate: string;     
-  permanentRate: number;
-}
-export interface Tax {
-  id?: number;
-  taxName: string; 
-  taxCode: string;     
-  description: string;
+  permanentExchangeRate: number;
 }

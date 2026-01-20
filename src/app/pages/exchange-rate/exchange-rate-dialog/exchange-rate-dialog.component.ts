@@ -56,7 +56,7 @@ export class ExchangeRateDialogComponent implements OnInit {
   exchangeForm!: FormGroup;
 
   ngOnInit(): void {
-    const existing: ExchangeRate | undefined = this.data?.exchangeRate;
+    const existing: ExchangeRate | undefined = this.data?.permanentExchangeRate;
 
     this.exchangeForm = new FormGroup(
       {
@@ -68,7 +68,7 @@ export class ExchangeRateDialogComponent implements OnInit {
           existing ? new Date(existing.endDate) : null,
           Validators.required
         ),
-        rate: new FormControl(existing?.permanentRate ?? null, [
+        rate: new FormControl(existing?.permanentExchangeRate ?? null, [
           Validators.required,
           Validators.min(0),
         ]),
@@ -95,7 +95,7 @@ export class ExchangeRateDialogComponent implements OnInit {
     const payload: ExchangeRate = {
       startDate: toDateOnly(raw.startDate),
       endDate: toDateOnly(raw.endDate),
-      permanentRate: Number(raw.rate),
+      permanentExchangeRate: Number(raw.rate),
     };
 
     const id = this.data?.exchangeRate?.id;

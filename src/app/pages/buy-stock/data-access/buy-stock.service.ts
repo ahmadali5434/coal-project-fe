@@ -5,6 +5,7 @@ import {
   PurchaseWithDetails,
   ApiResponse,
   GumrakEntry,
+  PakCustomEntry,
 } from './buy-stock.dto';
 import { environment } from '../../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
@@ -29,13 +30,17 @@ export class BuyStockService {
     );
   }
 
-  updateExchangeRate(purchaseId: number, temporaryExchangeRate: number) {
+  updateExchangeRate(
+    purchaseId: number,
+    type: 'purchase' | 'gumrak',
+    rate: number
+  ) {
     return this.http.patch(
       `${this.apiBaseUrl}/purchase-entries/${purchaseId}/exchange-rate`,
-      { exchangeRate:  temporaryExchangeRate}
+      { type, exchangeRate:  rate }
     );
-  }  
-  
+  }
+
   updatePurchase(purchaseId: string, formData: FormData) {
     return this.http.put<ApiResponse<PurchaseWithDetails>>(
       `${this.apiBaseUrl}/purchase-entries/${purchaseId}`,
@@ -46,14 +51,14 @@ export class BuyStockService {
   getPurchases(filters?: { status?: string }): Observable<PurchaseApiResponse[]> {
     const params = new URLSearchParams();
     if (filters?.status) params.append('status', filters.status);
-  
+
     const url = `${this.apiBaseUrl}/purchase-entries?${params.toString()}`;
-  
+
     return this.http
       .get<ApiResponse<PurchaseApiResponse[]>>(url)
       .pipe(map((res) => res.data ?? []));
   }
-  
+
 
   getPurchase(purchaseId: string): Observable<PurchaseApiResponse | null> {
     return this.http
@@ -184,6 +189,34 @@ export class BuyStockService {
   deleteGumrakEntry(purchaseId: string): Observable<ApiResponse<void>> {
     return this.http.delete<ApiResponse<void>>(
       `${this.apiBaseUrl}/purchase-entries/${purchaseId}/gumrak`
+    );
+  }
+
+  getCustomEntry(purchaseId: string): Observable<PakCustomEntry | null> {
+    return this.http
+      .get<ApiResponse<PakCustomEntry>>(
+        `${this.apiBaseUrl}/purchase-entries/${purchaseId}/custom`
+      )
+      .pipe(map(res => res.data ?? null));
+  }
+
+  createCustomEntry(purchaseId: string, payload: PakCustomEntry) {
+    return this.http.post<ApiResponse<PakCustomEntry>>(
+      `${this.apiBaseUrl}/purchase-entries/${purchaseId}/custom`,
+      payload
+    );
+  }
+
+  updateCustomEntry(purchaseId: string, payload: PakCustomEntry) {
+    return this.http.put<ApiResponse<PakCustomEntry>>(
+      `${this.apiBaseUrl}/purchase-entries/${purchaseId}/custom`,
+      payload
+    );
+  }
+
+  deleteCustomEntry(purchaseId: string) {
+    return this.http.delete<ApiResponse<void>>(
+      `${this.apiBaseUrl}/purchase-entries/${purchaseId}/custom`
     );
   }
 

@@ -8,19 +8,19 @@
       class="grid grid-cols-1 lg:grid-cols-2 gap-y-3 w-full place-items-center my-6"
     >
       <mat-form-field class="w-[80%]">
-        <mat-label>Purchase Date</mat-label>
+        <mat-label>Entry Date</mat-label>
         <input
           matInput
           [matDatepicker]="picker"
-          formControlName="purchaseDate"
+          formControlName="entryDate"
         />
         <mat-hint>MM/DD/YYYY</mat-hint>
         <mat-datepicker #picker></mat-datepicker>
       </mat-form-field>
 
       <mat-form-field class="w-[80%]">
-        <mat-label>Total Purchase Amount</mat-label>
-        <input matInput formControlName="totalPurchaseAmount" />
+        <mat-label>Total Amount</mat-label>
+        <input matInput formControlName="totalAmount" />
       </mat-form-field>
 
       <mat-form-field class="w-[80%]">
