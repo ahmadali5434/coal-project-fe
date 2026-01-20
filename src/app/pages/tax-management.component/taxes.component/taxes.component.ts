@@ -108,7 +108,7 @@ export class TaxesComponent implements OnInit {
   }
 
   onDelete(tax: Tax) {
-    const taxId = tax.id;
+    const taxId = tax.taxId;
     if (taxId == null) return;
 
     const ref = this.dialog.open(ConfirmDialogComponent, {

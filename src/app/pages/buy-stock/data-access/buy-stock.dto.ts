@@ -14,6 +14,14 @@ export interface CityRef {
   name: string;
 }
 
+// Add or verify the following export
+export interface Tax {
+  taxId?: string;
+  taxName: string;
+  taxCode: string;
+  description?: string;
+}
+
 // ----------------- PURCHASE ENTRY -----------------
 
 export interface Purchase {
