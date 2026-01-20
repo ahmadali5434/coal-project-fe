@@ -16,11 +16,11 @@ export class TaxService {
     return this.http.post<Tax>(this.baseUrl, payload);
   }
 
-  updateTax(id: number, payload: Partial<Tax>): Observable<Tax> {
+  updateTax(id: string, payload: Partial<Tax>): Observable<Tax> {
     return this.http.put<Tax>(`${this.baseUrl}/${id}`, payload);
   }
 
-  deleteTax(id: number): Observable<void> {
+  deleteTax(id: string): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
 }

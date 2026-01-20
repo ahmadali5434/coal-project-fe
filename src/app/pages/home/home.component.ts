@@ -162,11 +162,11 @@ export class HomeComponent implements OnInit {
         return value != null ? Number(value).toFixed(2) : '';
       },
     },
-  {
-    field: 'customEntry.importValue',
+    {
+      field: 'customEntry.importValue',
       headerName: 'Custom',
       minWidth: 110,
-  },
+    },
     {
       headerName: 'Actions',
       pinned: 'right',
@@ -342,8 +342,7 @@ export class HomeComponent implements OnInit {
           data.gumrakEntry?.temporaryExchangeRate
         ),
       };
-      const customEntry  : PakCustomEntry = {
-  
+      const customEntry: PakCustomEntry = {
         gdNumber: data.customEntry?.gdNumber,
         month: data.customEntry?.month,
         head: data.customEntry?.head,
@@ -359,7 +358,7 @@ export class HomeComponent implements OnInit {
         stockBalance: data.customEntry?.stockBalance,
         sales: data.customEntry?.sales,
         balance: data.customEntry?.balance,
-        taxPerVehicle: data.customEntry?.taxPerVehicle
+        taxPerVehicle: data.customEntry?.taxPerVehicle,
       };
       const row: PurchaseWithDetails = {
         id: String(data.id),
@@ -378,16 +377,29 @@ export class HomeComponent implements OnInit {
           {
             type: 'addFreight',
             icon: 'local_shipping',
-            label: purchaseFreight.id ? 'Update Freight Detail' : 'Add Freight Detail',
+            label: purchaseFreight.id
+              ? 'Update Freight Detail'
+              : 'Add Freight Detail',
             permission: 'purchaseFreight:create',
             callback: (row: any) => this.onAddFreight(row),
           },
           {
             type: 'addGumrak',
             icon: 'assignment',
-            label: gumrakEntry.id ? 'Update Gumrak Detail' : 'Add Gumrak Detail',
+            label: gumrakEntry.id
+              ? 'Update Gumrak Detail'
+              : 'Add Gumrak Detail',
             permission: 'gumrak:create',
             callback: (row: any) => this.openGumrakDialog(row),
+          },
+          {
+            type: 'addCustom',
+            icon: 'assignment',
+            label: customEntry.id
+              ? 'Update Custom Detail'
+              : 'Add Custom Detail',
+            permission: 'custom:create',
+            callback: (row: any) => this.openCustomDialog(row),
           },
           ...(purchase.permanentExchangeRate == null
             ? [
@@ -400,17 +412,18 @@ export class HomeComponent implements OnInit {
                 } as ActionConfig,
               ]
             : []),
-            ...(gumrakEntry.permanentExchangeRate == null && gumrakEntry.id !== undefined
-              ? [
-                  {
-                    type: 'addExchange',
-                    icon: 'currency_exchange',
-                    label: 'Add Gumrak Exchange Rate',
-                    permission: 'purchase:read', //TODO: write correct permission
-                    callback: () => this.addTempGumrakExchangeRate(row),
-                  } as ActionConfig,
-                ]
-              : []),
+          ...(gumrakEntry.permanentExchangeRate == null &&
+          gumrakEntry.id !== undefined
+            ? [
+                {
+                  type: 'addExchange',
+                  icon: 'currency_exchange',
+                  label: 'Add Gumrak Exchange Rate',
+                  permission: 'purchase:read', //TODO: write correct permission
+                  callback: () => this.addTempGumrakExchangeRate(row),
+                } as ActionConfig,
+              ]
+            : []),
           {
             type: 'delete',
             icon: 'delete',
@@ -440,8 +453,7 @@ export class HomeComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe((resp: PurchaseFreight) => {
-      if (resp)
-        this.loadDashboard();
+      if (resp) this.loadDashboard();
     });
   }
 
@@ -452,21 +464,23 @@ export class HomeComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe((resp: GumrakEntry) => {
-      if (resp) 
-        this.loadDashboard();
+      if (resp) this.loadDashboard();
     });
   }
-openCustomDialog(rowData: any) {
+
+  openCustomDialog(rowData: any) {
     const dialogRef = this.dialog.open(CustomFormComponent, {
       panelClass: 'dialog-container-lg',
       data: rowData,
     });
-  dialogRef.afterClosed().subscribe((resp) => {
+
+    dialogRef.afterClosed().subscribe((resp) => {
       if (resp) {
         this.loadPurchases();
       }
     });
   }
+
   addTempExchangeRate(rowData: any) {
     const dialogRef = this.dialog.open(TempExchangeRateComponent, {
       width: '800px',
