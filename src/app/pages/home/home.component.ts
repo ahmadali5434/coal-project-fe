@@ -394,8 +394,8 @@ export class HomeComponent implements OnInit {
                 {
                   type: 'addExchange',
                   icon: 'currency_exchange',
-                  label: 'Add Purchase Exchange Rate',
-                  permission: 'purchase:read', //TODO: write correct permission
+                  label: 'Add Exchange Rate',
+                  permission: 'exchange:create', //TODO: write correct permission
                   callback: () => this.addTempExchangeRate(row),
                 } as ActionConfig,
               ]
