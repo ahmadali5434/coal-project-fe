@@ -70,14 +70,14 @@ export class ExchangeRateComponent implements OnInit {
             type: 'edit',
             icon: 'edit',
             label: 'Edit Rate',
-            permission: 'customer:update', //TODO: Replace with correct permission
+            permission: 'exchangeRate:update', //TODO: Replace with correct permission
             callback: (row: any) => this.openDialog(row),
           },
           {
             type: 'delete',
             icon: 'delete',
             label: 'Delete Rate',
-            permission: 'customer:delete',//TODO: Replace with correct permission
+            permission: 'exchangeRate:delete',//TODO: Replace with correct permission
             callback: (row: any) => this.onDelete(row),
           },
         ],
