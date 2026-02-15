@@ -1,0 +1,59 @@
+<h2 class="flex justify-center items-center text-3xl pt-8">
+  {{ data ? "Edit Tax Rule" : "Create Tax Rule" }}
+</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" class="p-3">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 my-10 place-items-center">
+      <mat-form-field class="w-80">
+        <mat-label>Select Tax</mat-label>
+        <mat-select formControlName="taxId">
+          @for (tax of taxes; track tax.id) {
+          <mat-option [value]="tax.id">
+            {{ tax.code }} - {{ tax.name }}
+          </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field class="w-80">
+        <mat-label>Importer Type</mat-label>
+        <mat-select formControlName="importerType">
+          <mat-option value="INDIVIDUAL">INDIVIDUAL</mat-option>
+          <mat-option value="COMPANY">COMPANY</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field class="w-80">
+        <mat-label>Rate</mat-label>
+        <input matInput formControlName="rate" placeholder="e.g 17.5" />
+      </mat-form-field>
+
+      <mat-form-field class="w-80">
+        <mat-label>Effective From</mat-label>
+        <input matInput [matDatepicker]="picker" formControlName="effectiveFrom">
+        <mat-hint>MM/DD/YYYY</mat-hint>
+        <mat-datepicker-toggle matIconSuffix [for]="picker">
+          <mat-icon matDatepickerToggleIcon>keyboard_arrow_down</mat-icon>
+        </mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field class="w-80">
+        <mat-label>Effective To</mat-label>
+        <input matInput [matDatepicker]="picker" formControlName="effectiveTo">
+        <mat-hint>MM/DD/YYYY</mat-hint>
+        <mat-datepicker-toggle matIconSuffix [for]="picker">
+          <mat-icon matDatepickerToggleIcon>keyboard_arrow_down</mat-icon>
+        </mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button matButton="outlined" mat-dialog-close>Cancel</button>
+  <button matButton="filled" (click)="submit()">Save</button>
+</mat-dialog-actions>

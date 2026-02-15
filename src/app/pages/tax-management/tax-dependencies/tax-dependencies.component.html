@@ -1,0 +1,71 @@
+<h2>Tax Rule Dependencies</h2>
+
+<mat-form-field class="w-full">
+  <mat-label>Select Tax Rule</mat-label>
+  <mat-select [(value)]="selectedRuleId" (selectionChange)="loadDependencies()">
+    @for (rule of rules; track rule.id) {
+    <mat-option [value]="rule.id">
+      {{ getTaxName(rule.taxId) }} - {{ rule.importerType }}
+    </mat-option>
+    }
+  </mat-select>
+</mat-form-field>
+
+@if (selectedRuleId) {
+
+<form [formGroup]="form" class="flex gap-3 items-end mt-3">
+  <mat-form-field class="w-full">
+    <mat-label>Depends On Tax</mat-label>
+    <mat-select formControlName="dependsOnTaxId">
+      @for (tax of taxes; track tax.id) {
+      <mat-option [value]="tax.id">
+        {{ tax.code }} - {{ tax.name }}
+      </mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field style="width: 150px">
+    <mat-label>Order</mat-label>
+    <input matInput type="number" formControlName="order" />
+  </mat-form-field>
+
+  <button mat-raised-button color="primary" (click)="addDependency()">
+    Add
+  </button>
+</form>
+
+<h3 class="mt-4">Dependencies List</h3>
+
+<table
+  mat-table
+  [dataSource]="dependencies"
+  class="mat-elevation-z8 w-full mt-2"
+>
+  <ng-container matColumnDef="dependsOnTaxId">
+    <th mat-header-cell *matHeaderCellDef>Depends On Tax</th>
+    <td mat-cell *matCellDef="let dep">
+      {{ getTaxName(dep.dependsOnTaxId) }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="order">
+    <th mat-header-cell *matHeaderCellDef>Order</th>
+    <td mat-cell *matCellDef="let dep">
+      {{ dep.order }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="actions">
+    <th mat-header-cell *matHeaderCellDef>Actions</th>
+    <td mat-cell *matCellDef="let dep">
+      <button mat-icon-button color="warn" (click)="deleteDependency(dep.id)">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="columns"></tr>
+  <tr mat-row *matRowDef="let row; columns: columns"></tr>
+</table>
+}

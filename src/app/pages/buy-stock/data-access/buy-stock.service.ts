@@ -200,9 +200,9 @@ export class BuyStockService {
       .pipe(map(res => res.data ?? null));
   }
 
-  createCustomEntry(purchaseId: string, payload: PakCustomEntry) {
+  createCustomEntry(payload: PakCustomEntry) {
     return this.http.post<ApiResponse<PakCustomEntry>>(
-      `${this.apiBaseUrl}/purchase-entries/${purchaseId}/custom`,
+      `${this.apiBaseUrl}/custom-entries`,
       payload
     );
   }

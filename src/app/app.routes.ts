@@ -17,7 +17,24 @@ export const routes: Routes = [
         path: 'home',
         loadComponent: () =>
           import('./pages/home/home.component').then((m) => m.HomeComponent),
-        data: { breadcrumb: 'Home' }
+        data: { breadcrumb: 'Home' },
+      },
+      {
+        path: 'custom',
+        loadComponent: () =>
+          import('./pages/custom/custom.component').then(
+            (m) => m.CustomEntriesComponent
+          ),
+        data: { breadcrumb: 'Custom' },
+      },
+      {
+        path: 'custom-entries/:id',
+        loadComponent: () =>
+          import(
+            './pages/custom/components/custom-entry-details/custom-entry-details.component'
+          ).then((m) => m.CustomEntryDetailsComponent),
+        data: { breadcrumb: 'Custom' },
+        //component: CustomEntryDetailsComponent
       },
       {
         path: 'buy-stock-form',
@@ -33,23 +50,21 @@ export const routes: Routes = [
           import('./pages/warehouse/warehouse.component').then(
             (m) => m.WarehouseComponent
           ),
-            data: { breadcrumb: 'Warehouses' }
+        data: { breadcrumb: 'Warehouses' },
       },
       {
         path: 'exchangeRate',
         loadComponent: () =>
-          import('./pages/exchange-rate/exchange-rate-dialog/exchange-rate.component').then(
-            (m) => m.ExchangeRateComponent
-          ),
-            data: { breadcrumb: 'Exchange Rates' }
+          import(
+            './pages/exchange-rate/exchange-rate-dialog/exchange-rate.component'
+          ).then((m) => m.ExchangeRateComponent),
+        data: { breadcrumb: 'Exchange Rates' },
       },
       {
         path: 'setting',
         loadChildren: () =>
-          import('./pages/setting/setting.routes').then(
-            (m) => m.SETTINGROUTES
-          ),
-           data: { breadcrumb: 'Settings' }
+          import('./pages/setting/setting.routes').then((m) => m.SETTINGROUTES),
+        data: { breadcrumb: 'Settings' },
       },
       {
         path: 'user-mang',
@@ -57,15 +72,13 @@ export const routes: Routes = [
           import('./pages/user-management/user-management.routes').then(
             (m) => m.USERMANAGEMENTROUTES
           ),
-          data: { breadcrumb: 'User Management' },
+        data: { breadcrumb: 'User Management' },
       },
-       {
+      {
         path: 'tax-mangenmet',
         loadChildren: () =>
-          import('./pages/tax-management.component/tax-management.routes').then(
-            (m) => m.TAXRMANAGEMENTROUTES
-          ),
-          data: { breadcrumb: 'Tax Management' },
+          import('./pages/tax-management/tax.routes').then((m) => m.TAXROUTES),
+        data: { breadcrumb: 'Tax' },
       },
       {
         path: '',
@@ -78,9 +91,9 @@ export const routes: Routes = [
           import('./pages/no-page-found/no-page-found.component').then(
             (m) => m.NoPageFoundComponent
           ),
-          data: { breadcrumb: 'Not Found' },
+        data: { breadcrumb: 'Not Found' },
       },
-      
+
       { path: '**', redirectTo: '/404' }, // fallback
     ],
   },

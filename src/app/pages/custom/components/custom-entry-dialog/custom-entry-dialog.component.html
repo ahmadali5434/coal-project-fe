@@ -1,13 +1,34 @@
 <h2 class="flex justify-center items-center text-3xl pt-8">
-  {{ isEdit ? 'Update Custom Detail' : 'Add Custom Detail' }}
+  {{ isEdit ? "Update Custom Detail" : "Add Custom Detail" }}
 </h2>
 
 <mat-dialog-content class="mat-typography">
   <form [formGroup]="form">
-    <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 gap-y-3 w-full place-items-center my-12">
+    <div
+      class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 gap-y-3 w-full place-items-center my-12"
+    >
       <mat-form-field class="w-80">
         <mat-label>GD Number</mat-label>
         <input matInput formControlName="gdNumber" />
+      </mat-form-field>
+
+      <mat-form-field class="w-80">
+        <mat-label>Choose GD date</mat-label>
+        <input matInput [matDatepicker]="picker" formControlName="gdDate">
+        <mat-hint>MM/DD/YYYY</mat-hint>
+        <mat-datepicker-toggle matIconSuffix [for]="picker">
+          <mat-icon matDatepickerToggleIcon>keyboard_arrow_down</mat-icon>
+        </mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+
+      <!-- Importer Type (Required) -->
+      <mat-form-field class="w-80" required>
+        <mat-label>Importer Type</mat-label>
+        <mat-select formControlName="importerType">
+          <mat-option value="INDIVIDUAL">Individual</mat-option>
+          <mat-option value="COMPANY">Company</mat-option>
+        </mat-select>
       </mat-form-field>
 
       <mat-form-field class="w-80">
@@ -19,11 +40,10 @@
         <mat-label>Head</mat-label>
         <input matInput formControlName="head" />
       </mat-form-field>
-      <mat-form-field class="w-80">
+
+      <!-- <mat-form-field class="w-80">
         <mat-label>Select Drivers</mat-label>
         <mat-select formControlName="driverIds" multiple>
-
-
           <mat-divider></mat-divider>
 
           @for (driver of drivers(); track driver.id) {
@@ -32,15 +52,15 @@
           </mat-option>
           }
         </mat-select>
-      </mat-form-field>
+      </mat-form-field> -->
       <mat-form-field class="w-80">
         <mat-label>Gross Weight</mat-label>
-        <input matInput formControlName="grossWeight" />
+        <input matInput type="number" formControlName="grossWeight" />
       </mat-form-field>
 
       <mat-form-field class="w-80">
         <mat-label>Net Weight</mat-label>
-        <input matInput formControlName="netWeight" />
+        <input matInput type="number" formControlName="netWeight" />
       </mat-form-field>
 
       <mat-form-field class="w-80">
@@ -55,40 +75,20 @@
 
       <mat-form-field class="w-80">
         <mat-label>Exchange Rate (Rs)</mat-label>
-        <input matInput formControlName="exchangeRate" />
+        <input matInput type="number" formControlName="exchangeRate" />
       </mat-form-field>
 
       <mat-form-field class="w-80">
         <mat-label>Import Value (Rs)</mat-label>
-        <input matInput formControlName="importValue" />
-      </mat-form-field>
-
-      <mat-form-field class="w-80">
-        <mat-label>PSID Amount</mat-label>
-        <input matInput formControlName="psidAmount" />
+        <input matInput type="number" formControlName="importValue" />
       </mat-form-field>
 
       <mat-form-field class="w-80">
         <mat-label>Packages</mat-label>
-        <input matInput formControlName="packages" />
+        <input matInput type="number" formControlName="packages" />
       </mat-form-field>
 
-      <mat-form-field class="w-80">
-        <mat-label>Stock Out</mat-label>
-        <input matInput formControlName="stockOut" />
-      </mat-form-field>
-
-      <mat-form-field class="w-80">
-        <mat-label>Stock Balance</mat-label>
-        <input matInput formControlName="stockBalance" />
-      </mat-form-field>
-
-      <mat-form-field class="w-80">
-        <mat-label>Sales</mat-label>
-        <input matInput formControlName="sales" />
-      </mat-form-field>
-
-      <mat-form-field class="w-80">
+      <!-- <mat-form-field class="w-80">
         <mat-label>Balance</mat-label>
         <input matInput formControlName="balance" />
       </mat-form-field>
@@ -96,7 +96,7 @@
       <mat-form-field class="w-80">
         <mat-label>Tax Per Vehicle</mat-label>
         <input matInput formControlName="taxPerVehicle" />
-      </mat-form-field>
+      </mat-form-field> -->
     </div>
   </form>
 </mat-dialog-content>
@@ -104,6 +104,6 @@
 <mat-dialog-actions align="end">
   <button matButton="outlined" mat-dialog-close>Cancel</button>
   <button matButton="filled" cdkFocusInitial (click)="onSave()">
-    {{ isEdit ? 'Update' : 'Save' }}
+    {{ isEdit ? "Update" : "Save" }}
   </button>
 </mat-dialog-actions>

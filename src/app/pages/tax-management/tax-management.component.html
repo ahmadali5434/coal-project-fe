@@ -1,0 +1,50 @@
+<div class="p-6 bg-gray-50 min-h-screen">
+  <div class="text-sm text-gray-500 mb-2">
+    <h1 class="text-xl font-bold text-gray-800 mb-6">Tax Management</h1>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+      <a
+        [routerLink]="['taxes']"
+        *hasPermission="'customer:read'"
+        class="flex flex-col items-center justify-center bg-white w-50 h-45 rounded-xl p-6 border hover:shadow-lg hover:border-indigo-500 transition-all cursor-pointer"
+      >
+        <mat-icon
+          class="text-indigo-500 text-60xl mb-3"
+          style="font-size: 80px; width: 80px; height: 80px"
+        >
+       receipt_long
+        </mat-icon>
+        <span class="text-lg font-bold text-gray-700">Taxes</span>
+     </a>
+
+     <a
+        [routerLink]="['tax-rules']"
+        *hasPermission="'customer:read'"
+        class="flex flex-col items-center justify-center bg-white w-50 h-45 rounded-xl p-6 border hover:shadow-lg hover:border-indigo-500 transition-all cursor-pointer"
+      >
+        <mat-icon
+          class="text-indigo-500 text-60xl mb-3"
+          style="font-size: 80px; width: 80px; height: 80px"
+        >
+        rule
+        </mat-icon>
+        <span class="text-lg font-bold text-gray-700">Tax Rules</span>
+     </a>
+
+     <a
+        [routerLink]="['tax-dependencies']"
+        *hasPermission="'customer:read'"
+        class="flex flex-col items-center justify-center bg-white w-51 h-45 rounded-xl p-6 border hover:shadow-lg hover:border-indigo-500 transition-all cursor-pointer"
+      >
+        <mat-icon
+          class="text-indigo-500 text-60xl mb-3"
+          style="font-size: 80px; width: 80px; height: 80px"
+        >
+        account_tree
+        </mat-icon>
+        <span class="text-lg font-bold text-gray-700">Tax Dependencies</span>
+     </a>
+    </div>
+    <router-outlet></router-outlet>
+  </div>
+</div>

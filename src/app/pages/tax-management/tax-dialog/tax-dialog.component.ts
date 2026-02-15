@@ -17,8 +17,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
-import { TaxService } from '../taxes.component/taxes.service';
-import { Tax } from '../../buy-stock/data-access/buy-stock.dto';
+import { TaxService } from '../../custom/services/tax.service';
+import { MatSelectModule } from '@angular/material/select';
+import { CalculationType, Tax } from '../../custom/models/tax.model';
 
 
 @Component({
@@ -29,25 +30,27 @@ import { Tax } from '../../buy-stock/data-access/buy-stock.dto';
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
+    MatSelectModule,
     MatButtonModule,
     MatDialogContent,
     MatDialogActions,
     MatDialogClose,
   ],
-  templateUrl: './taxForm.component.html',
+  templateUrl: './tax-dialog.component.html',
 })
 export class TaxFormComponent {
   private readonly dialogRef = inject(MatDialogRef<TaxFormComponent>);
   private readonly snackBar = inject(MatSnackBar);
   private readonly taxService = inject(TaxService);
   private readonly data = inject(MAT_DIALOG_DATA);
+  calculationTypes = Object.values(CalculationType);
 
   isEdit = false;
 
   taxForm = new FormGroup({
-    taxName: new FormControl('', Validators.required),
-    taxCode: new FormControl('', Validators.required),
-    description: new FormControl(''),
+    name: new FormControl('', Validators.required),
+    code: new FormControl('', Validators.required),
+    calculationType: new FormControl<CalculationType | null>(null, Validators.required),
   });
 
   constructor() {
@@ -63,9 +66,9 @@ export class TaxFormComponent {
     }
 
     const payload: Partial<Tax> = {
-      taxName: this.taxForm.value.taxName!,
-      taxCode: this.taxForm.value.taxCode!,
-      description: this.taxForm.value.description ?? undefined,
+      name: this.taxForm.value.name!,
+      code: this.taxForm.value.code!,
+      calculationType: this.taxForm.value.calculationType!,
     };
 
     if (this.isEdit && !this.data?.id) return;

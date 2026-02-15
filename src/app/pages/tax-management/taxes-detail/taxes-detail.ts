@@ -12,11 +12,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { TaxService } from './taxes.service';
+import { TaxService } from '../../custom/services/tax.service';
 import { Tax } from '../../buy-stock/data-access/buy-stock.dto';
-import { TaxFormComponent } from '../taxForm.component/taxForm.component';
 import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { ActionCellRendererComponent } from '../../../shared/components/action-cell-renderer/action-cell-renderer.component';
+import { TaxFormComponent } from '../tax-dialog/tax-dialog.component';
 
 
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -31,9 +31,9 @@ ModuleRegistry.registerModules([AllCommunityModule]);
     MatButtonModule,
     MatIconModule
   ],
-  templateUrl: './taxes.component.html',
+  templateUrl: './taxes-detail.html',
 })
-export class TaxesComponent implements OnInit {
+export class TaxesDetail implements OnInit {
   private readonly taxService = inject(TaxService);
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
@@ -51,10 +51,10 @@ export class TaxesComponent implements OnInit {
   }
 
   colDefs: ColDef[] = [
-    { field: 'id', width: 70 },
-    { field: 'taxName', headerName: 'Tax Name', filter: true },
-    { field: 'taxCode', headerName: 'Tax Code', filter: true },
-    { field: 'description', headerName: 'Description' },
+    // { field: 'id', width: 70 },
+    { field: 'name', headerName: 'Tax Name', filter: true },
+    { field: 'code', headerName: 'Tax Code', filter: true },
+    { field: 'calculationType', headerName: 'Calculation Type' },
     {
       headerName: 'Actions',
       cellRenderer: ActionCellRendererComponent,
@@ -108,7 +108,7 @@ export class TaxesComponent implements OnInit {
   }
 
   onDelete(tax: Tax) {
-    const taxId = tax.taxId;
+    const taxId = tax.id;
     if (taxId == null) return;
 
     const ref = this.dialog.open(ConfirmDialogComponent, {
