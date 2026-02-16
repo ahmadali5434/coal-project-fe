@@ -86,8 +86,12 @@ export class TaxFormComponent {
         );
         this.dialogRef.close(true);
       },
-      error: () =>
-        this.snackBar.open('Operation failed', 'Close', { duration: 3000 }),
+      error: (err) => {
+        const message =
+          err?.error?.message || err?.message || 'Operation failed';
+      
+        this.snackBar.open(message, 'Close', { duration: 3000 });
+      },
     });
   }
 

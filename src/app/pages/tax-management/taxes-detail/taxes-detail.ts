@@ -52,33 +52,33 @@ export class TaxesDetail implements OnInit {
 
   colDefs: ColDef[] = [
     // { field: 'id', width: 70 },
-    { field: 'name', headerName: 'Tax Name', filter: true },
-    { field: 'code', headerName: 'Tax Code', filter: true },
-    { field: 'calculationType', headerName: 'Calculation Type' },
+    { field: 'name', headerName: 'Tax Name', filter: true, flex: 1 },
+    { field: 'code', headerName: 'Tax Code', filter: true, flex: 1 },
+    { field: 'calculationType', headerName: 'Calculation Type', flex: 1 },
     {
       headerName: 'Actions',
       cellRenderer: ActionCellRendererComponent,
-      cellRendererParams: {
-        actions: [
-          {
-            type: 'edit',
-            icon: 'edit',
-            label: 'Edit Tax',
-            permission: 'tax:update',
-            callback: (row: Tax) => this.openEditTax(row),
-          },
-          {
-            type: 'delete',
-            icon: 'delete',
-            label: 'Delete Tax',
-            permission: 'tax:delete',
-            callback: (row: Tax) => this.onDelete(row),
-          },
-        ],
+      cellRendererParams: (params: any) => {
+        return {
+          actions: [
+            {
+              type: 'edit',
+              icon: 'edit',
+              label: 'Edit Tax',
+              callback: () => this.openEditTax(params.data),
+            },
+            {
+              type: 'delete',
+              icon: 'delete',
+              label: 'Delete Tax',
+              callback: () => this.onDelete(params.data),
+            },
+          ],
+        };
       },
       pinned: 'right',
       maxWidth: 100,
-    },
+    }    
   ];
 
   gridOptions: GridOptions = {

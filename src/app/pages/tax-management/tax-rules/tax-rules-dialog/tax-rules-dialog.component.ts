@@ -1,7 +1,13 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogContent, MatDialogRef, MatDialogActions, MatDialogClose } from '@angular/material/dialog';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogContent,
+  MatDialogRef,
+  MatDialogActions,
+  MatDialogClose,
+} from '@angular/material/dialog';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
@@ -11,6 +17,7 @@ import { ImporterType } from '../../../custom/models/tax-rule.model';
 import { MatIcon } from '@angular/material/icon';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { provideNativeDateAdapter } from '@angular/material/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-tax-rules-dialog',
@@ -26,7 +33,7 @@ import { provideNativeDateAdapter } from '@angular/material/core';
     MatDialogActions,
     MatIcon,
     MatDialogClose,
-],
+  ],
   templateUrl: './tax-rules-dialog.component.html',
 })
 export class TaxRulesDialogComponent {
@@ -35,6 +42,7 @@ export class TaxRulesDialogComponent {
   private taxRuleService = inject(TaxRuleService);
 
   private dialogRef = inject(MatDialogRef<TaxRulesDialogComponent>);
+  private snackBar = inject(MatSnackBar);
   data = inject(MAT_DIALOG_DATA, { optional: true });
 
   taxes: any[] = [];
@@ -67,9 +75,9 @@ export class TaxRulesDialogComponent {
 
   submit() {
     if (this.form.invalid) return;
-  
+
     const raw = this.form.getRawValue();
-  
+
     const payload = {
       taxId: raw.taxId!,
       importerType: raw.importerType!,
@@ -77,17 +85,18 @@ export class TaxRulesDialogComponent {
       effectiveFrom: raw.effectiveFrom!,
       effectiveTo: raw.effectiveTo || undefined,
     };
-  
-    if (this.data?.id) {
-      this.taxRuleService.updateRule(this.data.id, payload).subscribe(() => {
-        this.dialogRef.close(true);
-      });
-    } else {
-      this.taxRuleService.createRule(payload).subscribe(() => {
-        this.dialogRef.close(true);
-      });
-    }
-  }
-  
-}
 
+    const request$ = this.data?.id
+      ? this.taxRuleService.updateRule(this.data.id, payload)
+      : this.taxRuleService.createRule(payload);
+
+    request$.subscribe({
+      next: () => this.dialogRef.close(true),
+      error: (err) => {
+        const message =
+          err?.error?.message || err?.message || 'Operation failed';
+        this.snackBar.open(message, 'Close', { duration: 3000 });
+      },
+    });
+  }
+}
