@@ -96,7 +96,7 @@ export interface CustomEntry {
 export interface PakCustomEntry {
   id?: number;
   gdNumber: string;
-  gdDate: string; // YYYY-MM-DD
+  gdDate: string; 
   importerType: 'INDIVIDUAL' | 'COMPANY';
   month: string;
   head: string;
