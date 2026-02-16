@@ -6,8 +6,7 @@ export interface Tax {
 }
 
 export enum CalculationType {
-  PERCENTAGE = 'Percentage',
-  FIXED = 'Fixed',
-  DERIVED = 'Derived',
-  COMPOSITE = 'Composite'
+  PERCENTAGE = 'PERCENTAGE',
+  FIXED = 'FIXED',
+  COMPOSITE = 'COMPOSITE'
 }

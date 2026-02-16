@@ -31,22 +31,22 @@
 
       <mat-form-field class="w-80">
         <mat-label>Effective From</mat-label>
-        <input matInput [matDatepicker]="picker" formControlName="effectiveFrom">
+        <input matInput [matDatepicker]="pickerFrom" formControlName="effectiveFrom">
         <mat-hint>MM/DD/YYYY</mat-hint>
-        <mat-datepicker-toggle matIconSuffix [for]="picker">
+        <mat-datepicker-toggle matIconSuffix [for]="pickerFrom">
           <mat-icon matDatepickerToggleIcon>keyboard_arrow_down</mat-icon>
         </mat-datepicker-toggle>
-        <mat-datepicker #picker></mat-datepicker>
+        <mat-datepicker #pickerFrom></mat-datepicker>
       </mat-form-field>
 
       <mat-form-field class="w-80">
         <mat-label>Effective To</mat-label>
-        <input matInput [matDatepicker]="picker" formControlName="effectiveTo">
+        <input matInput [matDatepicker]="pickerTo" formControlName="effectiveTo">
         <mat-hint>MM/DD/YYYY</mat-hint>
-        <mat-datepicker-toggle matIconSuffix [for]="picker">
+        <mat-datepicker-toggle matIconSuffix [for]="pickerTo">
           <mat-icon matDatepickerToggleIcon>keyboard_arrow_down</mat-icon>
         </mat-datepicker-toggle>
-        <mat-datepicker #picker></mat-datepicker>
+        <mat-datepicker #pickerTo></mat-datepicker>
       </mat-form-field>
 
     </div>

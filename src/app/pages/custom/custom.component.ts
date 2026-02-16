@@ -49,7 +49,7 @@ export class CustomEntriesComponent implements OnInit {
   openEditDialog(entry: any) {
     const ref = this.dialog.open(CustomEntryDialogComponent, {
       panelClass: 'dialog-container-lg',
-      data: entry,
+      data: { customEntry: entry },
     });
 
     ref.afterClosed().subscribe((res) => res && this.load());

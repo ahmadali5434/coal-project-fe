@@ -7,11 +7,11 @@ import { MatInputModule } from "@angular/material/input";
 import { ReactiveFormsModule, FormBuilder, Validators } from "@angular/forms";
 import { MatDialog } from "@angular/material/dialog";
 import { MatIconModule } from "@angular/material/icon";
+import { MatSnackBar } from "@angular/material/snack-bar";
 import { TaxRuleService } from "../../custom/services/tax-rule.service";
 import { DependencyService } from "../../custom/services/dependency.service";
 import { TaxService } from "../../custom/services/tax.service";
 import { ConfirmDialogComponent } from "../../../shared/components/confirm-dialog/confirm-dialog.component";
-
 
 @Component({
   selector: "app-tax-dependencies",
@@ -33,6 +33,7 @@ export class TaxDependenciesComponent implements OnInit {
   private taxService = inject(TaxService);
   private fb = inject(FormBuilder);
   private dialog = inject(MatDialog);
+  private snackBar = inject(MatSnackBar);
 
   rules: any[] = [];
   taxes: any[] = [];
@@ -53,39 +54,39 @@ export class TaxDependenciesComponent implements OnInit {
   }
 
   loadRules() {
-    this.taxRuleService.getAllRules().subscribe((res) => {
-      this.rules = res.data || res;
+    this.taxRuleService.getAllRules().subscribe({
+      next: (res) => (this.rules = res.data || res),
+      error: (err) => this.showError(err, "Failed to load rules")
     });
   }
 
   loadTaxes() {
-    this.taxService.fetchAllTaxes().subscribe((res) => {
-      this.taxes = res;
+    this.taxService.fetchAllTaxes().subscribe({
+      next: (res) => (this.taxes = res),
+      error: (err) => this.showError(err, "Failed to load taxes")
     });
-  }
-
-  getTaxName(taxId: string) {
-    const tax = this.taxes.find((t) => t.id === taxId);
-    return tax ? `${tax.code} - ${tax.name}` : taxId;
   }
 
   loadDependencies() {
     if (!this.selectedRuleId) return;
 
-    this.dependencyService.getDependencies(this.selectedRuleId).subscribe((res) => {
-      this.dependencies = res.data || res;
+    this.dependencyService.getDependencies(this.selectedRuleId).subscribe({
+      next: (res) => (this.dependencies = res.data || res),
+      error: (err) => this.showError(err, "Failed to load dependencies")
     });
   }
 
   addDependency() {
-    if (this.form.invalid) return;
-    if (!this.selectedRuleId) return;
+    if (this.form.invalid || !this.selectedRuleId) return;
 
     const payload = this.form.value;
 
-    this.dependencyService.addDependency(this.selectedRuleId, payload).subscribe(() => {
-      this.form.reset({ dependsOnTaxId: "", order: 1 });
-      this.loadDependencies();
+    this.dependencyService.addDependency(this.selectedRuleId, payload).subscribe({
+      next: () => {
+        this.form.reset({ dependsOnTaxId: "", order: 1 });
+        this.loadDependencies();
+      },
+      error: (err) => this.showError(err, "Failed to add dependency")
     });
   }
 
@@ -98,9 +99,20 @@ export class TaxDependenciesComponent implements OnInit {
     ref.afterClosed().subscribe((confirm) => {
       if (!confirm) return;
 
-      this.dependencyService.deleteDependency(this.selectedRuleId, depId).subscribe(() => {
-        this.loadDependencies();
+      this.dependencyService.deleteDependency(this.selectedRuleId, depId).subscribe({
+        next: () => this.loadDependencies(),
+        error: (err) => this.showError(err, "Failed to delete dependency")
       });
     });
+  }
+
+  private showError(err: any, fallback: string) {
+    const message = err?.error?.message || err?.message || fallback;
+    this.snackBar.open(message, "Close", { duration: 3000 });
+  }
+
+  getTaxName(taxId: string) {
+    const tax = this.taxes.find((t) => t.id === taxId);
+    return tax ? `${tax.code} - ${tax.name}` : taxId;
   }
 }
