@@ -6,7 +6,7 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -15,28 +15,37 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDividerModule } from '@angular/material/divider';
-import { BuyStockService } from '../buy-stock/data-access/buy-stock.service';
-import { ApiResponse, Driver, PakCustomEntry } from '../buy-stock/data-access/buy-stock.dto';
-import { AddNewDriverDialogComponent } from '../buy-stock/add-new-driver-dialog/add-new-driver-dialog.component';
-import { DriverService } from '../buy-stock/data-access/driver.service';
+import { BuyStockService } from '../../../buy-stock/data-access/buy-stock.service';
+import { PakCustomEntry, ApiResponse, Driver } from '../../../buy-stock/data-access/buy-stock.dto';
+import { DriverService } from '../../../buy-stock/data-access/driver.service';
+import { AddNewDriverDialogComponent } from '../../../buy-stock/add-new-driver-dialog/add-new-driver-dialog.component';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { provideNativeDateAdapter } from '@angular/material/core';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
   selector: 'app-custom-form',
+  providers: [provideNativeDateAdapter()],
   standalone: true,
   imports: [
     CommonModule,
     ReactiveFormsModule,
     MatFormFieldModule,
+    MatDatepickerModule,
     MatInputModule,
     MatButtonModule,
     MatDialogModule,
     MatSnackBarModule,
     MatSelectModule,
-    MatDividerModule
+    MatDividerModule,
+    MatIcon,
+    MatDialogContent,
+    MatDialogActions,
+    MatDialogClose,
   ],
-  templateUrl: './custom-form.component.html',
+  templateUrl: './custom-entry-dialog.component.html',
 })
-export class CustomFormComponent implements OnInit {
+export class CustomEntryDialogComponent implements OnInit {
   private readonly _snackBar = inject(MatSnackBar);
   private readonly buyStockService = inject(BuyStockService);
   private readonly driverService = inject(DriverService);
@@ -48,7 +57,7 @@ export class CustomFormComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private dialogRef: MatDialogRef<CustomFormComponent>,
+    private dialogRef: MatDialogRef<CustomEntryDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) { }
 
@@ -57,6 +66,8 @@ export class CustomFormComponent implements OnInit {
 
     this.form = this.fb.group({
       gdNumber: ['', Validators.required],
+      gdDate: ['', Validators.required],
+      importerType: ['', Validators.required],
       month: ['', Validators.required],
       head: ['', Validators.required],
       grossWeight: [0, Validators.required],
@@ -65,14 +76,14 @@ export class CustomFormComponent implements OnInit {
       hsCode: ['', Validators.required],
       exchangeRate: [0, Validators.required],
       importValue: [0, Validators.required],
-      psidAmount: [0],
+      //psidAmount: [0],
       packages: [0],
-      stockOut: [0],
-      stockBalance: [{ value: 0, disabled: true }],
-      sales: [0],
-      balance: [{ value: 0, disabled: true }],
-      taxPerVehicle: [{ value: 0, disabled: true }],
-      driverIds: [[], Validators.required],
+      //stockOut: [0],
+      //stockBalance: [{ value: 0, disabled: true }],
+      //sales: [0],
+      //balance: [{ value: 0, disabled: true }],
+      //taxPerVehicle: [{ value: 0, disabled: true }],
+      //driverIds: [[], Validators.required],
     });
     this.loadDrivers();
     if (this.isEdit) {
@@ -81,11 +92,13 @@ export class CustomFormComponent implements OnInit {
 
     this.calculateFields();
   }
+
   private loadDrivers() {
     this.driverService.fetchAllDrivers().subscribe({
       next: (drivers) => this.drivers.set(drivers),
     });
   }
+
   openNewDriverDialog() {
     this.dialog
       .open(AddNewDriverDialogComponent, {
@@ -96,22 +109,23 @@ export class CustomFormComponent implements OnInit {
         if (driver) this.loadDrivers();
       });
   }
+
   private calculateFields() {
     this.form.valueChanges.subscribe((val) => {
       const netWeight = Number(val.netWeight) || 0;
-      const stockOut = Number(val.stockOut) || 0;
-      const sales = Number(val.sales) || 0;
+      //const stockOut = Number(val.stockOut) || 0;
+      //const sales = Number(val.sales) || 0;
       const importValue = Number(val.importValue) || 0;
       const exchangeRate = Number(val.exchangeRate) || 0;
 
-      const stockBalance = netWeight - stockOut;
-      const balance = stockBalance - sales;
-      const taxPerVehicle = importValue * exchangeRate;
+      //const stockBalance = netWeight - stockOut;
+      //const balance = stockBalance - sales;
+      //const taxPerVehicle = importValue * exchangeRate;
 
-      this.form.patchValue(
-        { stockBalance, balance, taxPerVehicle },
-        { emitEvent: false }
-      );
+      // this.form.patchValue(
+      //   { stockBalance, balance, taxPerVehicle },
+      //   { emitEvent: false }
+      // );
     });
   }
 
@@ -130,12 +144,11 @@ export class CustomFormComponent implements OnInit {
 
     customId
       ? this.updateCustomData(purchaseId, payload)
-      : this.saveNewCustomData(purchaseId, payload);
+      : this.saveNewCustomData(payload);
   }
 
-
-  private saveNewCustomData(purchaseId: string, payload: PakCustomEntry) {
-    this.buyStockService.createCustomEntry(purchaseId, payload).subscribe({
+  private saveNewCustomData(payload: PakCustomEntry) {
+    this.buyStockService.createCustomEntry(payload).subscribe({
       next: (res: ApiResponse<PakCustomEntry>) => {
         this._snackBar.open('Custom entry saved!', undefined, {
           duration: 3000,

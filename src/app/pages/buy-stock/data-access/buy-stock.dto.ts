@@ -16,10 +16,11 @@ export interface CityRef {
 
 // Add or verify the following export
 export interface Tax {
-  taxId?: string;
-  taxName: string;
-  taxCode: string;
-  description?: string;
+  id?: string;
+  code: string;
+  name: string;
+  calculationType: string; //TODO: change to enum if needed
+  // description?: string;
 }
 
 // ----------------- PURCHASE ENTRY -----------------
@@ -93,8 +94,10 @@ export interface CustomEntry {
   customImage: string;
 }
 export interface PakCustomEntry {
-   id?: number;
+  id?: number;
   gdNumber: string;
+  gdDate: string; // YYYY-MM-DD
+  importerType: 'INDIVIDUAL' | 'COMPANY';
   month: string;
   head: string;
   grossWeight: number;

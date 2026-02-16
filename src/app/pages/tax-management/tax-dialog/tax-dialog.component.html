@@ -7,18 +7,24 @@
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 my-10 place-items-center">
       <mat-form-field class="w-80">
         <mat-label>Tax Name</mat-label>
-        <input matInput formControlName="taxName" />
+        <input matInput formControlName="name" />
       </mat-form-field>
 
       <mat-form-field class="w-80">
         <mat-label>Tax Code</mat-label>
-        <input matInput formControlName="taxCode" />
+        <input matInput formControlName="code" />
       </mat-form-field>
 
-      <mat-form-field class="lg:col-span-2 w-full max-w-[640px]">
-        <mat-label>Description</mat-label>
-        <textarea matInput formControlName="description"></textarea>
-      </mat-form-field>
+
+      <mat-form-field class="w-80">
+        <mat-label>Calculation Type</mat-label>
+        <mat-select formControlName="calculationType">
+          <mat-option *ngFor="let type of calculationTypes" [value]="type">
+            {{ type }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>      
+      
     </div>
   </form>
 </mat-dialog-content>

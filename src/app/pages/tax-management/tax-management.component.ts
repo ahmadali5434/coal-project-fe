@@ -4,7 +4,7 @@ import { RouterLink, RouterOutlet } from '@angular/router';
 import { HasPermissionDirective } from '../../core/directives/has-permission.directive';
 
 @Component({
-  selector: 'app-tax-management',
+  selector: 'app-tax',
   imports: [
     MatIcon, 
     MatIconModule, 
@@ -15,6 +15,6 @@ import { HasPermissionDirective } from '../../core/directives/has-permission.dir
   templateUrl: './tax-management.component.html',
 
 })
-export class TaxManagementComponent {
+export class TaxComponent {
   
 }

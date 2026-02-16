@@ -1,0 +1,63 @@
+<div class="flex justify-between items-center mb-3">
+    <h2>Custom Entries</h2>
+
+    <button mat-raised-button color="primary" (click)="openCreateDialog()">
+      + Add Entry
+    </button>
+  </div>
+
+  <table mat-table [dataSource]="entries" class="mat-elevation-z8 w-full">
+
+    <ng-container matColumnDef="gdNumber">
+      <th mat-header-cell *matHeaderCellDef> GD Number </th>
+      <td mat-cell *matCellDef="let e"> {{ e.gdNumber }} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="gdDate">
+      <th mat-header-cell *matHeaderCellDef> GD Date </th>
+      <td mat-cell *matCellDef="let e"> {{ e.gdDate }} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="importValue">
+      <th mat-header-cell *matHeaderCellDef> Import Value </th>
+      <td mat-cell *matCellDef="let e"> {{ e.importValue }} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="importerType">
+      <th mat-header-cell *matHeaderCellDef> Importer Type </th>
+      <td mat-cell *matCellDef="let e"> {{ e.importerType }} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="psidAmount">
+      <th mat-header-cell *matHeaderCellDef> PSID Amount </th>
+      <td mat-cell *matCellDef="let e"> {{ e.psidAmount }} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="packages">
+      <th mat-header-cell *matHeaderCellDef> Packages </th>
+      <td mat-cell *matCellDef="let e"> {{ e.packages }} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef> Actions </th>
+      <td mat-cell *matCellDef="let e">
+
+        <button mat-icon-button color="primary" (click)="viewDetails(e.id)">
+          <mat-icon>visibility</mat-icon>
+        </button>
+
+        <button mat-icon-button color="accent" (click)="openEditDialog(e)">
+          <mat-icon>edit</mat-icon>
+        </button>
+
+        <button mat-icon-button color="warn" (click)="deleteEntry(e.id)">
+          <mat-icon>delete</mat-icon>
+        </button>
+
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="columns"></tr>
+    <tr mat-row *matRowDef="let row; columns: columns;"></tr>
+
+  </table>

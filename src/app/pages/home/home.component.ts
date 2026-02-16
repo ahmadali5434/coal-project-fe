@@ -26,7 +26,7 @@ import { PurchaseProgressService } from '../buy-stock/data-access/purchase-progr
 import { TempExchangeRateComponent } from '../exchange-rate/temp-exchange-rate/temp-exchange-rate.component';
 import { FreightDialogComponent } from '../buy-stock/freight-dialog/freight-dialog.component';
 import { GumrakFormComponent } from '../buy-stock/gumrak-form/gumrak-form.component';
-import { CustomFormComponent } from '../custom-form/custom-form.component';
+import { CustomEntryDialogComponent } from '../custom/components/custom-entry-dialog/custom-entry-dialog.component';
 
 // Register all Community features
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -344,6 +344,8 @@ export class HomeComponent implements OnInit {
       };
       const customEntry: PakCustomEntry = {
         gdNumber: data.customEntry?.gdNumber,
+        gdDate: data.customEntry?.gdDate,
+        importerType: data.customEntry?.importerType,
         month: data.customEntry?.month,
         head: data.customEntry?.head,
         grossWeight: data.customEntry?.grossWeight,
@@ -469,7 +471,7 @@ export class HomeComponent implements OnInit {
   }
 
   openCustomDialog(rowData: any) {
-    const dialogRef = this.dialog.open(CustomFormComponent, {
+    const dialogRef = this.dialog.open(CustomEntryDialogComponent, {
       panelClass: 'dialog-container-lg',
       data: rowData,
     });
